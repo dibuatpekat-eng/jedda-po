@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jedda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #f0ede8; }
+body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialiased; color: #111; min-height: 100vh; background: #f0ede8; }
+
+#root { max-width: 600px; margin: 0 auto; min-height: 100vh; position: relative; }
+
+/* ── header ── */
+.header { display: flex; justify-content: space-between; align-items: flex-start; padding: 32px 28px 0; }
+.header-brand { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; }
+.header-meta { text-align: right; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; line-height: 1.9; font-weight: 300; }
+
+/* ── static rule (replaces ticker) ── */
+.header-rule { margin: 24px 0 0; border: none; border-top: 1px solid #ccc; }
+
+/* ── eyebrow ── */
+.items-eyebrow { padding: 0 28px; margin-top: 40px; display: flex; justify-content: space-between; align-items: baseline; }
+.eyebrow-left { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #666; font-weight: 400; }
+.eyebrow-right { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #999; font-weight: 300; }
+
+/* ── category ── */
+.cat-block { padding: 0 28px; margin-top: 32px; }
+.cat-label { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: #aaa; margin-bottom: 12px; font-weight: 300; }
+
+/* ── item grid (2 col boxes) ── */
+.item-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.item-card { border: 1px solid #d8d4ce; padding: 16px 14px 14px; cursor: pointer; position: relative; user-select: none; background: #f0ede8; transition: border-color 0.15s, background 0.15s; }
+.item-card:active { opacity: 0.6; }
+.item-card.has-qty { border-color: #111; background: #111; }
+.item-card-name { font-size: 13px; font-weight: 400; color: #222; line-height: 1.3; margin-bottom: 7px; font-family: 'IBM Plex Sans', sans-serif; transition: color 0.15s; }
+.item-card.has-qty .item-card-name { color: #f0ede8; }
+.item-card-colors { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #aaa; font-weight: 300; transition: color 0.15s; }
+.item-card.has-qty .item-card-colors { color: #888; }
+.item-card-badge { position: absolute; top: 10px; right: 10px; background: #f0ede8; color: #111; font-size: 10px; font-weight: 400; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; }
+
+/* ── notes area ── */
+.notes-area { padding: 28px 28px 0; border-top: 1px solid #e0dbd4; margin-top: 28px; }
+.notes-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #888; font-weight: 300; margin-bottom: 12px; display: block; }
+.notes-opt { font-size: 7px; color: #bbb; letter-spacing: 1px; }
+.notes-input { width: 100%; border: none; border-bottom: 1px solid #bbb; padding: 10px 0; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 300; color: #111; outline: none; background: transparent; transition: border-color 0.2s; }
+.notes-input:focus { border-bottom-color: #111; }
+.notes-input::placeholder { color: #ccc; font-weight: 300; }
+
+/* ── cart footer ── */
+.cart-footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(4px); width: 100%; max-width: 600px; background: #111; z-index: 10; opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; }
+.cart-footer.visible { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+.cart-footer-inner { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; cursor: pointer; }
+.cf-left { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 300; line-height: 1.8; }
+.cf-left strong { color: #fff; font-weight: 400; display: block; font-size: 11px; letter-spacing: 1px; }
+.cf-btn { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; }
+
+/* ── cart panel ── */
+.cart-panel-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.6); z-index: 15; opacity: 0; pointer-events: none; transition: opacity 0.2s; display: flex; align-items: flex-end; justify-content: center; }
+.cart-panel-overlay.open { opacity: 1; pointer-events: all; }
+.cart-panel { background: #f0ede8; width: 100%; max-width: 600px; max-height: 70vh; overflow-y: auto; transform: translateY(20px); opacity: 0; transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.2s; pointer-events: none; }
+.cart-panel.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+.cart-panel-top { padding: 24px 28px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d8d4ce; }
+.cart-panel-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #888; font-weight: 300; }
+.cart-panel-close { font-size: 14px; color: #bbb; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; line-height: 1; }
+.cart-panel-close:hover { color: #111; }
+.cart-item-row { display: flex; align-items: baseline; justify-content: space-between; padding: 13px 28px; border-bottom: 1px solid #e8e4df; }
+.cart-item-name { font-size: 13px; font-weight: 300; color: #222; font-family: 'IBM Plex Sans', sans-serif; }
+.cart-item-color { font-size: 10px; color: #bbb; margin-left: 5px; font-weight: 300; }
+.cart-item-right { display: flex; align-items: center; gap: 16px; }
+.cart-item-qty { font-size: 11px; color: #888; font-weight: 300; }
+.cart-item-del { font-size: 14px; color: #ccc; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; line-height: 1; transition: color 0.15s; }
+.cart-item-del:hover { color: #111; }
+.cart-panel-footer { padding: 16px 0 0; }
+.notes-toggle { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; cursor: pointer; }
+.notes-toggle:hover .notes-label { color: #555; }
+.cart-panel-next { display: block; width: 100%; padding: 16px 28px; background: #111; color: #f0ede8; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; font-weight: 300; text-align: left; margin-top: 16px; }
+
+/* ── dialog ── */
+.dialog-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.55); z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.2s; display: flex; align-items: flex-end; justify-content: center; }
+.dialog-overlay.open { opacity: 1; pointer-events: all; }
+.dialog { background: #f0ede8; width: 100%; max-width: 600px; max-height: 75vh; overflow-y: auto; transform: translateY(20px); opacity: 0; transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.2s; pointer-events: none; }
+.dialog.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+.dialog-top { padding: 28px 28px 20px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #d8d4ce; }
+.dialog-name { font-size: 14px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
+.dialog-hint { font-size: 7px; letter-spacing: 2px; text-transform: uppercase; color: #999; margin-top: 5px; font-weight: 300; }
+.dialog-close { font-size: 14px; color: #bbb; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; line-height: 1; }
+.dialog-close:hover { color: #111; }
+.dcolor-row { display: flex; align-items: center; padding: 16px 28px; border-bottom: 1px solid #e8e4df; }
+.dcolor-name { flex: 1; font-size: 11px; letter-spacing: 1px; font-weight: 300; color: #333; font-family: 'IBM Plex Sans', sans-serif; }
+.qty-ctrl { display: flex; align-items: center; gap: 20px; }
+.qty-btn { width: 24px; height: 24px; border: 1px solid #ccc; background: transparent; cursor: pointer; font-size: 14px; color: #666; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; line-height: 1; transition: all 0.15s; }
+.qty-btn:hover { border-color: #111; color: #111; }
+.qty-num { font-size: 12px; min-width: 20px; text-align: center; color: #111; font-weight: 300; }
+.dialog-next { display: block; width: 100%; padding: 18px 28px; background: #111; color: #f0ede8; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; font-weight: 300; text-align: left; transition: opacity 0.15s; }
+.dialog-next:hover { opacity: 0.85; }
+/* soldout */
+.item-card.soldout { opacity: 0.4; pointer-events: none; }
+.item-card.soldout .item-card-colors::after { content: ' — habis'; color: #c0392b; }
+.dcolor-row.soldout .dcolor-name::after { content: ' — habis'; color: #c0392b; font-size: 9px; margin-left: 6px; }
+.dcolor-row.soldout .qty-btn { opacity: 0.3; pointer-events: none; }
+/* est from batch */
+.est-batch-note { font-size: 9px; color: #aaa; font-family: 'IBM Plex Mono', monospace; margin-top: 4px; letter-spacing: 0.5px; }
+
+/* ── back ── */
+.back-btn { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 28px 28px 0; display: block; font-weight: 300; }
+.back-btn:hover { color: #111; }
+
+/* ── page header ── */
+.page-top { padding: 36px 28px 0; }
+.page-num { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: #aaa; margin-bottom: 18px; font-weight: 300; }
+.page-title { font-size: 26px; font-weight: 300; color: #111; line-height: 1.3; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -0.3px; }
+.page-title em { font-style: italic; color: #888; font-weight: 300; }
+
+/* ── summary stripe ── */
+.summary-stripe { margin: 32px 28px 0; border-top: 1px solid #bbb; }
+.s-row { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #e0dbd4; }
+.s-name { font-size: 13px; font-weight: 400; color: #222; font-family: 'IBM Plex Sans', sans-serif; }
+.s-color { font-size: 11px; color: #aaa; margin-left: 6px; font-weight: 300; }
+.s-qty { font-size: 12px; color: #666; font-weight: 400; font-family: 'IBM Plex Mono', monospace; }
+
+/* ── est inline ── */
+.est-inline { margin: 0 28px; padding: 12px 0; border-bottom: 1px solid #e0dbd4; display: flex; justify-content: space-between; align-items: baseline; }
+.est-inline-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 300; }
+.est-inline-val { font-size: 12px; font-weight: 300; color: #333; font-family: 'IBM Plex Sans', sans-serif; text-align: right; }
+.est-inline-days { font-size: 10px; color: #aaa; font-weight: 300; }
+
+/* ── fields ── */
+.fields-wrap { padding: 36px 28px 0; }
+.field-group { margin-bottom: 32px; }
+.field-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #888; margin-bottom: 12px; display: block; font-weight: 300; }
+.field-input { width: 100%; border: none; border-bottom: 1px solid #bbb; padding: 10px 0; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; font-weight: 400; color: #111; outline: none; background: transparent; transition: border-color 0.2s; -webkit-appearance: none; border-radius: 0; }
+.field-input:focus { border-bottom-color: #111; }
+.field-input::placeholder { color: #ccc; font-weight: 300; }
+
+/* ── submit area ── */
+.submit-area { padding: 40px 28px 100px; }
+.submit-btn { display: block; width: 100%; padding: 18px; background: #111; color: #f0ede8; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; font-weight: 300; text-align: left; transition: opacity 0.15s; }
+.submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.submit-btn:hover:not(:disabled) { opacity: 0.85; }
+.submit-note { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; margin-top: 14px; font-weight: 300; }
+
+/* ── review ── */
+.review-section { margin: 40px 28px 0; }
+.review-section-label { font-size: 7px; letter-spacing: 4px; text-transform: uppercase; color: #bbb; margin-bottom: 0; font-weight: 300; padding-bottom: 10px; border-bottom: 1px solid #ccc; }
+.review-rows { }
+.r-row { display: flex; justify-content: space-between; align-items: baseline; padding: 11px 0; border-bottom: 1px solid #e8e4df; gap: 16px; }
+.r-key { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; font-weight: 300; flex-shrink: 0; }
+.r-val { font-size: 12px; color: #333; font-weight: 300; text-align: right; line-height: 1.5; font-family: 'IBM Plex Sans', sans-serif; }
+
+/* ── done ── */
+.done-page { min-height: 100vh; display: flex; flex-direction: column; padding: 32px 28px 40px; }
+.done-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.done-brand { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; }
+.done-status { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 300; }
+.done-main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 72px 0 40px; }
+.done-po-label { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: #aaa; margin-bottom: 14px; font-weight: 300; }
+.done-po-num { font-size: 48px; font-weight: 300; color: #111; letter-spacing: 4px; font-family: 'IBM Plex Sans', sans-serif; line-height: 1; }
+.done-divider { width: 100%; height: 1px; background: #ccc; margin: 36px 0; }
+.done-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.done-cell { padding: 18px 0; border-bottom: 1px solid #e0dbd4; }
+.done-cell:nth-child(odd) { border-right: 1px solid #e0dbd4; padding-right: 20px; }
+.done-cell:nth-child(even) { padding-left: 20px; }
+.done-cell:nth-last-child(-n+2) { border-bottom: none; }
+.done-cell-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; font-weight: 300; }
+.done-cell-val { font-size: 14px; color: #111; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.4; }
+.done-note { margin-top: 40px; font-size: 12px; color: #777; line-height: 1.9; font-weight: 300; max-width: 320px; font-family: 'IBM Plex Sans', sans-serif; }
+.done-new-btn { margin-top: 40px; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; text-decoration: underline; text-decoration-color: #d8d4ce; font-weight: 300; }
+.done-footer { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #ccc; font-weight: 300; margin-top: 48px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<div id="cart-panel-overlay" class="cart-panel-overlay" onclick="closeCartPanel()">
+  <div id="cart-panel-el" class="cart-panel" onclick="event.stopPropagation()">
+    <div class="cart-panel-top">
+      <span class="cart-panel-title">item dipilih</span>
+      <button class="cart-panel-close" onclick="closeCartPanel()">×</button>
+    </div>
+    <div id="cart-panel-list"></div>
+    <div class="cart-panel-footer">
+      <div class="notes-area" style="border-top: 1px solid #e0dbd4; padding: 0 28px;">
+        <div class="notes-toggle" onclick="toggleNotes()" id="notes-toggle">
+          <span class="notes-label" style="margin-bottom:0;cursor:pointer;">notes <span class="notes-opt">(opsional)</span></span>
+          <span id="notes-arrow" style="font-size:8px;color:#bbb;font-family:IBM Plex Mono,monospace;">+</span>
+        </div>
+        <div id="notes-collapse" style="overflow:hidden;max-height:0;transition:max-height 0.2s ease;">
+          <input class="notes-input" placeholder="permintaan khusus, packaging, dll." value="" id="cart-notes-input" oninput="st.notes=this.value" style="margin-bottom:14px;">
+        </div>
+      </div>
+      <button class="cart-panel-next" onclick="closeCartPanel();st.phase='customer';render()">lanjut →</button>
+    </div>
+  </div>
+</div>
+
+<div id="dialog-overlay" class="dialog-overlay" onclick="closeSheet()">
+  <div id="dialog-el" class="dialog" onclick="event.stopPropagation()">
+    <div class="dialog-top">
+      <div>
+        <div id="dialog-title" class="dialog-name"></div>
+        <div class="dialog-hint">pilih warna & jumlah</div>
+      </div>
+      <button class="dialog-close" onclick="closeSheet()">×</button>
+    </div>
+    <div id="dialog-colors"></div>
+    <button class="dialog-next" onclick="proceedFromDialog()">lanjut →</button>
+  </div>
+</div>
+
+<script>
+const PRODUCTS = [
+  { cat:"outerwear", name:"Rhea Jacket",       colors:["Breen","Bistre","Auburn"], days:7  },
+  { cat:"outerwear", name:"Phi Jacket",         colors:["Auburn","Breen"],          days:7  },
+  { cat:"outerwear", name:"The Classic Coat",   colors:["Ecru","Bistre"],           days:10 },
+  { cat:"outerwear", name:"The Overcape",       colors:["Ecru"],                    days:10 },
+  { cat:"outerwear", name:"Semi Blazer",        colors:["Grain"],                   days:7  },
+  { cat:"vest",      name:"Kiro Cropped Vest",  colors:["Breen","Auburn"],          days:5  },
+  { cat:"vest",      name:"Minji Vest",         colors:["Breen","Bistre","Auburn"], days:5  },
+  { cat:"vest",      name:"Chae Vest",          colors:["Grain","Bistre"],          days:5  },
+  { cat:"vest",      name:"Sichi Vest",         colors:["Auburn"],                  days:5  },
+  { cat:"shirt",     name:"Yuwa Shirt",         colors:["Pebble","Shell"],          days:5  },
+  { cat:"shirt",     name:"Riku Shirt",         colors:["Pebble","Shell"],          days:5  },
+  { cat:"shirt",     name:"Kato Shirt",         colors:["Pebble","Shell"],          days:5  },
+  { cat:"bottom",    name:"Miru Pants",         colors:["Bistre","Breen"],          days:5  },
+  { cat:"bottom",    name:"Kae Pants",          colors:["Bistre","Auburn"],         days:5  },
+  { cat:"bottom",    name:"Rho Pants",          colors:["Bistre","Breen"],          days:5  },
+];
+
+const _supabase = supabase.createClient(
+  "https://okgcujdlwkcwvsdybkza.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
+);
+
+const st = { phase:"items", cart:{}, activeSheet:null, name:"", phone:"", address:"", notes:"", orderNum:null, savedDays:0 };
+
+// batch slot state — loaded from Supabase
+let slotData = {}; // { "Rhea Jacket · Breen": { available: 50, batchId: 3, endsAt: "2026-06-03" } }
+let batchLoaded = false;
+
+async function loadBatchSlots() {
+  try {
+    const today = new Date().toISOString().slice(0,10);
+    // Get active batches (ends_at not past)
+    const { data: batches } = await _supabase.from('po_batches').select('*').gte('ends_at', today).order('ends_at', { ascending: true });
+    // Get active PO items (baru, tunggu_ongkir, diproses)
+    const { data: activeOrders } = await _supabase.from('po_orders').select('id').in('status', ['baru','tunggu_ongkir','diproses']);
+    const activeIds = new Set((activeOrders||[]).map(o => o.id));
+    const { data: items } = await _supabase.from('po_items').select('article, color, qty, order_id');
+
+    // Count used qty per artikel · warna across active orders
+    const usedMap = {};
+    (items||[]).filter(i => activeIds.has(i.order_id)).forEach(i => {
+      const key = i.article + ' · ' + i.color;
+      usedMap[key] = (usedMap[key] || 0) + i.qty;
+    });
+
+    // Build slotData — find best available batch per artikel · warna
+    // Batch sudah diurutkan ends_at asc. Kalau batch pertama penuh, cek batch berikutnya.
+    slotData = {};
+    (batches||[]).forEach(b => {
+      const slots = b.slots || {};
+      Object.keys(slots).forEach(key => {
+        // Kalau sudah ada slot dari batch sebelumnya dan masih ada sisa, skip
+        if(slotData[key] && slotData[key].remaining > 0) return;
+        const total = slots[key] || 0;
+        const used = usedMap[key] || 0;
+        const remaining = total - used;
+        // Override ke batch ini (lebih awal yang punya sisa, atau batch terakhir kalau semua penuh)
+        slotData[key] = { total, used, remaining, batchId: b.id, endsAt: b.ends_at };
+      });
+    });
+  } catch(e) {
+    console.warn('batch load failed, form will work without slot restrictions', e);
+  }
+  batchLoaded = true;
+  render();
+}
+
+function getSlot(articleName, color) {
+  return slotData[articleName + ' · ' + color] || null;
+}
+function isColorSoldout(articleName, color) {
+  if(!batchLoaded) return false;
+  const slot = getSlot(articleName, color);
+  if(!slot) return false; // no batch configured = tetap bisa dipilih
+  return slot.remaining <= 0;
+}
+function isArticleSoldout(articleName) {
+  const p = PRODUCTS.find(x => x.name === articleName);
+  if(!p) return false;
+  return p.colors.every(c => isColorSoldout(articleName, c));
+}
+function getBestEstDate(articleName, color) {
+  const slot = getSlot(articleName, color);
+  if(!slot || !slot.endsAt) return null;
+  return new Date(slot.endsAt).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+}
+function getCartEstDate() {
+  // Find latest ends_at across all cart items
+  const items = cartItems();
+  if(!items.length) return null;
+  let latest = null;
+  items.forEach(i => {
+    const slot = getSlot(i.name, i.color);
+    if(slot && slot.endsAt) {
+      if(!latest || slot.endsAt > latest) latest = slot.endsAt;
+    }
+  });
+  if(!latest) return null;
+  return new Date(latest).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+}
+function getCartEndsAt() {
+  const items = cartItems();
+  let latest = null;
+  items.forEach(i => {
+    const slot = getSlot(i.name, i.color);
+    if(slot && slot.endsAt) {
+      if(!latest || slot.endsAt > latest) latest = slot.endsAt;
+    }
+  });
+  return latest;
+}
+
+function k(n,c){ return n+"||"+c; }
+function getQty(n,c){ return st.cart[k(n,c)]||0; }
+function setQty(n,c,v){
+  const key=k(n,c);
+  if(v<=0) delete st.cart[key]; else st.cart[key]=v;
+  updateItemCard(n); updateDialogRow(n,c); updateCartFooter();
+}
+function totalQty(){ return Object.values(st.cart).reduce((a,b)=>a+b,0); }
+function cartItems(){
+  return Object.entries(st.cart).filter(([,q])=>q>0).map(([key,q])=>{
+    const [n,c]=key.split("||"); const p=PRODUCTS.find(x=>x.name===n);
+    const slot = getSlot(n,c);
+    return {name:n,color:c,qty:q,days:p?.days||7,endsAt:slot?.endsAt||null};
+  });
+}
+function maxDays(){ const c=cartItems(); return c.length?Math.max(...c.map(x=>x.days)):0; }
+function estDisplay() {
+  const d = getCartEstDate();
+  if(d) return d;
+  const days = maxDays();
+  if(!days) return "—";
+  return "±" + days + " hari kerja";
+}
+function itemTotalQty(n){ return PRODUCTS.find(x=>x.name===n)?.colors.reduce((a,c)=>a+getQty(n,c),0)||0; }
+function getEstDate(days){ const d=new Date(); d.setDate(d.getDate()+days); return d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"}); }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
+
+// ── dialog ──
+function openSheet(name){
+  st.activeSheet=name;
+  const p=PRODUCTS.find(x=>x.name===name);
+  document.getElementById("dialog-title").textContent=p.name;
+  renderDialogColors(p);
+  document.getElementById("dialog-overlay").classList.add("open");
+  document.getElementById("dialog-el").classList.add("open");
+}
+function closeSheet(){
+  document.getElementById("dialog-overlay").classList.remove("open");
+  document.getElementById("dialog-el").classList.remove("open");
+  st.activeSheet=null;
+  updateCartFooter();
+}
+function proceedFromDialog(){
+  closeSheet();
+  // kalau sudah ada item, langsung tampilkan cart footer
+  updateCartFooter();
+}
+function renderDialogColors(p){
+  document.getElementById("dialog-colors").innerHTML=p.colors.map(col=>{
+    const q=getQty(p.name,col);
+    const soldout=isColorSoldout(p.name,col);
+    const slot=getSlot(p.name,col);
+    const estNote=slot&&slot.endsAt&&!soldout
+      ? `<span class="est-batch-note">est. ${new Date(slot.endsAt).toLocaleDateString('id-ID',{day:'numeric',month:'long'})}</span>`
+      : "";
+    return `<div class="dcolor-row${soldout?' soldout':''}">
+      <div>
+        <span class="dcolor-name">${col}</span>
+        ${estNote}
+      </div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="setQty('${p.name.replace(/'/g,"\\'")}','${col}',${q}-1)" ${soldout?'disabled':''}>−</button>
+        <span class="qty-num" id="dq-${esc(p.name+col)}">${q||"—"}</span>
+        <button class="qty-btn" onclick="setQty('${p.name.replace(/'/g,"\\'")}','${col}',${q}+1)" ${soldout?'disabled':''}>+</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+function updateDialogRow(n,c){
+  const el=document.getElementById("dq-"+esc(n+c));
+  if(el) el.textContent=getQty(n,c)||"—";
+  if(st.activeSheet===n){ const p=PRODUCTS.find(x=>x.name===n); if(p) renderDialogColors(p); }
+}
+
+// ── lightweight DOM updates ──
+function updateItemCard(n){
+  const card=document.getElementById("ic-"+esc(n));
+  if(!card) return;
+  const tq=itemTotalQty(n);
+  card.classList.toggle("has-qty",tq>0);
+  let badge=card.querySelector(".item-card-badge");
+  if(tq>0){
+    if(!badge){
+      badge=document.createElement("div");
+      badge.className="item-card-badge";
+      badge.onclick=function(e){ e.stopPropagation(); openSheet(n); };
+      card.appendChild(badge);
+    }
+    badge.textContent=tq;
+  } else { if(badge) badge.remove(); }
+}
+function updateCartFooter(){
+  const f=document.getElementById("cart-footer");
+  if(!f||st.phase!=="items") return;
+  const tq=totalQty(), md=maxDays();
+  f.classList.toggle("visible",tq>0);
+  const left=f.querySelector(".cf-left");
+  if(left) left.innerHTML=`<strong>${tq} item</strong>est. ${md} hari kerja`;
+}
+
+function openCartPanel(){
+  renderCartPanel();
+  document.getElementById("cart-panel-overlay").classList.add("open");
+  document.getElementById("cart-panel-el").classList.add("open");
+  const ni=document.getElementById('cart-notes-input');
+  if(ni) ni.value=st.notes;
+  if(st.notes.trim()){
+    const collapse=document.getElementById('notes-collapse');
+    const arrow=document.getElementById('notes-arrow');
+    if(collapse){ collapse.style.maxHeight='60px'; }
+    if(arrow){ arrow.textContent='−'; }
+  }
+}
+function closeCartPanel(){
+  document.getElementById("cart-panel-overlay").classList.remove("open");
+  document.getElementById("cart-panel-el").classList.remove("open");
+}
+function renderCartPanel(){
+  const items=cartItems();
+  document.getElementById("cart-panel-list").innerHTML=items.map(i=>`
+    <div class="cart-item-row">
+      <span class="cart-item-name">${esc(i.name)}<span class="cart-item-color">/ ${i.color}</span></span>
+      <div class="cart-item-right">
+        <span class="cart-item-qty">${i.qty} pcs</span>
+        <button class="cart-item-del" onclick="deleteCartItem('${i.name.replace(/'/g,"\'")}','${i.color}')">×</button>
+      </div>
+    </div>`).join("");
+}
+function toggleNotes(){
+  const collapse=document.getElementById('notes-collapse');
+  const arrow=document.getElementById('notes-arrow');
+  const isOpen=collapse.style.maxHeight!=='0px'&&collapse.style.maxHeight!=='';
+  if(isOpen){
+    collapse.style.maxHeight='0';
+    arrow.textContent='+';
+  } else {
+    collapse.style.maxHeight='60px';
+    arrow.textContent='−';
+    setTimeout(()=>{ const ni=document.getElementById('cart-notes-input'); if(ni) ni.focus(); },220);
+  }
+}
+function deleteCartItem(n,c){
+  delete st.cart[k(n,c)];
+  updateItemCard(n);
+  updateCartFooter();
+  renderCartPanel();
+  if(totalQty()===0) closeCartPanel();
+}
+
+// ── render ──
+function render(){
+  const root=document.getElementById("root");
+  const md=maxDays(), items=cartItems();
+
+  // ── done ──
+  if(st.phase==="done"){
+    root.innerHTML=`
+    <div class="done-page">
+      <div class="done-header">
+        <div class="done-brand">Jedda</div>
+        <div class="done-status">order received</div>
+      </div>
+      <div class="done-main">
+        <div class="done-po-label">nomor pesanan</div>
+        <div class="done-po-num">${st.orderNum}</div>
+        <div class="done-divider"></div>
+        <div class="done-grid">
+          <div class="done-cell">
+            <div class="done-cell-label">estimasi tiba</div>
+            <div class="done-cell-val">${st.savedEstDate||'—'}</div>
+          </div>
+          <div class="done-cell">
+            <div class="done-cell-label">status</div>
+            <div class="done-cell-val">sedang diproses</div>
+          </div>
+          <div class="done-cell">
+            <div class="done-cell-label">nama</div>
+            <div class="done-cell-val">${esc(st.name)}</div>
+          </div>
+          <div class="done-cell">
+            <div class="done-cell-label">kontak</div>
+            <div class="done-cell-val">${esc(st.phone)}</div>
+          </div>
+        </div>
+        <div class="done-note">tim jedda akan menghubungi via whatsapp untuk konfirmasi pesanan dan informasi pengiriman.</div>
+        <button class="done-new-btn" onclick="resetAll()">+ order baru</button>
+      </div>
+      <div class="done-footer">jedda — ${new Date().getFullYear()}</div>
+    </div>`;
+    return;
+  }
+
+  // ── review ──
+  if(st.phase==="review"){
+    const irows=items.map(i=>`
+      <div class="r-row">
+        <span class="r-key">${esc(i.name)}</span>
+        <span class="r-val">${i.color} · ${i.qty} pcs</span>
+      </div>`).join("");
+    root.innerHTML=`
+      <div class="header">
+        <div class="header-brand">Jedda</div>
+        <div class="header-meta">pre-order<br>${new Date().toLocaleDateString("id-ID",{month:"long",year:"numeric"})}</div>
+      </div>
+      <hr class="header-rule">
+      <button class="back-btn" onclick="st.phase='customer';render()">← kembali</button>
+      <div class="page-top">
+        <div class="page-num">03 — konfirmasi</div>
+        <div class="page-title"><em>konfirmasi</em> pesanan.</div>
+      </div>
+      <div class="review-section">
+        <div class="review-section-label">item</div>
+        <div class="review-rows">${irows}</div>
+      </div>
+      <div class="review-section">
+        <div class="review-section-label">customer</div>
+        <div class="review-rows">
+          <div class="r-row"><span class="r-key">nama</span><span class="r-val">${esc(st.name)}</span></div>
+          <div class="r-row"><span class="r-key">hp</span><span class="r-val">${esc(st.phone)}</span></div>
+          <div class="r-row"><span class="r-key">alamat</span><span class="r-val">${esc(st.address)}</span></div>
+          ${st.notes?`<div class="r-row"><span class="r-key">catatan</span><span class="r-val">${esc(st.notes)}</span></div>`:""}
+        </div>
+      </div>
+      <div class="review-section">
+        <div class="review-section-label">estimasi</div>
+        <div class="review-rows">
+          <div class="r-row"><span class="r-key">estimasi tiba</span><span class="r-val">${estDisplay()}</span></div>
+        </div>
+      </div>
+      <div class="submit-area">
+        <button class="submit-btn" id="submit-btn" onclick="submitOrder()">confirm order →</button>
+        <div class="submit-note">tim jedda akan menghubungi via whatsapp</div>
+      </div>`;
+    return;
+  }
+
+  // ── customer ──
+  if(st.phase==="customer"){
+    const srows=items.map(i=>`
+      <div class="s-row">
+        <span class="s-name">${esc(i.name)}<span class="s-color">/ ${i.color}</span></span>
+        <span class="s-qty">${i.qty}</span>
+      </div>`).join("");
+    root.innerHTML=`
+      <div class="header">
+        <div class="header-brand">Jedda</div>
+        <div class="header-meta">pre-order<br>data customer</div>
+      </div>
+      <hr class="header-rule">
+      <button class="back-btn" onclick="st.phase='items';render()">← kembali</button>
+      <div class="page-top">
+        <div class="page-num">02 — data customer</div>
+        <div class="page-title"><em>lengkapi</em> pesanan.</div>
+      </div>
+      <div class="summary-stripe">${srows}</div>
+      <div class="est-inline">
+        <span class="est-inline-label">estimasi tiba</span>
+        <span class="est-inline-val">${estDisplay()}</span>
+      </div>
+      <div class="fields-wrap">
+        <div class="field-group">
+          <label class="field-label">nama lengkap</label>
+          <input class="field-input" id="f-name" placeholder="nama sesuai penerima" value="${esc(st.name)}" oninput="st.name=this.value">
+        </div>
+        <div class="field-group">
+          <label class="field-label">nomor HP</label>
+          <input class="field-input" id="f-phone" placeholder="08xx" type="tel" value="${esc(st.phone)}" oninput="st.phone=this.value">
+        </div>
+        <div class="field-group">
+          <label class="field-label">alamat lengkap</label>
+          <input class="field-input" id="f-addr" placeholder="jalan, kelurahan, kota, kode pos" value="${esc(st.address)}" oninput="st.address=this.value">
+        </div>
+      </div>
+      <div class="submit-area">
+        <button class="submit-btn" onclick="goReview()">lanjut →</button>
+      </div>`;
+    return;
+  }
+
+  // ── items ──
+  const CATS_ORDER=["outerwear","vest","shirt","bottom"];
+  const sections=CATS_ORDER.map(cat=>{
+    const ps=PRODUCTS.filter(p=>p.cat===cat);
+    const cards=ps.map(p=>{
+      const tq=itemTotalQty(p.name);
+      const safeName=p.name.replace(/'/g,"\\'");
+      return `<div class="item-card ${tq>0?'has-qty':''}" id="ic-${esc(p.name)}" onclick="openSheet('${safeName}')">
+        <div class="item-card-name">${p.name}</div>
+        <div class="item-card-colors">${p.colors.join(" · ")}</div>
+        ${tq>0?`<div class="item-card-badge" onclick="event.stopPropagation();openSheet('${safeName}')">${tq}</div>`:""}
+      </div>`;
+    }).join("");
+    return `<div class="cat-block">
+      <div class="cat-label">${cat}</div>
+      <div class="item-grid">${cards}</div>
+    </div>`;
+  }).join("");
+
+  root.innerHTML=`
+    <div class="header">
+      <div class="header-brand">Jedda</div>
+      <div class="header-meta">pre-order<br>${new Date().toLocaleDateString("id-ID",{month:"long",year:"numeric"})}</div>
+    </div>
+    <hr class="header-rule">
+    <div class="items-eyebrow">
+      <span class="eyebrow-left">01 — pilih item</span>
+      <span class="eyebrow-right">${totalQty()>0?totalQty()+" dipilih":"—"}</span>
+    </div>
+    ${sections}
+    <div style="height:100px"></div>
+    <div id="cart-footer" class="cart-footer ${totalQty()>0?'visible':''}">
+      <div class="cart-footer-inner" onclick="openCartPanel()">
+        <div class="cf-left">
+          <strong>${totalQty()} item</strong>est. ${estDisplay()}
+        </div>
+        <button class="cf-btn" onclick="event.stopPropagation();openCartPanel()">lihat →</button>
+      </div>
+    </div>`;
+}
+
+function goReview(){
+  if(!st.name.trim()){ alert("nama wajib diisi."); return; }
+  if(!st.phone.trim()){ alert("nomor HP wajib diisi."); return; }
+  if(!st.address.trim()){ alert("alamat wajib diisi."); return; }
+  st.phase="review"; render();
+}
+
+async function submitOrder(){
+  const btn=document.getElementById('submit-btn');
+  if(btn){ btn.disabled=true; btn.textContent="memproses..."; }
+  try {
+    let nextNum=1;
+    try {
+      const {data:last,error:le}=await _supabase.from("po_orders").select("po_number").order("id",{ascending:false}).limit(1);
+      if(!le&&last&&last.length>0){ const n=parseInt(last[0].po_number.replace("JD-","")); if(!isNaN(n)) nextNum=n+1; }
+    } catch(e){}
+    const poNumber="JD-"+String(nextNum).padStart(4,"0");
+    const md=maxDays();
+    const {data:order,error:oe}=await _supabase.from("po_orders").insert({
+      po_number:poNumber, customer_name:st.name.trim(), customer_phone:st.phone.trim(),
+      customer_city:"", address:st.address.trim(), notes:st.notes.trim()||null, status:"baru", estimated_days:md, est_date: getCartEndsAt(),
+    }).select().single();
+    if(oe) throw oe;
+    const {error:ie}=await _supabase.from("po_items").insert(cartItems().map(i=>({order_id:order.id,article:i.name,color:i.color,qty:i.qty})));
+    if(ie) throw ie;
+    st.savedEstDate = getCartEstDate()
+      ? new Date(getCartEndsAt()).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})
+      : (maxDays() ? "±" + maxDays() + " hari kerja" : "—");
+    st.orderNum=poNumber; st.phase="done"; render();
+  } catch(err){
+    let msg="unknown error";
+    if(typeof err==="string") msg=err;
+    else if(err?.message) msg=err.message;
+    else if(err?.code) msg=`code: ${err.code}`;
+    else { try{ msg=JSON.stringify(err); }catch(e){} }
+    alert("Gagal submit:\n\n"+msg);
+    if(btn){ btn.disabled=false; btn.textContent="confirm order →"; }
+  }
+}
+
+function resetAll(){
+  st.phase="items"; st.cart={}; st.activeSheet=null;
+  st.name=""; st.phone=""; st.address=""; st.notes="";
+  st.orderNum=null; st.savedDays=0; render();
+}
+
+loadBatchSlots(); // loads batch data then calls render()
+</script>
+</body>
+</html>

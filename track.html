@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jedda — cek pesanan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #f0ede8; }
+body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialiased; color: #111; min-height: 100vh; background: #f0ede8; }
+
+#root { max-width: 560px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
+
+/* ── header ── */
+.header { display: flex; justify-content: space-between; align-items: flex-start; padding: 32px 28px 0; }
+.header-brand { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; }
+.header-meta { text-align: right; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; line-height: 1.9; font-weight: 300; }
+.header-rule { margin: 24px 0 0; border: none; border-top: 1px solid #ccc; }
+
+/* ── search section ── */
+.search-section { padding: 48px 28px 0; }
+.search-eyebrow { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 20px; }
+.search-field { display: flex; align-items: flex-end; gap: 0; border-bottom: 1px solid #bbb; padding-bottom: 10px; transition: border-color 0.2s; }
+.search-field:focus-within { border-bottom-color: #111; }
+.search-input { flex: 1; border: none; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 300; color: #111; outline: none; letter-spacing: 1px; }
+.search-input::placeholder { color: #ccc; font-size: 18px; }
+.search-btn { background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 300; padding: 0 0 2px; white-space: nowrap; transition: color 0.15s; }
+.search-btn:hover { color: #111; }
+.search-hint { font-size: 9px; color: #bbb; margin-top: 10px; font-weight: 300; letter-spacing: 0.5px; }
+.search-error { font-size: 9px; color: #c0392b; margin-top: 10px; font-weight: 300; letter-spacing: 0.5px; }
+
+/* ── result ── */
+.result { padding: 56px 28px 0; display: none; }
+.result.visible { display: block; }
+
+/* ── status area ── */
+.status-area { margin-bottom: 40px; text-align: center; }
+.status-po { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 8px; }
+.status-name { font-size: 24px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 28px; }
+
+/* ── illustration ── */
+.illus-wrap { margin-bottom: 28px; height: 80px; display: flex; align-items: center; justify-content: center; }
+
+/* ── status label + subjudul ── */
+.status-label { font-size: 28px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 8px; }
+.status-label em { font-style: italic; color: #888; }
+.status-sub { font-size: 12px; font-weight: 300; color: #666; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.6; margin-bottom: 24px; }
+
+/* ── rotating text ── */
+.rotating-wrap { height: 18px; overflow: hidden; margin-bottom: 40px; display: flex; justify-content: center; }
+.rotating-text { font-size: 10px; font-weight: 300; color: #aaa; letter-spacing: 1px; font-family: 'IBM Plex Mono', monospace; opacity: 0; transition: opacity 0.6s; position: absolute; }
+.rotating-text.visible { opacity: 1; }
+
+/* ── stepper ── */
+.stepper { display: flex; align-items: center; gap: 0; margin-bottom: 40px; }
+.step-item { display: flex; align-items: center; gap: 0; flex: 1; }
+.step-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid #ccc; background: transparent; flex-shrink: 0; transition: all 0.4s; }
+.step-dot.done { background: #888; border-color: #888; }
+.step-dot.current { background: #111; border-color: #111; box-shadow: 0 0 0 3px rgba(17,17,17,0.12); }
+.step-line { flex: 1; height: 1px; background: #d8d4ce; transition: background 0.4s; }
+.step-line.done { background: #888; }
+.step-label { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; color: #ccc; margin-top: 8px; white-space: nowrap; }
+.step-label.done { color: #888; }
+.step-label.current { color: #111; font-weight: 400; }
+.step-col { display: flex; flex-direction: column; align-items: center; }
+
+/* ── est block ── */
+.est-block { border: 1px solid #d8d4ce; padding: 16px 18px; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; }
+.est-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
+.est-date { font-size: 16px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
+.est-days { font-size: 10px; font-weight: 300; color: #888; margin-top: 3px; }
+
+/* ── resi block ── */
+.resi-block { border: 1px solid #d8d4ce; padding: 16px 18px; margin-bottom: 32px; }
+.resi-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
+.resi-val { font-size: 14px; font-weight: 300; color: #111; letter-spacing: 0.5px; }
+.resi-kurir { font-size: 9px; color: #aaa; margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── separator ── */
+.sep { border: none; border-top: 1px solid #e0dbd4; margin-bottom: 28px; }
+
+/* ── order summary ── */
+.summary-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; margin-bottom: 0; }
+.summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 12px; }
+.summary-row:last-child { border-bottom: none; }
+.summary-key { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; flex-shrink: 0; }
+.summary-val { font-size: 13px; font-weight: 300; text-align: right; font-family: 'IBM Plex Sans', sans-serif; color: #111; line-height: 1.5; }
+
+/* ── contact ── */
+.contact-section { margin-top: 48px; padding-top: 24px; border-top: 1px solid #e0dbd4; }
+.contact-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 14px; }
+.contact-hint { font-size: 11px; font-weight: 300; color: #888; font-family: 'IBM Plex Sans', sans-serif; margin-bottom: 16px; line-height: 1.6; }
+.contact-links { display: flex; gap: 12px; }
+.contact-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; border: 1px solid #ccc; color: #666; text-decoration: none; transition: all 0.15s; }
+.contact-btn:hover { border-color: #111; color: #111; }
+.contact-btn-wa { border-color: #25d366; color: #1a9e4c; }
+.contact-btn-wa:hover { background: #25d366; color: #fff; }
+
+/* ── cek lagi ── */
+.reset-btn { margin-top: 40px; display: inline-block; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #bbb; font-weight: 300; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; text-decoration: underline; text-decoration-color: #ddd; transition: color 0.15s; }
+.reset-btn:hover { color: #555; }
+
+/* ── animations ── */
+
+/* pulse dot for menunggu */
+@keyframes pulse-ring {
+  0%   { transform: scale(0.8); opacity: 0.6; }
+  50%  { transform: scale(1.2); opacity: 0.2; }
+  100% { transform: scale(0.8); opacity: 0.6; }
+}
+.illus-pulse { position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+.illus-pulse-core { width: 10px; height: 10px; border-radius: 50%; background: #bbb; }
+.illus-pulse-ring { position: absolute; width: 30px; height: 30px; border-radius: 50%; border: 1px solid #bbb; animation: pulse-ring 2s ease-in-out infinite; }
+.illus-pulse-ring2 { animation-delay: 0.7s; width: 40px; height: 40px; }
+
+/* sewing machine for in production */
+@keyframes needle-updown {
+  0%   { transform: translateY(0px); }
+  40%  { transform: translateY(14px); }
+  50%  { transform: translateY(14px); }
+  90%  { transform: translateY(0px); }
+  100% { transform: translateY(0px); }
+}
+@keyframes fabric-move {
+  0%   { transform: translateX(0px); }
+  100% { transform: translateX(-18px); }
+}
+@keyframes stitch-appear {
+  0%   { stroke-dashoffset: 40; }
+  100% { stroke-dashoffset: 0; }
+}
+.illus-sm-needle { animation: needle-updown 0.7s ease-in-out infinite; transform-origin: center top; }
+.illus-sm-fabric { animation: fabric-move 3s linear infinite; }
+.illus-sm-stitch { stroke-dasharray: 4 3; animation: stitch-appear 3s linear infinite; }
+
+/* box for dikirim */
+@keyframes box-slide {
+  0%   { transform: translateX(0px); }
+  50%  { transform: translateX(12px); }
+  100% { transform: translateX(0px); }
+}
+.illus-box { animation: box-slide 2.4s ease-in-out infinite; }
+@keyframes line-fade {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.8; }
+}
+.illus-line1 { animation: line-fade 2.4s ease-in-out infinite; }
+.illus-line2 { animation: line-fade 2.4s ease-in-out infinite 0.3s; }
+.illus-line3 { animation: line-fade 2.4s ease-in-out infinite 0.6s; }
+</style>
+</head>
+<body>
+<div id="root">
+
+  <div class="header">
+    <div class="header-brand">jedda</div>
+    <div class="header-meta">
+      cek pesanan<br>
+      pre-order
+    </div>
+  </div>
+  <hr class="header-rule">
+
+  <!-- search -->
+  <div class="search-section">
+    <div class="search-eyebrow">nomor pre-order</div>
+    <div class="search-field">
+      <input class="search-input" id="po-input" placeholder="PO-XXXXX" maxlength="20"
+        oninput="this.value = this.value.toUpperCase()"
+        onkeydown="if(event.key==='Enter') doSearch()">
+      <button class="search-btn" onclick="doSearch()">cek →</button>
+    </div>
+    <div class="search-hint" id="search-hint">masukkan nomor PO yang kamu terima saat checkout.</div>
+  </div>
+
+  <!-- result -->
+  <div class="result" id="result">
+
+    <div class="status-area">
+      <div class="status-po" id="res-po"></div>
+      <div class="status-name" id="res-name"></div>
+
+      <!-- illustration -->
+      <div class="illus-wrap" id="illus-wrap"></div>
+
+      <!-- status label -->
+      <div class="status-label" id="res-status-label"></div>
+      <div class="status-sub" id="res-status-sub"></div>
+
+      <!-- rotating text -->
+      <div class="rotating-wrap" style="position:relative">
+        <span class="rotating-text" id="rotating-text"></span>
+      </div>
+    </div>
+
+    <!-- stepper -->
+    <div id="stepper-wrap" style="margin-bottom:40px"></div>
+
+    <!-- est -->
+    <div class="est-block" id="est-block">
+      <div>
+        <div class="est-label">estimasi kirim</div>
+        <div class="est-date" id="res-est-date">—</div>
+        <div class="est-days" id="res-est-days"></div>
+      </div>
+    </div>
+
+    <!-- resi (only if dikirim) -->
+    <div class="resi-block" id="resi-block" style="display:none">
+      <div class="resi-label">nomor resi</div>
+      <div class="resi-val" id="res-resi"></div>
+      <div class="resi-kurir" id="res-kurir"></div>
+    </div>
+
+    <hr class="sep">
+
+    <!-- order summary -->
+    <div class="summary-label">ringkasan pesanan</div>
+    <div id="summary-rows"></div>
+
+    <!-- contact -->
+    <div class="contact-section">
+      <div class="contact-hint">ada data yang salah atau butuh bantuan? hubungi kami.</div>
+      <div class="contact-links">
+        <a class="contact-btn contact-btn-wa" id="wa-link" href="#" target="_blank">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L0 24l6.335-1.508A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.782 9.782 0 01-4.988-1.362l-.358-.213-3.761.896.952-3.656-.233-.376A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
+          whatsapp
+        </a>
+        <a class="contact-btn" href="https://instagram.com/jeddawear" target="_blank">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+          instagram
+        </a>
+      </div>
+    </div>
+
+    <button class="reset-btn" onclick="doReset()">← cek nomor lain</button>
+  </div>
+
+</div>
+
+<script>
+const _sb = supabase.createClient(
+  "https://okgcujdlwkcwvsdybkza.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
+);
+
+const WA_NUMBER = "6281234567890"; // ganti dengan nomor WA Jedda
+
+// status config — customer-facing
+const STATUS_CONFIG = {
+  baru: {
+    label: "<em>menunggu</em> konfirmasi.",
+    sub: "kamu akan menerima konfirmasi via whatsapp dalam 2x24 jam.",
+    rotating: ["give us a moment.", "our staff is still at the booth.", "we'll reach out shortly."],
+    illus: "pulse",
+    stepIdx: 0
+  },
+  tunggu_ongkir: {
+    label: "<em>in</em> production.",
+    sub: "pesananmu sedang dibuat. mohon selesaikan pembayaran ongkos kirim agar pengiriman tidak tertunda.",
+    rotating: ["we don't rush.", "made with intention.", "quality takes time.", "yours is being made."],
+    illus: "needle",
+    stepIdx: 1
+  },
+  diproses: {
+    label: "<em>in</em> production.",
+    sub: "pesananmu sedang dalam proses produksi.",
+    rotating: ["we don't rush.", "made with intention.", "quality takes time.", "yours is being made."],
+    illus: "needle",
+    stepIdx: 2
+  },
+  dikirim: {
+    label: "<em>dikirim.</em>",
+    sub: "pesananmu sudah dalam perjalanan.",
+    rotating: ["on its way to you.", "packed with care.", "almost there."],
+    illus: "box",
+    stepIdx: 3
+  },
+  // legacy status fallbacks
+  siap: {
+    label: "<em>dikirim.</em>",
+    sub: "pesananmu sudah dalam perjalanan.",
+    rotating: ["on its way to you.", "packed with care.", "almost there."],
+    illus: "box",
+    stepIdx: 3
+  },
+  selesai: {
+    label: "<em>dikirim.</em>",
+    sub: "pesananmu sudah dalam perjalanan.",
+    rotating: ["on its way to you.", "packed with care.", "almost there."],
+    illus: "box",
+    stepIdx: 3
+  },
+  ongkir: {
+    label: "<em>in</em> production.",
+    sub: "pesananmu sedang dibuat. mohon selesaikan pembayaran ongkos kirim agar pengiriman tidak tertunda.",
+    rotating: ["we don't rush.", "made with intention.", "quality takes time.", "yours is being made."],
+    illus: "needle",
+    stepIdx: 1
+  }
+};
+
+const STEPS = [
+  { key: "baru",          label: "konfirmasi" },
+  { key: "tunggu_ongkir", label: "in production" },
+  { key: "diproses",      label: "produksi" },
+  { key: "dikirim",       label: "dikirim" }
+];
+
+// illustrations
+function illusPulse() {
+  return `<div class="illus-pulse">
+    <div class="illus-pulse-ring"></div>
+    <div class="illus-pulse-ring illus-pulse-ring2"></div>
+    <div class="illus-pulse-core"></div>
+  </div>`;
+}
+function illusNeedle() {
+  return `<svg width="120" height="90" viewBox="0 0 120 90" fill="none" style="overflow:visible">
+    <!-- fabric coming out left (animated) -->
+    <g class="illus-sm-fabric">
+      <rect x="-8" y="58" width="56" height="10" rx="1" fill="#e8e4de" stroke="#ccc" stroke-width="0.8"/>
+      <!-- stitches on fabric -->
+      <line class="illus-sm-stitch" x1="0" y1="63" x2="46" y2="63" stroke="#bbb" stroke-width="0.8"/>
+    </g>
+    <!-- machine body -->
+    <rect x="34" y="18" width="52" height="44" rx="3" fill="#e0ddd8" stroke="#bbb" stroke-width="1"/>
+    <!-- machine arm top -->
+    <rect x="34" y="12" width="52" height="12" rx="2" fill="#d8d4ce" stroke="#bbb" stroke-width="1"/>
+    <!-- presser foot area -->
+    <rect x="52" y="54" width="16" height="6" rx="1" fill="#ccc" stroke="#bbb" stroke-width="0.8"/>
+    <!-- needle (animated) -->
+    <g class="illus-sm-needle">
+      <line x1="60" y1="24" x2="60" y2="56" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+      <ellipse cx="60" cy="54" rx="1.5" ry="2" fill="#888"/>
+      <!-- needle eye -->
+      <ellipse cx="60" cy="28" rx="1.2" ry="2" stroke="#aaa" stroke-width="0.8" fill="none"/>
+    </g>
+    <!-- thread from top -->
+    <path d="M60 12 Q65 8 70 12" stroke="#ccc" stroke-width="0.8" fill="none" stroke-dasharray="2 2"/>
+    <!-- bobbin circle on body -->
+    <circle cx="78" cy="38" r="8" stroke="#ccc" stroke-width="0.8" fill="none"/>
+    <circle cx="78" cy="38" r="3" stroke="#bbb" stroke-width="0.8" fill="none"/>
+    <!-- fabric going right -->
+    <rect x="86" y="58" width="28" height="10" rx="1" fill="#eae6e0" stroke="#d8d4ce" stroke-width="0.8"/>
+  </svg>`;
+}
+function illusBox() {
+  return `<svg width="100" height="60" viewBox="0 0 100 60" fill="none">
+    <line class="illus-line1" x1="4" y1="30" x2="18" y2="30" stroke="#d8d4ce" stroke-width="1" stroke-linecap="round"/>
+    <line class="illus-line2" x1="4" y1="36" x2="14" y2="36" stroke="#d8d4ce" stroke-width="1" stroke-linecap="round"/>
+    <line class="illus-line3" x1="4" y1="42" x2="10" y2="42" stroke="#d8d4ce" stroke-width="1" stroke-linecap="round"/>
+    <g class="illus-box">
+      <rect x="28" y="18" width="32" height="26" stroke="#bbb" stroke-width="1" rx="1"/>
+      <line x1="28" y1="28" x2="60" y2="28" stroke="#bbb" stroke-width="1"/>
+      <line x1="44" y1="18" x2="44" y2="28" stroke="#bbb" stroke-width="0.8"/>
+      <line x1="36" y1="32" x2="52" y2="32" stroke="#ccc" stroke-width="0.8"/>
+      <line x1="36" y1="37" x2="48" y2="37" stroke="#ccc" stroke-width="0.8"/>
+    </g>
+    <polyline points="66,30 72,26 78,30 72,34" stroke="#ccc" stroke-width="0.8" fill="none"/>
+    <line x1="80" y1="30" x2="96" y2="30" stroke="#d8d4ce" stroke-width="1" stroke-linecap="round" stroke-dasharray="3 3"/>
+  </svg>`;
+}
+
+// rotating text
+let rotatingInterval = null;
+let rotatingIdx = 0;
+function startRotating(texts) {
+  stopRotating();
+  rotatingIdx = 0;
+  const el = document.getElementById("rotating-text");
+  function show() {
+    el.classList.remove("visible");
+    setTimeout(() => {
+      el.textContent = texts[rotatingIdx % texts.length];
+      el.classList.add("visible");
+      rotatingIdx++;
+    }, 400);
+  }
+  show();
+  rotatingInterval = setInterval(show, 3200);
+}
+function stopRotating() {
+  if(rotatingInterval) { clearInterval(rotatingInterval); rotatingInterval = null; }
+}
+
+function getEstDate(days, from) {
+  const d = new Date(from); d.setDate(d.getDate() + days);
+  return d.toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"});
+}
+function getEstDaysLeft(days, from) {
+  const est = new Date(from); est.setDate(est.getDate() + days);
+  return Math.ceil((est - Date.now()) / 86400000);
+}
+
+async function doSearch() {
+  const val = document.getElementById("po-input").value.trim();
+  if(!val) return;
+  const hint = document.getElementById("search-hint");
+  hint.className = "search-hint";
+  hint.textContent = "mencari...";
+
+  try {
+    const { data: orders, error } = await _sb
+      .from("po_orders").select("*").eq("po_number", val).limit(1);
+    if(error) throw error;
+    if(!orders || orders.length === 0) {
+      hint.className = "search-error";
+      hint.textContent = "nomor PO tidak ditemukan. coba cek kembali.";
+      return;
+    }
+    const o = orders[0];
+    const { data: items } = await _sb.from("po_items").select("*").eq("order_id", o.id);
+    hint.className = "search-hint";
+    hint.textContent = "";
+    showResult(o, items || []);
+  } catch(e) {
+    hint.className = "search-error";
+    hint.textContent = "terjadi kesalahan. coba lagi.";
+  }
+}
+
+function showResult(o, items) {
+  const cfg = STATUS_CONFIG[o.status] || STATUS_CONFIG["baru"];
+  const maxDays = items.length
+    ? Math.max(...items.map(i => i.estimated_days || o.estimated_days || 7))
+    : (o.estimated_days || 7);
+  const daysLeft = getEstDaysLeft(maxDays, o.created_at);
+
+  // header info
+  document.getElementById("res-po").textContent = o.po_number;
+  document.getElementById("res-name").textContent = o.customer_name;
+
+  // illustration
+  const illusWrap = document.getElementById("illus-wrap");
+  if(cfg.illus === "pulse") illusWrap.innerHTML = illusPulse();
+  else if(cfg.illus === "needle") illusWrap.innerHTML = illusNeedle();
+  else illusWrap.innerHTML = illusBox();
+
+  // status label + sub
+  document.getElementById("res-status-label").innerHTML = cfg.label;
+  document.getElementById("res-status-sub").textContent = cfg.sub;
+
+  // rotating text
+  startRotating(cfg.rotating);
+
+  // stepper
+  const stepHtml = `<div class="stepper">` + STEPS.map((s, i) => {
+    const isDone = cfg.stepIdx > i;
+    const isCurrent = cfg.stepIdx === i;
+    const lineClass = isDone ? "done" : "";
+    return `
+      <div class="step-col">
+        <div class="step-dot ${isDone?'done':''} ${isCurrent?'current':''}"></div>
+        <div class="step-label ${isDone?'done':''} ${isCurrent?'current':''}">${s.label}</div>
+      </div>
+      ${i < STEPS.length - 1 ? `<div class="step-line ${lineClass}" style="margin-bottom:18px"></div>` : ""}
+    `;
+  }).join("") + `</div>`;
+  document.getElementById("stepper-wrap").innerHTML = stepHtml;
+
+  // est
+  document.getElementById("res-est-date").textContent = getEstDate(maxDays, o.created_at);
+  document.getElementById("res-est-days").textContent = daysLeft > 0 ? daysLeft + " hari lagi" : "hari ini atau sudah lewat";
+
+  // est block: sembunyikan kalau sudah dikirim
+  document.getElementById("est-block").style.display = (o.status === "dikirim" || o.status === "siap" || o.status === "selesai") ? "none" : "block";
+
+  // resi block: tampilkan kalau dikirim
+  if((o.status === "dikirim" || o.status === "siap" || o.status === "selesai") && o.resi) {
+    document.getElementById("res-resi").textContent = o.resi;
+    document.getElementById("res-kurir").textContent = o.kurir || "";
+    document.getElementById("resi-block").style.display = "block";
+  } else {
+    document.getElementById("resi-block").style.display = "none";
+  }
+
+  // summary
+  const summaryRows = [
+    { key: "nama", val: o.customer_name },
+    { key: "no. hp", val: o.customer_phone },
+    ...items.map(i => ({ key: i.article, val: i.color + " · " + i.qty + " pcs" }))
+  ];
+  document.getElementById("summary-rows").innerHTML = summaryRows.map(r =>
+    `<div class="summary-row">
+      <span class="summary-key">${r.key}</span>
+      <span class="summary-val">${r.val}</span>
+    </div>`
+  ).join("");
+
+  // WA link
+  const waNum = (o.customer_phone || "").replace(/^0/, "62").replace(/\D/g, "");
+  document.getElementById("wa-link").href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("Halo Jedda, saya ingin menanyakan pesanan " + o.po_number + " atas nama " + o.customer_name + ".")}`;
+
+  // show result
+  document.getElementById("result").classList.add("visible");
+  document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function doReset() {
+  stopRotating();
+  document.getElementById("result").classList.remove("visible");
+  document.getElementById("po-input").value = "";
+  document.getElementById("search-hint").className = "search-hint";
+  document.getElementById("search-hint").textContent = "masukkan nomor PO yang kamu terima saat checkout.";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
+</body>
+</html>

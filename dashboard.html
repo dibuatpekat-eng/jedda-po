@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jedda — PO Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialiased; color: #111; }
+
+/* ── sidebar ── */
+.sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 180px; background: #e0ddd8; display: flex; flex-direction: column; padding: 32px 0 28px; z-index: 10; }
+.sidebar-brand { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; padding: 0 24px; margin-bottom: 48px; }
+.sidebar-nav { display: flex; flex-direction: column; gap: 0; padding: 0; flex: 1; }
+.nav-item { padding: 11px 24px; font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 300; color: #888; cursor: pointer; transition: color 0.15s; display: flex; align-items: center; gap: 10px; border-left: 1px solid transparent; }
+.nav-item:hover { color: #111; }
+.nav-item.active { color: #111; border-left-color: #111; font-weight: 400; }
+.sidebar-footer { padding: 0 24px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #999; font-weight: 300; }
+
+/* ── main ── */
+.main { margin-left: 180px; min-height: 100vh; }
+
+/* ── top bar ── */
+.topbar { padding: 28px 36px 0; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #d8d4ce; padding-bottom: 20px; }
+.topbar-section { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
+.topbar-title { font-size: 22px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -0.3px; }
+.topbar-title em { font-style: italic; color: #888; }
+.topbar-date { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; }
+
+/* ── stat cards ── */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-bottom: 1px solid #d8d4ce; }
+.stat-card { padding: 22px 28px; cursor: pointer; transition: background 0.15s; border-right: 1px solid #d8d4ce; position: relative; }
+.stat-card:last-child { border-right: none; }
+.stat-card:hover:not(.active) { background: #d8d4ce; }
+.stat-card.active { background: #111; }
+.stat-card.active .stat-label { color: #fff; }
+.stat-card.active .stat-num { color: #fff; }
+.stat-card.active .stat-sub { color: #fff; }
+.stat-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 400; margin-bottom: 10px; }
+.stat-num { font-size: 36px; font-weight: 300; color: #111; line-height: 1; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -1px; }
+.stat-sub { font-size: 10px; color: #888; margin-top: 8px; font-weight: 300; letter-spacing: 0.3px; }
+
+/* ── toolbar ── */
+.toolbar { padding: 14px 36px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d8d4ce; }
+.sort-btn { padding: 6px 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; border: 1px solid #ccc; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', monospace; color: #999; transition: all 0.15s; }
+.sort-btn:hover { border-color: #888; color: #555; }
+.sort-btn.active { border-color: #111; color: #111; background: transparent; }
+.toolbar-right { margin-left: auto; }
+.search-input { padding: 6px 14px; font-size: 11px; font-weight: 300; border: 1px solid #ccc; background: transparent; font-family: 'IBM Plex Mono', monospace; color: #111; outline: none; width: 220px; transition: border-color 0.15s; }
+.search-input:focus { border-color: #111; }
+.search-input::placeholder { color: #999; font-size: 10px; }
+
+/* ── table ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+thead tr { border-bottom: 1px solid #d8d4ce; }
+thead th { padding: 11px 12px; font-size: 8px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 400; color: #888; text-align: left; white-space: nowrap; user-select: none; overflow: hidden; }
+thead th:first-child, td:first-child { padding-left: 32px; }
+tbody tr { border-bottom: 1px solid #dedad4; cursor: pointer; transition: background 0.1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #ebe8e2; }
+tbody tr.selected { background: #e8e4de; }
+td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertical-align: middle; font-family: 'IBM Plex Sans', sans-serif; overflow: hidden; }
+thead th:nth-child(1), td:nth-child(1) { width: 110px; }
+thead th:nth-child(2), td:nth-child(2) { width: 120px; }
+thead th:nth-child(3), td:nth-child(3) { width: 150px; }
+thead th:nth-child(4), td:nth-child(4) { width: 20%; }
+thead th:nth-child(5), td:nth-child(5) { width: 170px; }
+thead th:nth-child(6), td:nth-child(6) { width: 170px; }
+thead th:nth-child(7), td:nth-child(7) { width: 140px; }
+.td-mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #666; letter-spacing: 0.5px; }
+
+/* ── urgent ── */
+.urgent-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #c0392b; margin-right: 7px; vertical-align: middle; }
+
+/* ── status badge ── */
+.status-badge { display: inline-block; padding: 3px 9px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; border: 1px solid; }
+.s-baru          { border-color: #c8b89a; color: #8a6a40; background: #f5efe6; }
+.s-tunggu_ongkir { border-color: #b0a898; color: #5a5248; background: #edeae5; }
+.s-diproses      { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
+.s-dikirim       { border-color: #aab0bb; color: #3a4a5a; background: #eceff3; }
+
+/* ── table action buttons ── */
+.tbl-action { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.tbl-action:hover { border-color: #111; color: #111; }
+.tbl-action-wa { border-color: #25d366; color: #1a9e4c; background: transparent; }
+.tbl-action-wa:hover { background: #25d366; color: #fff; }
+.tbl-action-resi { border-color: #aab0bb; color: #3a4a5a; }
+.tbl-action-resi:hover { background: #111; color: #f0ede8; border-color: #111; }
+
+/* ── est in table ── */
+.est-date { font-size: 13px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
+.est-days { font-size: 10px; font-weight: 400; color: #888; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+.est-urgent { color: #c0392b; }
+
+/* ── item list in table ── */
+.item-line { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; line-height: 1.6; }
+.item-meta { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #aaa; letter-spacing: 0.5px; margin-left: 6px; }
+
+/* ── entry ── */
+.entry-date { font-size: 12px; font-weight: 300; color: #333; font-family: 'IBM Plex Sans', sans-serif; }
+.entry-time { font-size: 11px; font-weight: 300; color: #777; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+
+/* ── panel ── */
+.panel-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.25); z-index: 19; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.panel-overlay.open { opacity: 1; pointer-events: all; }
+.detail-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 340px; background: #f0ede8; border-left: 1px solid #d8d4ce; transform: translateX(100%); transition: transform 0.3s cubic-bezier(.4,0,.2,1); z-index: 20; display: flex; flex-direction: column; }
+.detail-panel.open { transform: translateX(0); }
+
+.dp-header { padding: 24px 24px 20px; border-bottom: 1px solid #d8d4ce; flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-between; }
+.dp-po { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; font-weight: 300; }
+.dp-name { font-size: 20px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.dp-close { background: none; border: none; font-size: 16px; color: #bbb; cursor: pointer; padding: 0; line-height: 1; font-family: 'IBM Plex Mono', monospace; }
+.dp-close:hover { color: #111; }
+
+.dp-body { flex: 1; overflow-y: auto; }
+.dp-section { padding: 20px 24px 0; }
+.dp-section:last-child { padding-bottom: 20px; }
+.dp-section-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 0; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; }
+.dp-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 12px; }
+.dp-row:last-child { border-bottom: none; }
+.dp-key { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
+.dp-val { font-size: 13px; font-weight: 300; text-align: right; max-width: 200px; line-height: 1.5; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.dp-item-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid #eae6e0; }
+.dp-item-row:last-child { border-bottom: none; }
+.dp-item-name { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.dp-item-color { font-size: 11px; font-weight: 300; color: #aaa; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+.dp-item-qty { font-size: 12px; font-weight: 400; color: #555; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
+
+/* ── est block in panel ── */
+.dp-est { margin: 20px 24px 0; padding: 14px 16px; border: 1px solid #d8d4ce; display: flex; justify-content: space-between; align-items: center; }
+.dp-est-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 6px; font-weight: 300; font-family: 'IBM Plex Mono', monospace; }
+.dp-est-date { font-size: 15px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
+.dp-est-days { font-size: 12px; font-weight: 300; color: #777; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+.dp-est-alert { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #c0392b; font-weight: 300; font-family: 'IBM Plex Mono', monospace; }
+
+/* ── flow steps ── */
+.flow-wrap { padding: 14px 0 0; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.flow-step { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #ccc; font-weight: 300; }
+.flow-step.done { color: #888; }
+.flow-step.current { color: #111; font-weight: 400; }
+.flow-sep { font-size: 9px; color: #d8d4ce; }
+
+/* ── checkbox ── */
+.dp-checkbox-wrap { display: flex; align-items: center; gap: 10px; padding: 14px 0; border-bottom: 1px solid #eae6e0; cursor: pointer; }
+.dp-checkbox { width: 14px; height: 14px; border: 1px solid #bbb; background: transparent; appearance: none; cursor: pointer; position: relative; flex-shrink: 0; }
+.dp-checkbox:checked { background: #111; border-color: #111; }
+.dp-checkbox:checked::after { content: ''; position: absolute; top: 2px; left: 4px; width: 4px; height: 7px; border: 1px solid #f0ede8; border-top: none; border-left: none; transform: rotate(45deg); }
+.dp-checkbox-label { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
+
+/* ── footer actions ── */
+.dp-footer { padding: 18px 24px; border-top: 1px solid #d8d4ce; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+.dp-footer-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; }
+.btn { display: block; width: 100%; padding: 13px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2.5px; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-transform: uppercase; text-align: left; }
+.btn:hover { border-color: #111; color: #111; }
+.btn-dark { background: #111; color: #f0ede8; border-color: #111; }
+.btn-dark:hover { opacity: 0.8; color: #f0ede8; }
+.btn-wa { background: #25d366; color: #fff; border-color: #25d366; display: flex; align-items: center; gap: 10px; }
+.btn-wa:hover { opacity: 0.85; color: #fff; }
+.btn-done-label { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #bbb; text-align: center; padding: 6px 0; font-weight: 300; }
+
+/* ── empty ── */
+.empty-state { text-align: center; padding: 80px 40px; }
+.empty-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #bbb; font-weight: 300; }
+
+/* ── settings page ── */
+.settings-page { display: none; margin-left: 180px; min-height: 100vh; position: absolute; top: 0; left: 0; right: 0; }
+.settings-page.active { display: block; }
+.po-page { display: block; }
+.po-page.hidden { display: none; }
+
+.settings-topbar { padding: 28px 36px 20px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #d8d4ce; }
+
+.settings-body { padding: 36px; }
+.settings-section-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; padding-bottom: 10px; border-bottom: 1px solid #d8d4ce; margin-bottom: 0; }
+
+/* article list */
+.article-list { margin-bottom: 40px; }
+.article-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #eae6e0; cursor: pointer; transition: background 0.1s; gap: 16px; }
+.article-row:hover { background: #ebe8e2; margin: 0 -36px; padding: 14px 36px; }
+.article-row:last-child { border-bottom: none; }
+.article-row-name { font-size: 14px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.article-row-meta { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #aaa; margin-top: 3px; }
+.article-row-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.article-status-badge { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; font-family: 'IBM Plex Mono', monospace; padding: 3px 8px; border: 1px solid; }
+.badge-open { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
+.badge-closed { border-color: #ccc; color: #aaa; background: #f5f5f5; }
+.article-slot-summary { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #888; }
+.article-chevron { font-size: 12px; color: #ccc; }
+
+/* add article btn */
+.add-article-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; margin-top: 16px; }
+.add-article-btn:hover { border-color: #111; color: #111; }
+
+/* article detail panel */
+.art-panel { display: none; }
+.art-panel.active { display: block; }
+.art-back { display: inline-flex; align-items: center; gap: 6px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; cursor: pointer; font-weight: 300; background: none; border: none; font-family: 'IBM Plex Mono', monospace; padding: 0; margin-bottom: 28px; transition: color 0.15s; }
+.art-back:hover { color: #111; }
+.art-title { font-size: 22px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 6px; }
+.art-subtitle { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #aaa; margin-bottom: 32px; }
+
+/* toggle open/closed */
+.art-toggle-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; padding: 14px 16px; border: 1px solid #d8d4ce; }
+.art-toggle-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: #555; flex: 1; }
+.toggle-switch { position: relative; width: 36px; height: 20px; cursor: pointer; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: #d8d4ce; transition: background 0.2s; }
+.toggle-slider::before { content: ''; position: absolute; width: 14px; height: 14px; left: 3px; top: 3px; background: #fff; transition: transform 0.2s; }
+.toggle-switch input:checked + .toggle-slider { background: #111; }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+.toggle-status-text { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; font-weight: 300; font-family: 'IBM Plex Mono', monospace; color: #888; }
+
+/* batch cards */
+.batch-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; }
+.batch-list { margin-bottom: 24px; }
+.batch-card { border: 1px solid #d8d4ce; margin-bottom: 12px; }
+.batch-card-header { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e4df; cursor: pointer; }
+.batch-card-left { }
+.batch-card-num { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 4px; }
+.batch-card-dates { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.batch-card-actions { display: flex; gap: 8px; align-items: center; }
+.batch-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; transition: color 0.15s; padding: 0; }
+.batch-edit-btn:hover { color: #111; }
+.batch-del-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #c0392b; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; transition: opacity 0.15s; padding: 0; }
+.batch-del-btn:hover { opacity: 0.7; }
+
+/* slot rows */
+.batch-slots { padding: 12px 18px; }
+.slot-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eae6e0; }
+.slot-row:last-child { border-bottom: none; }
+.slot-color { font-size: 11px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #333; flex: 1; }
+.slot-bar-wrap { flex: 2; margin: 0 16px; height: 3px; background: #e8e4df; position: relative; }
+.slot-bar-fill { height: 100%; background: #111; transition: width 0.3s; }
+.slot-bar-fill.almost { background: #c8a04a; }
+.slot-bar-fill.full { background: #c0392b; }
+.slot-numbers { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #888; white-space: nowrap; }
+.slot-numbers strong { color: #111; }
+
+/* add batch / edit modal */
+.batch-modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 40; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.batch-modal-overlay.open { opacity: 1; pointer-events: all; }
+.batch-modal-box { background: #f0ede8; width: 420px; max-height: 80vh; overflow-y: auto; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
+.batch-modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; }
+.batch-modal-article { font-size: 18px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 28px; }
+.bm-field { margin-bottom: 20px; }
+.bm-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+.bm-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; transition: border-color 0.15s; }
+.bm-input:focus { border-bottom-color: #111; }
+.bm-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.bm-slots-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; }
+.bm-slot-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #eae6e0; }
+.bm-slot-row:last-child { border-bottom: none; }
+.bm-slot-color { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; flex: 1; }
+.bm-slot-input { width: 72px; border: none; border-bottom: 1px solid #ccc; padding: 6px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; text-align: right; transition: border-color 0.15s; }
+.bm-slot-input:focus { border-bottom-color: #111; }
+.bm-slot-unit { font-size: 9px; color: #bbb; font-family: 'IBM Plex Mono', monospace; }
+.bm-actions { display: flex; gap: 8px; margin-top: 28px; }
+.bm-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-align: left; }
+.bm-btn:hover { border-color: #888; color: #555; }
+.bm-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
+.bm-btn-dark:hover { opacity: 0.8; }
+
+/* ── resi modal ── */
+/* ── resi modal ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 30; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box { background: #f0ede8; width: 360px; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
+.modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
+.modal-name { font-size: 16px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 24px; }
+.modal-field { margin-bottom: 20px; }
+.modal-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+.modal-select { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; appearance: none; cursor: pointer; transition: border-color 0.15s; }
+.modal-select:focus { border-bottom-color: #111; }
+.modal-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; transition: border-color 0.15s; }
+.modal-input:focus { border-bottom-color: #111; }
+.modal-input::placeholder { color: #ccc; }
+.modal-actions { display: flex; gap: 8px; margin-top: 24px; }
+.modal-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-align: left; }
+.modal-btn:hover { border-color: #888; color: #555; }
+.modal-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
+.modal-btn-dark:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-brand">Jedda</div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" id="nav-po" onclick="showPage('po')">pre-order</div>
+    <div class="nav-item" id="nav-settings" onclick="showPage('settings')">settings</div>
+  </nav>
+  <div class="sidebar-footer">admin</div>
+</div>
+
+<div class="main">
+<div class="po-page" id="po-page">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-section">dashboard</div>
+      <div class="topbar-title"><em>pre-order</em> masuk.</div>
+    </div>
+    <div class="topbar-date" id="topbar-date">—</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card active" id="sc-semua" onclick="setFilter('semua',this)">
+      <div class="stat-label">total PO</div>
+      <div class="stat-num" id="stat-total">—</div>
+      <div class="stat-sub">semua order</div>
+    </div>
+    <div class="stat-card" id="sc-baru" onclick="setFilter('baru',this)">
+      <div class="stat-label">baru masuk</div>
+      <div class="stat-num" id="stat-baru">—</div>
+      <div class="stat-sub">perlu konfirmasi</div>
+    </div>
+    <div class="stat-card" id="sc-tunggu_ongkir" onclick="setFilter('tunggu_ongkir',this)">
+      <div class="stat-label">tunggu ongkir</div>
+      <div class="stat-num" id="stat-tunggu_ongkir">—</div>
+      <div class="stat-sub">belum bayar</div>
+    </div>
+    <div class="stat-card" id="sc-diproses" onclick="setFilter('diproses',this)">
+      <div class="stat-label">diproses</div>
+      <div class="stat-num" id="stat-diproses">—</div>
+      <div class="stat-sub">ongkir lunas</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="sort-btn active" id="sort-est" onclick="setSort('est',this)">↑ est. tiba</button>
+    <button class="sort-btn" id="sort-entry" onclick="setSort('entry',this)">terbaru masuk</button>
+    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
+    <button class="sort-btn" id="filter-today" onclick="setDateFilter('today',this)">hari ini</button>
+    <button class="sort-btn" id="filter-week" onclick="setDateFilter('week',this)">7 hari</button>
+    <button class="sort-btn active" id="filter-all" onclick="setDateFilter('all',this)">semua</button>
+    <div class="toolbar-right">
+      <input class="search-input" placeholder="cari nama / no. PO..." oninput="setSearch(this.value)">
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>no. PO</th>
+          <th>masuk</th>
+          <th>nama</th>
+          <th>item</th>
+          <th>estimasi kirim</th>
+          <th>status</th>
+          <th>aksi</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+    <div id="empty-state" class="empty-state" style="display:none">
+      <div class="empty-label">tidak ada order ditemukan</div>
+    </div>
+  </div>
+</div>
+
+<!-- resi modal -->
+<div class="modal-overlay" id="resi-modal" onclick="handleModalOverlayClick(event)">
+  <div class="modal-box">
+    <div class="modal-title">input pengiriman</div>
+    <div class="modal-name" id="modal-name">—</div>
+    <div class="modal-field">
+      <div class="modal-label">kurir</div>
+      <select class="modal-select" id="modal-kurir" onchange="handleKurirChange()">
+        <option value="JNE">JNE</option>
+        <option value="custom">lainnya (ketik sendiri)</option>
+      </select>
+    </div>
+    <div class="modal-field" id="modal-kurir-custom-wrap" style="display:none">
+      <div class="modal-label">nama kurir</div>
+      <input class="modal-input" id="modal-kurir-custom" placeholder="contoh: sicepat, anteraja...">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">nomor resi</div>
+      <input class="modal-input" id="modal-resi" placeholder="masukkan nomor resi...">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeResiModal()">batal</button>
+      <button class="modal-btn modal-btn-dark" onclick="submitResi()">simpan & tandai dikirim</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end po-page -->
+
+<!-- settings page -->
+<div class="settings-page" id="settings-page">
+  <div class="settings-topbar">
+    <div>
+      <div class="topbar-section">settings</div>
+      <div class="topbar-title"><em>kelola</em> batch.</div>
+    </div>
+  </div>
+  <div class="settings-body">
+
+    <!-- batch list view -->
+    <div id="batch-list-view">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+        <div class="settings-section-label" style="border:none;padding:0">batch produksi</div>
+        <button class="add-article-btn" style="margin:0" onclick="openBatchModal(null)">+ tambah batch</button>
+      </div>
+      <div style="border-bottom:1px solid #d8d4ce;margin-bottom:0"></div>
+      <div id="batch-list-rows"></div>
+    </div>
+
+    <!-- batch detail / edit view -->
+    <div id="batch-detail-view" style="display:none">
+      <button class="art-back" onclick="backToBatchList()">&#8592; kembali</button>
+      <div class="art-title" id="bd-title"></div>
+      <div class="art-subtitle" id="bd-dates"></div>
+      <div id="bd-article-slots"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- batch modal -->
+<div class="batch-modal-overlay" id="batch-modal" onclick="handleBatchModalOverlay(event)">
+  <div class="batch-modal-box">
+    <div class="batch-modal-title">batch produksi</div>
+    <div class="bm-dates">
+      <div class="bm-field">
+        <div class="bm-label">mulai produksi</div>
+        <input class="bm-input" type="date" id="bm-start">
+      </div>
+      <div class="bm-field">
+        <div class="bm-label">selesai / siap kirim</div>
+        <input class="bm-input" type="date" id="bm-end">
+      </div>
+    </div>
+    <div class="bm-slots-label">artikel & slot</div>
+    <div id="bm-article-slots"></div>
+    <div class="bm-actions">
+      <button class="bm-btn" onclick="closeBatchModal()">batal</button>
+      <button class="bm-btn bm-btn-dark" onclick="saveBatch()">simpan batch</button>
+    </div>
+  </div>
+</div>
+
+<div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detail-panel">
+  <div class="dp-header">
+    <div>
+      <div class="dp-po" id="dp-po"></div>
+      <div class="dp-name" id="dp-name"></div>
+    </div>
+    <button class="dp-close" onclick="closePanel()">×</button>
+  </div>
+  <div class="dp-body" id="dp-body"></div>
+  <div class="dp-footer" id="dp-footer"></div>
+</div>
+
+<script>
+const _sb = supabase.createClient(
+  "https://okgcujdlwkcwvsdybkza.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
+);
+
+const STATUSES = ["baru", "tunggu_ongkir", "diproses", "dikirim"];
+const STATUS_LABEL = {
+  baru:          "baru",
+  tunggu_ongkir: "tunggu ongkir",
+  diproses:      "sedang diproses",
+  dikirim:       "sudah dikirim"
+};
+const STATUS_CLASS = {
+  baru:          "s-baru",
+  tunggu_ongkir: "s-tunggu_ongkir",
+  diproses:      "s-diproses",
+  dikirim:       "s-dikirim"
+};
+
+const WA_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L0 24l6.335-1.508A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.782 9.782 0 01-4.988-1.362l-.358-.213-3.761.896.952-3.656-.233-.376A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>`;
+
+let orders = [];
+let filterStatus = "semua";
+let dateFilter = "all";
+let sortMode = "est";
+let searchQuery = "";
+let selectedId = null;
+let resiTargetId = null;
+
+// ── load ──
+async function loadOrders(){
+  document.getElementById("table-body").innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#aaa;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">memuat data...</td></tr>`;
+  try {
+    const {data: ordersData, error: oErr} = await _sb.from("po_orders").select("*").order("created_at", {ascending:false});
+    if(oErr){ showError(JSON.stringify(oErr)); return; }
+    const {data: itemsData, error: iErr} = await _sb.from("po_items").select("*");
+    if(iErr){ showError("error items: " + JSON.stringify(iErr)); return; }
+
+    orders = ordersData.map(o => {
+      const items = itemsData.filter(i => i.order_id === o.id);
+      const maxDays = items.length
+        ? Math.max(...items.map(i => i.estimated_days || o.estimated_days || 7))
+        : (o.estimated_days || 7);
+      return {
+        id:             o.id,
+        po_number:      o.po_number,
+        name:           o.customer_name,
+        phone:          o.customer_phone,
+        address:        o.address || "",
+        notes:          o.notes || "",
+        resi:           o.resi || "",
+        kurir:          o.kurir || "",
+        status:         o.status || "baru",
+        created:        new Date(o.created_at),
+        maxDays:        maxDays,
+        items:          items.map(i => ({name: i.article, color: i.color, qty: i.qty}))
+      };
+    });
+
+    updateStats();
+    renderTable();
+  } catch(e) {
+    showError(e.message);
+  }
+}
+
+function showError(msg){
+  document.getElementById("table-body").innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#c0392b;font-family:'IBM Plex Mono',monospace">${msg}</td></tr>`;
+}
+
+async function updateOrderStatus(id, newStatus){
+  await _sb.from("po_orders").update({status: newStatus, updated_at: new Date().toISOString()}).eq("id", id);
+}
+
+async function saveResiToDb(id, resi, kurir){
+  await _sb.from("po_orders").update({
+    resi: resi,
+    kurir: kurir,
+    status: "dikirim",
+    updated_at: new Date().toISOString()
+  }).eq("id", id);
+}
+
+function getEstDate(days, from){
+  const d = new Date(from); d.setDate(d.getDate()+days);
+  return d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
+}
+function getEstDaysLeft(days, from){
+  const est = new Date(from); est.setDate(est.getDate()+days);
+  return Math.ceil((est-Date.now())/86400000);
+}
+function fmtEntry(d){
+  const dt = new Date(d);
+  return {
+    date: dt.toLocaleDateString("id-ID",{day:"numeric",month:"short"}),
+    time: dt.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})
+  };
+}
+
+function filtered(){
+  const now = new Date();
+  let list = orders.filter(o => {
+    if(filterStatus !== "semua" && o.status !== filterStatus) return false;
+    if(dateFilter === "today"){
+      if(new Date(o.created).toDateString() !== now.toDateString()) return false;
+    } else if(dateFilter === "week"){
+      const cutoff = new Date(now); cutoff.setDate(cutoff.getDate()-7);
+      if(new Date(o.created) < cutoff) return false;
+    }
+    if(searchQuery){
+      const q = searchQuery.toLowerCase();
+      if(!o.name.toLowerCase().includes(q) && !o.po_number.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+  if(sortMode === "est"){
+    list = list.slice().sort((a,b) => {
+      const da = new Date(a.created); da.setDate(da.getDate()+a.maxDays);
+      const db = new Date(b.created); db.setDate(db.getDate()+b.maxDays);
+      return da-db;
+    });
+  } else {
+    list = list.slice().sort((a,b) => new Date(b.created)-new Date(a.created));
+  }
+  return list;
+}
+
+function updateStats(){
+  document.getElementById("stat-total").textContent          = orders.length;
+  document.getElementById("stat-baru").textContent           = orders.filter(o=>o.status==="baru").length;
+  document.getElementById("stat-tunggu_ongkir").textContent  = orders.filter(o=>o.status==="tunggu_ongkir").length;
+  document.getElementById("stat-diproses").textContent       = orders.filter(o=>o.status==="diproses").length;
+  document.getElementById("topbar-date").textContent = new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+}
+
+function renderTable(){
+  const tbody = document.getElementById("table-body");
+  const empty = document.getElementById("empty-state");
+  const rows = filtered();
+  if(!rows.length){ tbody.innerHTML=""; empty.style.display="block"; return; }
+  empty.style.display="none";
+
+  tbody.innerHTML = rows.map(o => {
+    const daysLeft = getEstDaysLeft(o.maxDays, o.created);
+    const urgent = daysLeft<=3 && o.status!=="dikirim";
+    const entry = fmtEntry(o.created);
+
+    // item: full list, each on its own line
+    const itemList = o.items.map(i =>
+      `<div class="item-line">${i.name} <span class="item-meta">${i.color} · ${i.qty}pc</span></div>`
+    ).join("");
+
+    // aksi kolom per status
+    let aksiHtml = "";
+    if(o.status === "baru"){
+      aksiHtml = `<button class="tbl-action tbl-action-wa" onclick="event.stopPropagation();handleWaKonfirmasi(${o.id})">${WA_SVG} kirim WA</button>`;
+    } else if(o.status === "tunggu_ongkir"){
+      aksiHtml = `<button class="tbl-action tbl-action-wa" onclick="event.stopPropagation();handleWaFollowUp(${o.id})">${WA_SVG} follow-up</button>`;
+    } else if(o.status === "diproses"){
+      aksiHtml = `<button class="tbl-action tbl-action-resi" onclick="event.stopPropagation();openResiModal(${o.id})">input resi</button>`;
+    } else if(o.status === "dikirim"){
+      aksiHtml = o.resi
+        ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;letter-spacing:0.5px">${o.kurir ? o.kurir+' · ' : ''}${o.resi}</span>`
+        : `<span style="font-size:9px;color:#ccc;font-family:'IBM Plex Mono',monospace">—</span>`;
+    }
+
+    return `<tr onclick="openPanel(${o.id})" class="${selectedId===o.id?'selected':''}">
+      <td class="td-mono">${o.po_number}</td>
+      <td style="white-space:nowrap">
+        <div class="entry-date">${entry.date}</div>
+        <div class="entry-time">${entry.time}</div>
+      </td>
+      <td>${urgent?'<span class="urgent-dot"></span>':''}${o.name}</td>
+      <td>${itemList}</td>
+      <td style="white-space:nowrap">
+        <div class="est-date ${urgent?'est-urgent':''}">${getEstDate(o.maxDays, o.created)}</div>
+        <div class="est-days ${urgent?'est-urgent':''}">${daysLeft>0?daysLeft+" hari lagi":"hari ini / lewat"}</div>
+      </td>
+      <td><span class="status-badge ${STATUS_CLASS[o.status]||'s-baru'}">${STATUS_LABEL[o.status]||o.status}</span></td>
+      <td>${aksiHtml}</td>
+    </tr>`;
+  }).join("");
+}
+
+function setFilter(f, el){
+  filterStatus = f;
+  document.querySelectorAll(".stat-card").forEach(c => c.classList.remove("active"));
+  (el || document.getElementById("sc-"+f))?.classList.add("active");
+  renderTable();
+}
+function setSort(mode, el){
+  sortMode = mode;
+  document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+  renderTable();
+}
+function setDateFilter(mode, el){
+  dateFilter = mode;
+  ["filter-today","filter-week","filter-all"].forEach(id => {
+    document.getElementById(id)?.classList.remove("active");
+  });
+  el.classList.add("active");
+  renderTable();
+}
+function setSearch(v){ searchQuery = v; renderTable(); }
+
+function buildWaKonfirmasi(o){
+  const lines = o.items.map(i=>`• ${i.name} — ${i.color} (${i.qty} pcs)`).join("\n");
+  return `Halo ${o.name.split(" ")[0]}!\n\nPesanan pre-order kamu di Jedda sudah kami terima dan sedang diproses.\n\nRingkasan pesanan:\n${lines}\n\nEstimasi kirim: ${getEstDate(o.maxDays,o.created)}\n\nUntuk konfirmasi pengiriman, mohon transfer ongkos kirim ke:\nBCA 1234567890 a/n Jedda\nNominal: Rp [ONGKIR]\n\nSetelah transfer, kirim bukti ke sini ya. Terima kasih!`;
+}
+function buildWaFollowUp(o){
+  return `Halo ${o.name.split(" ")[0]}! Mengingatkan kembali mengenai ongkos kirim pesanan Jedda kamu. Mohon segera ditransfer agar pesanan bisa segera dikirim. Terima kasih!`;
+}
+
+function moveStatus(id, newStatus){
+  const o = orders.find(x=>x.id===id); if(!o) return;
+  o.status = newStatus;
+  updateOrderStatus(id, newStatus);
+  updateStats(); renderTable();
+  if(selectedId===id) renderPanel(o);
+}
+
+function handleWaKonfirmasi(id){
+  const o = orders.find(x=>x.id===id); if(!o) return;
+  const waNum = o.phone.replace(/^0/,"62").replace(/\D/g,"");
+  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaKonfirmasi(o))}`, "_blank");
+  moveStatus(id, "tunggu_ongkir");
+}
+function handleWaFollowUp(id){
+  const o = orders.find(x=>x.id===id); if(!o) return;
+  const waNum = o.phone.replace(/^0/,"62").replace(/\D/g,"");
+  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaFollowUp(o))}`, "_blank");
+}
+
+// ── resi modal ──
+function openResiModal(id){
+  const o = orders.find(x=>x.id===id); if(!o) return;
+  resiTargetId = id;
+  document.getElementById("modal-name").textContent = o.name + " · " + o.po_number;
+  document.getElementById("modal-kurir").value = "JNE";
+  document.getElementById("modal-kurir-custom-wrap").style.display = "none";
+  document.getElementById("modal-kurir-custom").value = "";
+  document.getElementById("modal-resi").value = o.resi || "";
+  document.getElementById("resi-modal").classList.add("open");
+}
+function closeResiModal(){
+  document.getElementById("resi-modal").classList.remove("open");
+  resiTargetId = null;
+}
+function handleModalOverlayClick(e){
+  if(e.target === document.getElementById("resi-modal")) closeResiModal();
+}
+function handleKurirChange(){
+  const val = document.getElementById("modal-kurir").value;
+  document.getElementById("modal-kurir-custom-wrap").style.display = val === "custom" ? "block" : "none";
+}
+async function submitResi(){
+  const resi = document.getElementById("modal-resi").value.trim();
+  if(!resi){ alert("masukkan nomor resi dulu."); return; }
+  const kurirSel = document.getElementById("modal-kurir").value;
+  const kurir = kurirSel === "custom"
+    ? (document.getElementById("modal-kurir-custom").value.trim() || "lainnya")
+    : kurirSel;
+  const o = orders.find(x=>x.id===resiTargetId); if(!o) return;
+  o.resi = resi;
+  o.kurir = kurir;
+  o.status = "dikirim";
+  await saveResiToDb(resiTargetId, resi, kurir);
+  closeResiModal();
+  updateStats(); renderTable();
+  if(selectedId===resiTargetId) renderPanel(o);
+}
+
+// ── panel ──
+function openPanel(id){
+  const o = orders.find(x=>x.id===id); if(!o) return;
+  selectedId = id;
+  renderTable();
+  document.getElementById("dp-po").textContent = o.po_number;
+  document.getElementById("dp-name").textContent = o.name;
+  renderPanel(o);
+  document.getElementById("detail-panel").classList.add("open");
+  document.getElementById("panel-overlay").classList.add("open");
+}
+function closePanel(){
+  selectedId = null; renderTable();
+  document.getElementById("detail-panel").classList.remove("open");
+  document.getElementById("panel-overlay").classList.remove("open");
+}
+
+function handleOngkirDiterima(id){
+  const cb = document.getElementById("cb-ongkir");
+  if(!cb || !cb.checked){ alert("centang konfirmasi dulu."); return; }
+  moveStatus(id, "diproses");
+}
+
+function renderPanel(o){
+  const daysLeft = getEstDaysLeft(o.maxDays, o.created);
+  const urgent = daysLeft<=3 && o.status!=="dikirim";
+  const entry = fmtEntry(o.created);
+
+  const flowHtml = STATUSES.map((s,i) => {
+    const idx = STATUSES.indexOf(o.status);
+    const isDone = idx > i;
+    const isCurrent = o.status === s;
+    return `<span class="flow-step ${isDone?'done':''} ${isCurrent?'current':''}">${STATUS_LABEL[s]}</span>${i<STATUSES.length-1?'<span class="flow-sep"> › </span>':''}`;
+  }).join("");
+
+  const itemRows = o.items.map(i=>`
+    <div class="dp-item-row">
+      <div><div class="dp-item-name">${i.name}</div><div class="dp-item-color">${i.color}</div></div>
+      <div class="dp-item-qty">${i.qty} pcs</div>
+    </div>`).join("");
+
+  const notesHtml = o.notes
+    ? `<div class="dp-row"><span class="dp-key">catatan</span><span class="dp-val" style="color:#666;font-style:italic">${o.notes}</span></div>`
+    : "";
+
+  document.getElementById("dp-body").innerHTML=`
+    <div class="dp-est">
+      <div>
+        <div class="dp-est-label">estimasi kirim</div>
+        <div class="dp-est-date ${urgent?'est-urgent':''}">${getEstDate(o.maxDays,o.created)}</div>
+        <div class="dp-est-days">${o.maxDays} hari kerja produksi</div>
+      </div>
+      ${urgent?`<div class="dp-est-alert">⚑ ${daysLeft<=0?"lewat estimasi":daysLeft+" hari lagi"}</div>`:""}
+    </div>
+    <div class="dp-section">
+      <div class="dp-section-label">alur status</div>
+      <div class="flow-wrap">${flowHtml}</div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-section-label">item</div>
+      ${itemRows}
+    </div>
+    <div class="dp-section">
+      <div class="dp-section-label">customer</div>
+      <div class="dp-row"><span class="dp-key">nama</span><span class="dp-val">${o.name}</span></div>
+      <div class="dp-row"><span class="dp-key">hp</span><span class="dp-val">${o.phone}</span></div>
+      <div class="dp-row"><span class="dp-key">alamat</span><span class="dp-val">${o.address}</span></div>
+      ${notesHtml}
+      <div class="dp-row"><span class="dp-key">masuk</span><span class="dp-val">${entry.date}, ${entry.time}</span></div>
+      ${o.resi?`<div class="dp-row"><span class="dp-key">resi</span><span class="dp-val" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${o.kurir?o.kurir+' · ':''}${o.resi}</span></div>`:""}
+    </div>`;
+
+  const waNum = o.phone.replace(/^0/,"62").replace(/\D/g,"");
+  let footerHtml = `<div class="dp-footer-label">aksi</div>`;
+
+  if(o.status === "baru"){
+    footerHtml += `
+      <button class="btn btn-wa" onclick="handleWaKonfirmasi(${o.id})">
+        ${WA_SVG} kirim WA konfirmasi
+      </button>`;
+  } else if(o.status === "tunggu_ongkir"){
+    footerHtml += `
+      <label class="dp-checkbox-wrap" for="cb-ongkir">
+        <input type="checkbox" class="dp-checkbox" id="cb-ongkir">
+        <span class="dp-checkbox-label">ongkos kirim sudah diterima</span>
+      </label>
+      <button class="btn btn-dark" onclick="handleOngkirDiterima(${o.id})">konfirmasi & proses</button>
+      <button class="btn" onclick="handleWaFollowUp(${o.id})">follow-up WA ongkir</button>`;
+  } else if(o.status === "diproses"){
+    footerHtml += `<button class="btn btn-dark" onclick="openResiModal(${o.id})">input resi & tandai dikirim</button>`;
+  } else {
+    footerHtml += `<div class="btn-done-label">sudah dikirim${o.kurir?' · '+o.kurir:''}${o.resi?' · '+o.resi:''}</div>`;
+  }
+
+  document.getElementById("dp-footer").innerHTML = footerHtml;
+}
+
+loadOrders();
+
+// ── settings ──
+let batches = [];
+let allItems = [];
+let editingBatchId = null;
+
+function showPage(page) {
+  const poPage = document.getElementById('po-page');
+  const settingsPage = document.getElementById('settings-page');
+  poPage.classList.toggle('hidden', page !== 'po');
+  settingsPage.classList.toggle('active', page === 'settings');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('nav-' + page).classList.add('active');
+  if(page === 'settings') loadBatches();
+}
+
+async function loadBatches() {
+  // Ambil semua data
+  const { data: batchData } = await _sb.from('po_batches').select('*').order('starts_at');
+  const { data: items } = await _sb.from('po_items').select('article, color, qty, order_id');
+  const { data: activeOrders } = await _sb.from('po_orders').select('id, status').in('status', ['baru','tunggu_ongkir','diproses']);
+  const activeIds = new Set((activeOrders||[]).map(o => o.id));
+
+  allItems = items || [];
+
+  // Hitung usage per batch per artikel per warna
+  batches = (batchData||[]).map(b => {
+    const slots = b.slots || {}; // { "Rhea · Cream": 50, "Rhea · Black": 30, ... }
+    const used = {};
+    // used dihitung dari PO aktif yang ada di batch ini
+    // batch.articles = ["Rhea Flare Jacket", "Phi Top", ...]
+    const batchArticles = b.articles || [];
+    batchArticles.forEach(artName => {
+      allItems.filter(i => activeIds.has(i.order_id) && i.article === artName).forEach(i => {
+        const key = artName + ' · ' + i.color;
+        used[key] = (used[key] || 0) + i.qty;
+      });
+    });
+    return { ...b, used };
+  });
+
+  renderBatchList();
+}
+
+function renderBatchList() {
+  const el = document.getElementById('batch-list-rows');
+  if(!batches.length) {
+    el.innerHTML = '<div style="padding:24px 0;font-size:11px;color:#bbb;font-family:IBM Plex Mono,monospace;letter-spacing:1px">belum ada batch.</div>';
+    return;
+  }
+  el.innerHTML = batches.map((b, idx) => {
+    const start = new Date(b.starts_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    const end   = new Date(b.ends_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    const slots = b.slots || {};
+    const used  = b.used  || {};
+    const totalSlots = Object.values(slots).reduce((s,v)=>s+v,0);
+    const totalUsed  = Object.values(used).reduce((s,v)=>s+v,0);
+    const arts = b.articles || [];
+
+    const artSummary = arts.length
+      ? arts.join(', ')
+      : '<span style="color:#ccc">belum ada artikel</span>';
+
+    return '<div class="batch-card">'
+      + '<div class="batch-card-header">'
+      + '<div>'
+      + '<div class="batch-card-num">batch '+(idx+1)+'</div>'
+      + '<div class="batch-card-dates">'+start+' &rarr; '+end+'</div>'
+      + '<div style="font-size:10px;color:#aaa;font-family:IBM Plex Mono,monospace;margin-top:4px">'+artSummary+'</div>'
+      + '</div>'
+      + '<div class="batch-card-actions">'
+      + '<span style="font-size:10px;font-family:IBM Plex Mono,monospace;color:#888;margin-right:12px">'+totalUsed+'/'+totalSlots+' slot</span>'
+      + '<button class="batch-edit-btn" onclick="openBatchModal('+b.id+')">edit</button>'
+      + '<button class="batch-del-btn" onclick="deleteBatch('+b.id+')">hapus</button>'
+      + '</div></div>'
+      // slot rows per artikel per warna
+      + '<div class="batch-slots">'
+      + Object.keys(slots).map(key => {
+          const total = slots[key] || 0;
+          const u = used[key] || 0;
+          const pct = total > 0 ? Math.min(100, Math.round(u/total*100)) : 0;
+          const fc = pct >= 100 ? 'full' : pct >= 75 ? 'almost' : '';
+          return '<div class="slot-row">'
+            + '<span class="slot-color">'+key+'</span>'
+            + '<div class="slot-bar-wrap"><div class="slot-bar-fill '+fc+'" style="width:'+pct+'%"></div></div>'
+            + '<span class="slot-numbers"><strong>'+u+'</strong>/'+total+' pcs</span>'
+            + '</div>';
+        }).join('')
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function backToBatchList() {
+  document.getElementById('batch-list-view').style.display = 'block';
+  document.getElementById('batch-detail-view').style.display = 'none';
+}
+
+function openBatchModal(batchId) {
+  editingBatchId = batchId;
+  const batch = batchId ? batches.find(b => b.id === batchId) : null;
+  document.getElementById('bm-start').value = batch ? batch.starts_at.slice(0,10) : '';
+  document.getElementById('bm-end').value   = batch ? batch.ends_at.slice(0,10)   : '';
+
+  // Derive all unique artikel+warna from po_items
+  const artColorMap = {};
+  allItems.forEach(i => {
+    if(!artColorMap[i.article]) artColorMap[i.article] = new Set();
+    artColorMap[i.article].add(i.color);
+  });
+
+  const slots = batch ? (batch.slots || {}) : {};
+  const checkedArts = batch ? (batch.articles || []) : [];
+
+  const html = Object.keys(artColorMap).sort().map(artName => {
+    const isChecked = checkedArts.includes(artName);
+    const colorRows = Array.from(artColorMap[artName]).sort().map(color => {
+      const key = artName + ' · ' + color;
+      const val = slots[key] || '';
+      return '<div class="bm-slot-row" id="bm-rows-'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'">'
+        + '<span class="bm-slot-color" style="color:#888;padding-left:12px">'+color+'</span>'
+        + '<input class="bm-slot-input" type="number" min="0" placeholder="0" value="'+val+'" id="bm-slot-'+key.replace(/[^a-zA-Z0-9]/g,'_')+'">'
+        + '<span class="bm-slot-unit">pcs</span></div>';
+    }).join('');
+
+    return '<div style="margin-bottom:16px">'
+      + '<div class="dp-checkbox-wrap" style="border-bottom:1px solid #d8d4ce;padding:10px 0">'
+      + '<input type="checkbox" class="dp-checkbox" id="bm-art-'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'"'+(isChecked?' checked':'')+' onchange=\"toggleBmArt(this,&quot;'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'&quot;)\">'
+      + '<label style="font-size:13px;font-weight:300;font-family:IBM Plex Sans,sans-serif;color:#111;cursor:pointer" for="bm-art-'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'">'+artName+'</label>'
+      + '</div>'
+      + '<div id="bm-colors-'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'" style="display:'+(isChecked?'block':'none')+'">'+colorRows+'</div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('bm-article-slots').innerHTML = html;
+  document.getElementById('batch-modal').classList.add('open');
+}
+
+function toggleBmArt(cb, artKey) {
+  document.getElementById('bm-colors-'+artKey).style.display = cb.checked ? 'block' : 'none';
+}
+
+function closeBatchModal() {
+  document.getElementById('batch-modal').classList.remove('open');
+  editingBatchId = null;
+}
+function handleBatchModalOverlay(e) {
+  if(e.target === document.getElementById('batch-modal')) closeBatchModal();
+}
+
+async function saveBatch() {
+  const start = document.getElementById('bm-start').value;
+  const end   = document.getElementById('bm-end').value;
+  if(!start || !end) { alert('isi tanggal dulu.'); return; }
+
+  // Collect checked articles and their slots
+  const artColorMap = {};
+  allItems.forEach(i => {
+    if(!artColorMap[i.article]) artColorMap[i.article] = new Set();
+    artColorMap[i.article].add(i.color);
+  });
+
+  const checkedArts = [];
+  const slots = {};
+  Object.keys(artColorMap).sort().forEach(artName => {
+    const cbId = 'bm-art-' + artName.replace(/[^a-zA-Z0-9]/g,'_');
+    const cb = document.getElementById(cbId);
+    if(cb && cb.checked) {
+      checkedArts.push(artName);
+      Array.from(artColorMap[artName]).sort().forEach(color => {
+        const key = artName + ' · ' + color;
+        const inputId = 'bm-slot-' + key.replace(/[^a-zA-Z0-9]/g,'_');
+        const el = document.getElementById(inputId);
+        slots[key] = parseInt(el ? el.value : 0) || 0;
+      });
+    }
+  });
+
+  if(!checkedArts.length) { alert('pilih minimal 1 artikel.'); return; }
+
+  const payload = { starts_at: start, ends_at: end, slots, articles: checkedArts };
+  if(editingBatchId) {
+    await _sb.from('po_batches').update(payload).eq('id', editingBatchId);
+  } else {
+    await _sb.from('po_batches').insert(payload);
+  }
+  closeBatchModal();
+  await loadBatches();
+}
+
+async function deleteBatch(batchId) {
+  if(!confirm('hapus batch ini?')) return;
+  await _sb.from('po_batches').delete().eq('id', batchId);
+  await loadBatches();
+}
+
+</script>
+</body>
+</html>

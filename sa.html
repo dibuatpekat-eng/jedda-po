@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jedda — SA View (preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialiased; color: #111; }
+
+.main { max-width: 480px; margin: 0 auto; padding-bottom: 80px; }
+
+/* ── header ── */
+.header { display: flex; justify-content: space-between; align-items: flex-start; padding: 32px 24px 0; }
+.header-brand { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; }
+.header-right { text-align: right; }
+.header-meta { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; line-height: 1.9; font-weight: 300; }
+.header-rule { margin: 20px 0 0; border: none; border-top: 1px solid #ccc; }
+
+/* ── summary bar ── */
+.summary-bar { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #d8d4ce; }
+.sum-card { padding: 16px 20px; border-right: 1px solid #d8d4ce; }
+.sum-card:last-child { border-right: none; }
+.sum-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
+.sum-val { font-size: 26px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -0.5px; line-height: 1; }
+
+/* ── updated bar ── */
+.updated-bar { padding: 9px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d8d4ce; }
+.updated-text { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #bbb; font-weight: 300; }
+.refresh-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; }
+
+/* ── article blocks ── */
+.article-list { padding: 0 24px; }
+
+.article-block { border-bottom: 1px solid #d8d4ce; }
+.article-block:last-child { border-bottom: none; }
+
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  cursor: pointer;
+  user-select: none;
+  gap: 12px;
+}
+.article-header:active { opacity: 0.6; }
+
+.article-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.article-name { font-size: 14px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+
+/* mini slot summary chips */
+.art-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.art-chip {
+  font-size: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 300;
+  padding: 2px 7px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.chip-ok     { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
+.chip-low    { border-color: #c8a04a; color: #7a5a1a; background: #f5edda; }
+.chip-zero   { border-color: #c0392b; color: #c0392b; background: #fdf0ee; }
+.chip-nobatch { border-color: #d8d4ce; color: #bbb; background: transparent; }
+
+.article-chevron {
+  font-size: 10px;
+  color: #bbb;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.article-block.open .article-chevron { transform: rotate(180deg); }
+
+/* ── color rows (collapsible) ── */
+.color-rows {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease;
+}
+.article-block.open .color-rows { max-height: 600px; }
+
+.color-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 64px 72px;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid #eae6e0;
+}
+
+.cr-name { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
+
+/* bar — isi dari kiri, warna menunjukkan seberapa BANYAK sisa */
+.cr-bar-wrap { height: 3px; background: #e8e4df; }
+.cr-bar-fill { height: 100%; transition: width 0.4s ease; }
+.cr-bar-fill.bar-ok   { background: #6aaa7a; }   /* banyak — hijau */
+.cr-bar-fill.bar-low  { background: #c8a04a; }   /* sedikit — kuning */
+.cr-bar-fill.bar-zero { background: #c0392b; }   /* habis — merah */
+.cr-bar-fill.bar-none { background: transparent; }
+
+.cr-sisa { font-size: 11px; font-weight: 400; font-family: 'IBM Plex Mono', monospace; text-align: right; white-space: nowrap; color: #111; }
+.cr-sisa.zero { color: #c0392b; }
+.cr-sisa.low  { color: #c8a04a; }
+
+.cr-est { font-size: 10px; font-weight: 300; font-family: 'IBM Plex Mono', monospace; text-align: right; white-space: nowrap; color: #888; }
+.cr-est.none { color: #888; }
+</style>
+</head>
+<body>
+<div class="main">
+  <div class="header">
+    <div class="header-brand">jedda</div>
+    <div class="header-right">
+      <div class="header-meta">sa view<br>stok & estimasi</div>
+    </div>
+  </div>
+  <hr class="header-rule">
+
+  <div class="summary-bar">
+    <div class="sum-card">
+      <div class="sum-label">artikel</div>
+      <div class="sum-val">6</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">sisa slot</div>
+      <div class="sum-val">87</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">habis</div>
+      <div class="sum-val">2</div>
+    </div>
+  </div>
+
+  <div class="updated-bar">
+    <span class="updated-text">diperbarui 14:32</span>
+    <button class="refresh-btn">refresh ↺</button>
+  </div>
+
+  <div class="article-list" id="article-list"></div>
+</div>
+
+<script>
+const DUMMY = [
+  {
+    name: "Rhea Jacket",
+    colors: [
+      { name: "Breen",  total: 50, used: 38, endsAt: "2026-06-03" },
+      { name: "Bistre", total: 25, used: 25, endsAt: "2026-06-03" },
+      { name: "Auburn", total: 30, used: 12, endsAt: "2026-06-18" },
+    ]
+  },
+  {
+    name: "Phi Jacket",
+    colors: [
+      { name: "Auburn", total: 20, used: 17, endsAt: "2026-06-03" },
+      { name: "Breen",  total: 20, used:  4, endsAt: "2026-06-18" },
+    ]
+  },
+  {
+    name: "Kiro Cropped Vest",
+    colors: [
+      { name: "Breen",  total: 40, used:  8, endsAt: "2026-06-10" },
+      { name: "Auburn", total: 40, used: 40, endsAt: "2026-06-10" },
+    ]
+  },
+  {
+    name: "Minji Vest",
+    colors: [
+      { name: "Breen",  total: 35, used:  5, endsAt: "2026-06-10" },
+      { name: "Bistre", total: 35, used: 20, endsAt: "2026-06-10" },
+      { name: "Auburn", total: 35, used: 30, endsAt: "2026-06-10" },
+    ]
+  },
+  {
+    name: "Yuwa Shirt",
+    colors: [
+      { name: "Pebble", total: 0, used: 0, endsAt: null },
+      { name: "Shell",  total: 0, used: 0, endsAt: null },
+    ]
+  },
+  {
+    name: "Miru Pants",
+    colors: [
+      { name: "Bistre", total: 30, used:  2, endsAt: "2026-05-30" },
+      { name: "Breen",  total: 30, used: 18, endsAt: "2026-05-30" },
+    ]
+  },
+];
+
+function daysUntil(dateStr) {
+  if(!dateStr) return null;
+  return Math.ceil((new Date(dateStr) - Date.now()) / 86400000);
+}
+
+function estLabel(endsAt, hasBatch, isSoldout) {
+  if(isSoldout) return { text: "closed po", cls: "none" };
+  if(!hasBatch || !endsAt) return { text: "—", cls: "none" };
+  const days = daysUntil(endsAt);
+  if(days === null) return { text: "—", cls: "none" };
+  if(days <= 0) return { text: "est. lewat", cls: "none" };
+  return { text: "est. " + days + " hari", cls: "none" };
+}
+
+function colorState(total, used) {
+  const remaining = total - used;
+  const pct = total > 0 ? remaining / total : -1;
+  if(total === 0)      return { remaining: null, pct: 0,   barCls: "bar-none", sisaCls: "",     sisaLabel: "—",              soldout: false };
+  if(remaining <= 0)   return { remaining: 0,    pct: 0,   barCls: "bar-zero", sisaCls: "zero", sisaLabel: "habis",           soldout: true  };
+  if(pct < 0.20)       return { remaining,       pct,      barCls: "bar-zero", sisaCls: "zero", sisaLabel: remaining + " sisa", soldout: false };
+  if(pct < 0.50)       return { remaining,       pct,      barCls: "bar-low",  sisaCls: "low",  sisaLabel: remaining + " sisa", soldout: false };
+  return               { remaining,              pct,      barCls: "bar-ok",   sisaCls: "",     sisaLabel: remaining + " sisa", soldout: false };
+}
+
+function chipForColor(total, used) {
+  const remaining = total - used;
+  const pct = total > 0 ? remaining / total : -1;
+  if(total === 0)    return "chip-nobatch";
+  if(remaining <= 0) return "chip-zero";
+  if(pct < 0.20)     return "chip-zero";
+  if(pct < 0.50)     return "chip-low";
+  return "chip-ok";
+}
+
+function render() {
+  const html = DUMMY.map((art, idx) => {
+    const chips = art.colors.map(c =>
+      `<span class="art-chip ${chipForColor(c.total, c.used)}">${c.name}</span>`
+    ).join("");
+
+    const colorRows = art.colors.map(c => {
+      const hasBatch = c.total > 0;
+      const state = colorState(c.total, c.used);
+      const est   = estLabel(c.endsAt, hasBatch, state.soldout);
+      const barW  = hasBatch ? Math.round(state.pct * 100) : 0;
+
+      return `<div class="color-row">
+        <span class="cr-name">${c.name}</span>
+        <div class="cr-bar-wrap">
+          <div class="cr-bar-fill ${state.barCls}" style="width:${barW}%"></div>
+        </div>
+        <span class="cr-sisa ${state.sisaCls}">${state.sisaLabel}</span>
+        <span class="cr-est ${est.cls}">${est.text}</span>
+      </div>`;
+    }).join("");
+
+    // default open untuk artikel pertama
+    const openClass = idx === 0 ? "open" : "";
+
+    return `<div class="article-block ${openClass}" id="ab-${idx}">
+      <div class="article-header" onclick="toggle(${idx})">
+        <div class="article-left">
+          <span class="article-name">${art.name}</span>
+          <div class="art-chips">${chips}</div>
+        </div>
+        <span class="article-chevron">▾</span>
+      </div>
+      <div class="color-rows">${colorRows}</div>
+    </div>`;
+  }).join("");
+
+  document.getElementById("article-list").innerHTML = html;
+}
+
+function toggle(idx) {
+  document.getElementById("ab-" + idx).classList.toggle("open");
+}
+
+render();
+</script>
+</body>
+</html>
