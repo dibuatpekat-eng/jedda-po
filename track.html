@@ -32,30 +32,29 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .search-hint { font-size: 9px; color: #bbb; margin-top: 10px; font-weight: 300; letter-spacing: 0.5px; }
 .search-error { font-size: 9px; color: #c0392b; margin-top: 10px; font-weight: 300; letter-spacing: 0.5px; }
 
-/* ── result ── */
-.result { padding: 56px 28px 0; display: none; }
+.result { padding: 36px 28px 0; display: none; }
 .result.visible { display: block; }
 
 /* ── status area ── */
-.status-area { margin-bottom: 40px; text-align: center; }
+.status-area { margin-bottom: 24px; text-align: center; }
 .status-po { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 8px; }
-.status-name { font-size: 24px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 28px; }
+.status-name { font-size: 24px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 16px; }
 
 /* ── illustration ── */
-.illus-wrap { margin-bottom: 28px; height: 80px; display: flex; align-items: center; justify-content: center; }
+.illus-wrap { margin-bottom: 16px; height: 64px; display: flex; align-items: center; justify-content: center; }
 
 /* ── status label + subjudul ── */
 .status-label { font-size: 28px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 8px; }
 .status-label em { font-style: italic; color: #888; }
-.status-sub { font-size: 12px; font-weight: 300; color: #666; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.6; margin-bottom: 24px; }
+.status-sub { font-size: 12px; font-weight: 300; color: #666; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.6; margin-bottom: 12px; }
 
 /* ── rotating text ── */
-.rotating-wrap { height: 18px; overflow: hidden; margin-bottom: 40px; display: flex; justify-content: center; }
+.rotating-wrap { height: 18px; overflow: hidden; margin-bottom: 20px; display: flex; justify-content: center; }
 .rotating-text { font-size: 10px; font-weight: 300; color: #aaa; letter-spacing: 1px; font-family: 'IBM Plex Mono', monospace; opacity: 0; transition: opacity 0.6s; position: absolute; }
 .rotating-text.visible { opacity: 1; }
 
 /* ── stepper ── */
-.stepper { display: flex; align-items: center; gap: 0; margin-bottom: 40px; }
+.stepper { display: flex; align-items: center; gap: 0; margin-bottom: 24px; }
 .step-item { display: flex; align-items: center; gap: 0; flex: 1; }
 .step-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid #ccc; background: transparent; flex-shrink: 0; transition: all 0.4s; }
 .step-dot.done { background: #888; border-color: #888; }
@@ -68,19 +67,19 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .step-col { display: flex; flex-direction: column; align-items: center; }
 
 /* ── est block ── */
-.est-block { border: 1px solid #d8d4ce; padding: 16px 18px; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; }
+.est-block { border: 1px solid #d8d4ce; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
 .est-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
 .est-date { font-size: 16px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
 .est-days { font-size: 10px; font-weight: 300; color: #888; margin-top: 3px; }
 
 /* ── resi block ── */
-.resi-block { border: 1px solid #d8d4ce; padding: 16px 18px; margin-bottom: 32px; }
+.resi-block { border: 1px solid #d8d4ce; padding: 14px 18px; margin-bottom: 20px; }
 .resi-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
 .resi-val { font-size: 14px; font-weight: 300; color: #111; letter-spacing: 0.5px; }
 .resi-kurir { font-size: 9px; color: #aaa; margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
 
 /* ── separator ── */
-.sep { border: none; border-top: 1px solid #e0dbd4; margin-bottom: 28px; }
+.sep { border: none; border-top: 1px solid #e0dbd4; margin-bottom: 16px; }
 
 /* ── order summary ── */
 .summary-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; margin-bottom: 0; }
@@ -90,7 +89,7 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .summary-val { font-size: 13px; font-weight: 300; text-align: right; font-family: 'IBM Plex Sans', sans-serif; color: #111; line-height: 1.5; }
 
 /* ── contact ── */
-.contact-section { margin-top: 48px; padding-top: 24px; border-top: 1px solid #e0dbd4; }
+.contact-section { margin-top: 28px; padding-top: 20px; border-top: 1px solid #e0dbd4; }
 .contact-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 14px; }
 .contact-hint { font-size: 11px; font-weight: 300; color: #888; font-family: 'IBM Plex Sans', sans-serif; margin-bottom: 16px; line-height: 1.6; }
 .contact-links { display: flex; gap: 12px; }
@@ -270,29 +269,28 @@ const STATUS_CONFIG = {
     sub: "pesananmu sedang dalam proses produksi.",
     rotating: ["we don't rush.", "made with intention.", "quality takes time.", "yours is being made."],
     illus: "needle",
-    stepIdx: 2
+    stepIdx: 1
   },
   dikirim: {
     label: "<em>dikirim.</em>",
     sub: "pesananmu sudah dalam perjalanan.",
     rotating: ["on its way to you.", "packed with care.", "almost there."],
     illus: "box",
-    stepIdx: 3
+    stepIdx: 2
   },
-  // legacy status fallbacks
   siap: {
     label: "<em>dikirim.</em>",
     sub: "pesananmu sudah dalam perjalanan.",
     rotating: ["on its way to you.", "packed with care.", "almost there."],
     illus: "box",
-    stepIdx: 3
+    stepIdx: 2
   },
   selesai: {
     label: "<em>dikirim.</em>",
     sub: "pesananmu sudah dalam perjalanan.",
     rotating: ["on its way to you.", "packed with care.", "almost there."],
     illus: "box",
-    stepIdx: 3
+    stepIdx: 2
   },
   ongkir: {
     label: "<em>in</em> production.",
@@ -301,13 +299,11 @@ const STATUS_CONFIG = {
     illus: "needle",
     stepIdx: 1
   }
-};
 
 const STEPS = [
-  { key: "baru",          label: "konfirmasi" },
-  { key: "tunggu_ongkir", label: "in production" },
-  { key: "diproses",      label: "produksi" },
-  { key: "dikirim",       label: "dikirim" }
+  { key: "baru",     label: "konfirmasi" },
+  { key: "diproses", label: "produksi" },
+  { key: "dikirim",  label: "dikirim" }
 ];
 
 // illustrations
@@ -482,7 +478,10 @@ function showResult(o, items) {
   const summaryRows = [
     { key: "nama", val: o.customer_name },
     { key: "no. hp", val: o.customer_phone },
-    ...items.map(i => ({ key: i.article, val: i.color + " · " + i.qty + " pcs" }))
+    ...items.map(i => {
+      const meta = [i.color, i.size].filter(Boolean).join(' · ');
+      return { key: i.article, val: meta + " · " + i.qty + " pcs" };
+    })
   ];
   document.getElementById("summary-rows").innerHTML = summaryRows.map(r =>
     `<div class="summary-row">
