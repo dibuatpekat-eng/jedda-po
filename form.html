@@ -189,8 +189,8 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .done-cell-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; font-weight: 300; }
 .done-cell-val { font-size: 14px; color: #111; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.4; }
 .done-note { margin-top: 40px; font-size: 12px; color: #777; line-height: 1.8; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; }
-.done-track-hint { margin-top: 20px; font-size: 11px; color: #aaa; line-height: 1.8; font-weight: 300; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.3px; }
-.done-track-link { color: #555; text-decoration: underline; text-decoration-color: #ccc; }
+.done-track-hint { margin-top: 16px; font-size: 11px; color: #aaa; line-height: 1.8; font-weight: 300; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.3px; }
+.done-track-link { color: #111; font-weight: 400; text-decoration: underline; text-decoration-color: #111; letter-spacing: 0.5px; }
 .done-new-btn { margin-top: 40px; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; text-decoration: underline; text-decoration-color: #d8d4ce; font-weight: 300; }
 .done-footer { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #ccc; font-weight: 300; margin-top: 48px; }
 </style>
@@ -608,8 +608,8 @@ function render(){
             <div class="done-cell-val">${esc(st.phone)}</div>
           </div>
         </div>
-        <div class="done-note">tim jedda akan menghubungi via whatsapp dalam 2x24 jam untuk konfirmasi pesanan dan informasi pengiriman.</div>
-        <div class="done-track-hint">cek status pesanan kamu kapan saja di<br><a class="done-track-link" href="https://po.jeddawear.com/track" target="_blank">po.jeddawear.com/track</a></div>
+        <div class="done-note">konfirmasi pesanan akan dikirim via whatsapp dalam 2x24 jam.</div>
+        <div class="done-track-hint">pantau status pesanan di<br><a class="done-track-link" href="https://po.jeddawear.com/track" target="_blank">po.jeddawear.com/track</a></div>
         <button class="done-new-btn" onclick="resetAll()">+ order baru</button>
       </div>
       <div class="done-footer">jedda — ${new Date().getFullYear()}</div>

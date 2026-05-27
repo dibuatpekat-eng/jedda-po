@@ -355,6 +355,8 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
     <button class="sort-btn" id="filter-today" onclick="setDateFilter('today',this)">hari ini</button>
     <button class="sort-btn" id="filter-week" onclick="setDateFilter('week',this)">7 hari</button>
     <button class="sort-btn active" id="filter-all" onclick="setDateFilter('all',this)">semua</button>
+    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
+    <button class="sort-btn active" id="toggle-dikirim" onclick="toggleHideDikirim(this)">sembunyikan dikirim</button>
     <div class="toolbar-right">
       <input class="search-input" placeholder="cari nama / no. PO..." oninput="setSearch(this.value)">
     </div>
@@ -368,7 +370,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
           <th>masuk</th>
           <th>nama</th>
           <th>item</th>
-          <th>estimasi kirim</th>
+          <th>estimasi PO</th>
           <th>status</th>
           <th>aksi</th>
         </tr>
@@ -514,6 +516,7 @@ let sortMode = "est";
 let searchQuery = "";
 let selectedId = null;
 let resiTargetId = null;
+let hideDikirim = true; // default sembunyikan yang sudah dikirim
 
 // ── load ──
 async function loadOrders(){
@@ -598,9 +601,17 @@ function fmtEntry(d){
   };
 }
 
+function toggleHideDikirim(el) {
+  hideDikirim = !hideDikirim;
+  el.classList.toggle('active', hideDikirim);
+  el.textContent = hideDikirim ? 'sembunyikan dikirim' : 'tampilkan dikirim';
+  renderTable();
+}
+
 function filtered(){
   const now = new Date();
   let list = orders.filter(o => {
+    if(hideDikirim && o.status === 'dikirim') return false;
     if(filterStatus !== "semua" && o.status !== filterStatus) return false;
     if(dateFilter === "today"){
       if(new Date(o.created).toDateString() !== now.toDateString()) return false;
