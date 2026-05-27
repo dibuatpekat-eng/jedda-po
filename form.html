@@ -122,8 +122,10 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 /* soldout whole item card */
 .item-card.soldout { opacity: 0.4; pointer-events: none; }
 .item-card.soldout .item-card-colors::after { content: ' — habis'; color: #c0392b; }
-/* disabled = belum ada batch */
+/* disabled = belum ada batch/est days */
 .item-card.disabled { opacity: 0.35; pointer-events: none; cursor: default; }
+/* loading overlay */
+.loading-bar { padding: 0 28px; margin-top: 40px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #bbb; font-weight: 300; }
 
 /* ── back ── */
 .back-btn { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 28px 28px 0; display: block; font-weight: 300; }
@@ -187,6 +189,8 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .done-cell-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; font-weight: 300; }
 .done-cell-val { font-size: 14px; color: #111; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.4; }
 .done-note { margin-top: 40px; font-size: 12px; color: #777; line-height: 1.8; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; }
+.done-track-hint { margin-top: 20px; font-size: 11px; color: #aaa; line-height: 1.8; font-weight: 300; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.3px; }
+.done-track-link { color: #555; text-decoration: underline; text-decoration-color: #ccc; }
 .done-new-btn { margin-top: 40px; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; text-decoration: underline; text-decoration-color: #d8d4ce; font-weight: 300; }
 .done-footer { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #ccc; font-weight: 300; margin-top: 48px; }
 </style>
@@ -605,6 +609,7 @@ function render(){
           </div>
         </div>
         <div class="done-note">tim jedda akan menghubungi via whatsapp dalam 2x24 jam untuk konfirmasi pesanan dan informasi pengiriman.</div>
+        <div class="done-track-hint">cek status pesanan kamu kapan saja di<br><a class="done-track-link" href="https://po.jeddawear.com/track" target="_blank">po.jeddawear.com/track</a></div>
         <button class="done-new-btn" onclick="resetAll()">+ order baru</button>
       </div>
       <div class="done-footer">jedda — ${new Date().getFullYear()}</div>
@@ -705,6 +710,19 @@ function render(){
 
   // ── items ──
   const CATS_ORDER=["outerwear","vest","shirt","bottom"];
+
+  // Loading state
+  if(!batchLoaded){
+    root.innerHTML=`
+      <div class="header">
+        <div class="header-brand">Jedda</div>
+        <div class="header-meta">pre-order<br>${new Date().toLocaleDateString("id-ID",{month:"long",year:"numeric"})}</div>
+      </div>
+      <hr class="header-rule">
+      <div class="loading-bar">memuat...</div>`;
+    return;
+  }
+
   const sections=CATS_ORDER.map(cat=>{
     const ps=PRODUCTS.filter(p=>p.cat===cat);
     if(!ps.length) return '';
@@ -717,7 +735,7 @@ function render(){
       const onclick = disabled||soldout ? '' : `onclick="openSheet('${safeName}')"`;
       return `<div class="${cardClass}" id="ic-${esc(p.name)}" ${onclick}>
         <div class="item-card-name">${p.name}</div>
-        <div class="item-card-colors">${p.colors.join(" · ")}</div>
+        <div class="item-card-colors">${disabled ? 'po blm dibuka' : p.colors.join(" · ")}</div>
         ${tq>0?`<div class="item-card-badge" onclick="event.stopPropagation();openSheet('${safeName}')">${tq}</div>`:""}
       </div>`;
     }).join("");

@@ -201,7 +201,7 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
     <!-- est -->
     <div class="est-block" id="est-block">
       <div>
-        <div class="est-label">estimasi kirim</div>
+        <div class="est-label">estimasi PO</div>
         <div class="est-date" id="res-est-date">—</div>
         <div class="est-days" id="res-est-days"></div>
       </div>
@@ -228,7 +228,7 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L0 24l6.335-1.508A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.782 9.782 0 01-4.988-1.362l-.358-.213-3.761.896.952-3.656-.233-.376A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>
           whatsapp
         </a>
-        <a class="contact-btn" href="https://instagram.com/jeddawear" target="_blank">
+        <a class="contact-btn" href="https://instagram.com/__jedda" target="_blank">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
           instagram
         </a>
@@ -246,7 +246,7 @@ const _sb = supabase.createClient(
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
 );
 
-const WA_NUMBER = "6281234567890"; // ganti dengan nomor WA Jedda
+const WA_NUMBER = "6282117711056";
 
 // status config — customer-facing
 const STATUS_CONFIG = {
@@ -422,10 +422,21 @@ async function doSearch() {
 
 function showResult(o, items) {
   const cfg = STATUS_CONFIG[o.status] || STATUS_CONFIG["baru"];
-  const maxDays = items.length
-    ? Math.max(...items.map(i => i.estimated_days || o.estimated_days || 7))
-    : (o.estimated_days || 7);
-  const daysLeft = getEstDaysLeft(maxDays, o.created_at);
+
+  // Estimasi: prioritas est_date dari batch, fallback estimated_days
+  let estLabel, estDaysLabel;
+  if(o.est_date) {
+    const diff = new Date(o.est_date) - new Date(new Date().toDateString());
+    const daysLeft = Math.ceil(diff / 86400000);
+    estLabel = '±' + Math.max(0, daysLeft) + ' hari';
+    estDaysLabel = daysLeft > 0 ? daysLeft + ' hari lagi' : 'hari ini atau sudah lewat';
+  } else {
+    const maxDays = o.estimated_days || 7;
+    const est = new Date(o.created_at); est.setDate(est.getDate() + maxDays);
+    const daysLeft = Math.ceil((est - Date.now()) / 86400000);
+    estLabel = '±' + maxDays + ' hari';
+    estDaysLabel = daysLeft > 0 ? daysLeft + ' hari lagi' : 'hari ini atau sudah lewat';
+  }
 
   // header info
   document.getElementById("res-po").textContent = o.po_number;
@@ -460,8 +471,8 @@ function showResult(o, items) {
   document.getElementById("stepper-wrap").innerHTML = stepHtml;
 
   // est
-  document.getElementById("res-est-date").textContent = getEstDate(maxDays, o.created_at);
-  document.getElementById("res-est-days").textContent = daysLeft > 0 ? daysLeft + " hari lagi" : "hari ini atau sudah lewat";
+  document.getElementById("res-est-date").textContent = estLabel;
+  document.getElementById("res-est-days").textContent = estDaysLabel;
 
   // est block: sembunyikan kalau sudah dikirim
   document.getElementById("est-block").style.display = (o.status === "dikirim" || o.status === "siap" || o.status === "selesai") ? "none" : "block";

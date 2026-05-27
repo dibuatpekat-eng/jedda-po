@@ -540,6 +540,7 @@ async function loadOrders(){
         kurir:          o.kurir || "",
         status:         o.status || "baru",
         created:        new Date(o.created_at),
+        est_date:       o.est_date || null,
         maxDays:        maxDays,
         items:          items.map(i => ({name: i.article, color: i.color, size: i.size||null, qty: i.qty}))
       };
@@ -569,13 +570,25 @@ async function saveResiToDb(id, resi, kurir){
   }).eq("id", id);
 }
 
+function getEstDisplay(o) {
+  if(o.est_date) {
+    const diff = new Date(o.est_date) - new Date(new Date().toDateString());
+    const d = Math.ceil(diff / 86400000);
+    return '±' + Math.max(0, d) + ' hari';
+  }
+  return '±' + (o.maxDays || 7) + ' hari';
+}
+function getEstDaysLeft(o) {
+  if(o.est_date) {
+    const diff = new Date(o.est_date) - Date.now();
+    return Math.ceil(diff / 86400000);
+  }
+  const est = new Date(o.created); est.setDate(est.getDate() + (o.maxDays || 7));
+  return Math.ceil((est - Date.now()) / 86400000);
+}
 function getEstDate(days, from){
   const d = new Date(from); d.setDate(d.getDate()+days);
   return d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
-}
-function getEstDaysLeft(days, from){
-  const est = new Date(from); est.setDate(est.getDate()+days);
-  return Math.ceil((est-Date.now())/86400000);
 }
 function fmtEntry(d){
   const dt = new Date(d);
@@ -629,9 +642,10 @@ function renderTable(){
   empty.style.display="none";
 
   tbody.innerHTML = rows.map(o => {
-    const daysLeft = getEstDaysLeft(o.maxDays, o.created);
+    const daysLeft = getEstDaysLeft(o);
     const urgent = daysLeft<=3 && o.status!=="dikirim";
     const entry = fmtEntry(o.created);
+    const estDisp = getEstDisplay(o);
 
     // item: full list, each on its own line
     const itemList = o.items.map(i => {
@@ -662,7 +676,7 @@ function renderTable(){
       <td>${urgent?'<span class="urgent-dot"></span>':''}${o.name}</td>
       <td>${itemList}</td>
       <td style="white-space:nowrap">
-        <div class="est-date ${urgent?'est-urgent':''}">${getEstDate(o.maxDays, o.created)}</div>
+        <div class="est-date ${urgent?'est-urgent':''}">${estDisp}</div>
         <div class="est-days ${urgent?'est-urgent':''}">${daysLeft>0?daysLeft+" hari lagi":"hari ini / lewat"}</div>
       </td>
       <td><span class="status-badge ${STATUS_CLASS[o.status]||'s-baru'}">${STATUS_LABEL[o.status]||o.status}</span></td>
@@ -698,7 +712,16 @@ function buildWaKonfirmasi(o){
     const meta = [i.color, i.size].filter(Boolean).join(' · ');
     return `• ${i.name} — ${meta} (${i.qty} pcs)`;
   }).join("\n");
-  return `Halo ${o.name.split(" ")[0]}!\n\nPesanan pre-order kamu di Jedda sudah kami terima dan sedang diproses.\n\nRingkasan pesanan:\n${lines}\n\nEstimasi kirim: ${getEstDate(o.maxDays,o.created)}\n\nUntuk konfirmasi pengiriman, mohon transfer ongkos kirim ke:\nBCA 1234567890 a/n Jedda\nNominal: Rp [ONGKIR]\n\nSetelah transfer, kirim bukti ke sini ya. Terima kasih!`;
+  // estimasi: pakai est_date dari batch kalau ada, fallback hari kerja
+  let estStr;
+  if(o.est_date) {
+    const diff = new Date(o.est_date) - new Date(new Date().toDateString());
+    const d = Math.ceil(diff / 86400000);
+    estStr = '±' + Math.max(0, d) + ' hari';
+  } else {
+    estStr = '±' + (o.maxDays || 7) + ' hari';
+  }
+  return `Halo ${o.name.split(" ")[0]}!\n\nPesanan pre-order kamu di Jedda sudah kami terima dan sedang diproses.\n\nRingkasan pesanan:\n${lines}\n\nEstimasi: ${estStr}\n\nUntuk konfirmasi pengiriman, mohon transfer ongkos kirim ke:\nBCA 1234567890 a/n Jedda\nNominal: Rp [ONGKIR]\n\nSetelah transfer, kirim bukti ke sini ya. Terima kasih!`;
 }
 function buildWaFollowUp(o){
   return `Halo ${o.name.split(" ")[0]}! Mengingatkan kembali mengenai ongkos kirim pesanan Jedda kamu. Mohon segera ditransfer agar pesanan bisa segera dikirim. Terima kasih!`;
@@ -787,9 +810,10 @@ function handleOngkirDiterima(id){
 }
 
 function renderPanel(o){
-  const daysLeft = getEstDaysLeft(o.maxDays, o.created);
+  const daysLeft = getEstDaysLeft(o);
   const urgent = daysLeft<=3 && o.status!=="dikirim";
   const entry = fmtEntry(o.created);
+  const estDisp = getEstDisplay(o);
 
   const flowHtml = STATUSES.map((s,i) => {
     const idx = STATUSES.indexOf(o.status);
@@ -813,9 +837,9 @@ function renderPanel(o){
   document.getElementById("dp-body").innerHTML=`
     <div class="dp-est">
       <div>
-        <div class="dp-est-label">estimasi kirim</div>
-        <div class="dp-est-date ${urgent?'est-urgent':''}">${getEstDate(o.maxDays,o.created)}</div>
-        <div class="dp-est-days">${o.maxDays} hari kerja produksi</div>
+        <div class="dp-est-label">estimasi PO</div>
+        <div class="dp-est-date ${urgent?'est-urgent':''}">${estDisp}</div>
+        <div class="dp-est-days">${daysLeft > 0 ? daysLeft+' hari lagi' : 'hari ini / lewat'}</div>
       </div>
       ${urgent?`<div class="dp-est-alert">⚑ ${daysLeft<=0?"lewat estimasi":daysLeft+" hari lagi"}</div>`:""}
     </div>
