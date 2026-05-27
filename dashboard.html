@@ -401,30 +401,22 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   </div>
   <div class="settings-body">
 
-    <!-- global est days -->
-    <div style="margin-bottom:40px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+    <!-- estimasi per artikel -->
+    <div style="margin-bottom:48px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
         <div class="settings-section-label" style="border:none;padding:0">estimasi sementara</div>
+        <button class="add-article-btn" style="margin:0" onclick="saveArticleDays()">simpan semua</button>
       </div>
-      <div style="border-bottom:1px solid #d8d4ce;margin-bottom:20px"></div>
-      <div style="display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #eae6e0">
-        <div style="flex:1">
-          <div style="font-size:12px;font-weight:300;font-family:'IBM Plex Sans',sans-serif;color:#111;margin-bottom:4px">estimasi global (hari)</div>
-          <div style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#aaa">isi angka hari kalau batch belum siap. 0 = nonaktif, artikel tanpa batch tidak bisa dipilih.</div>
-        </div>
-        <input type="number" min="0" max="99" id="global-days-input" class="bm-slot-input" style="width:64px;font-size:16px;text-align:center" placeholder="0">
-        <button class="add-article-btn" style="margin:0" onclick="saveGlobalDays()">simpan</button>
-      </div>
-      <div id="global-days-status" style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#aaa;margin-top:10px;letter-spacing:1px"></div>
+      <div id="article-days-list"></div>
+      <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#aaa;margin-top:12px;letter-spacing:0.5px">isi hari per artikel kalau batch belum siap. 0 = artikel tidak bisa dipilih di form.</div>
     </div>
 
     <!-- batch list view -->
     <div id="batch-list-view">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
         <div class="settings-section-label" style="border:none;padding:0">batch produksi</div>
         <button class="add-article-btn" style="margin:0" onclick="openBatchModal(null)">+ tambah batch</button>
       </div>
-      <div style="border-bottom:1px solid #d8d4ce;margin-bottom:0"></div>
       <div id="batch-list-rows"></div>
     </div>
 
@@ -884,24 +876,37 @@ function showPage(page) {
   settingsPage.classList.toggle('active', page === 'settings');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('nav-' + page).classList.add('active');
-  if(page === 'settings') { loadGlobalDays(); loadBatches(); }
+  if(page === 'settings') { loadArticleDays(); loadBatches(); }
 }
 
-async function loadGlobalDays() {
-  const { data } = await _sb.from('po_settings').select('global_est_days').eq('id', 1).single();
-  const days = data?.global_est_days || 0;
-  document.getElementById('global-days-input').value = days || '';
-  const statusEl = document.getElementById('global-days-status');
-  statusEl.textContent = days > 0
-    ? '● aktif — semua artikel bisa dipilih, estimasi ±' + days + ' hari'
-    : '○ nonaktif — artikel tanpa batch tidak bisa dipilih';
-  statusEl.style.color = days > 0 ? '#3a5a3a' : '#aaa';
+async function loadArticleDays() {
+  const { data } = await _sb.from('po_settings').select('article_est_days').eq('id', 1).single();
+  const map = data?.article_est_days || {};
+
+  const html = PRODUCTS.map(p => {
+    const days = map[p.name] || 0;
+    const active = days > 0;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #eae6e0;gap:16px">
+      <span style="font-size:13px;font-weight:300;font-family:'IBM Plex Sans',sans-serif;color:${active?'#111':'#aaa'};flex:1">${p.name}</span>
+      <span style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#bbb;margin-right:8px">${active?'aktif':'nonaktif'}</span>
+      <input type="number" min="0" max="99" class="bm-slot-input" style="width:56px;text-align:center" placeholder="0" value="${days||''}" id="artdays-${p.name.replace(/[^a-zA-Z0-9]/g,'_')}">
+      <span style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#bbb">hari</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('article-days-list').innerHTML = html;
 }
 
-async function saveGlobalDays() {
-  const val = parseInt(document.getElementById('global-days-input').value) || 0;
-  await _sb.from('po_settings').update({ global_est_days: val, updated_at: new Date().toISOString() }).eq('id', 1);
-  loadGlobalDays();
+async function saveArticleDays() {
+  const map = {};
+  PRODUCTS.forEach(p => {
+    const id = 'artdays-' + p.name.replace(/[^a-zA-Z0-9]/g,'_');
+    const el = document.getElementById(id);
+    const val = parseInt(el?.value) || 0;
+    if(val > 0) map[p.name] = val;
+  });
+  await _sb.from('po_settings').update({ article_est_days: map, updated_at: new Date().toISOString() }).eq('id', 1);
+  loadArticleDays();
 }
 
 async function loadBatches() {

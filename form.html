@@ -260,7 +260,7 @@ const st = { phase:"items", cart:{}, activeSheet:null, name:"", phone:"", addres
 
 let slotData = {}; // key: "Article · Color · Size" → { total, used, remaining, endsAt }
 let batchLoaded = false;
-let globalEstDays = 0; // fallback dari po_settings kalau tidak ada batch
+let articleEstDays = {}; // { "Rhea Jacket": 7, "Kiro Cropped Vest": 5, ... }
 
 async function loadBatchSlots() {
   try {
@@ -274,10 +274,10 @@ async function loadBatchSlots() {
       _supabase.from('po_batches').select('*').gte('ends_at', today).order('ends_at', { ascending: true }),
       _supabase.from('po_orders').select('id').in('status', ['baru','tunggu_ongkir','diproses']),
       _supabase.from('po_items').select('article, color, size, qty, order_id'),
-      _supabase.from('po_settings').select('global_est_days').eq('id', 1).single()
+      _supabase.from('po_settings').select('article_est_days').eq('id', 1).single()
     ]);
 
-    globalEstDays = settings?.global_est_days || 0;
+    articleEstDays = settings?.article_est_days || {};
 
     const activeIds = new Set((activeOrders||[]).map(o => o.id));
     const usedMap = {};
@@ -317,14 +317,18 @@ function isSoldout(article, color, size) {
   if(!slot) return false;
   return slot.remaining <= 0;
 }
-// artikel disabled kalau tidak ada batch DAN tidak ada global est days
+// artikel disabled kalau tidak ada batch DAN tidak ada est days untuk artikel itu
 function isArticleDisabled(articleName) {
   if(!batchLoaded) return false;
-  if(globalEstDays > 0) return false; // global days aktif → semua artikel bisa dipilih
+  // cek batch dulu
   const p = PRODUCTS.find(x => x.name === articleName);
   if(!p) return false;
   const sizes = p.sizes || ['OS'];
-  return p.colors.every(c => sizes.every(s => !getSlot(articleName, c, s)));
+  const hasBatch = p.colors.some(c => sizes.some(s => getSlot(articleName, c, s)));
+  if(hasBatch) return false;
+  // cek article est days
+  const days = articleEstDays[articleName] || 0;
+  return days <= 0;
 }
 function isArticleSoldout(articleName) {
   const p = PRODUCTS.find(x => x.name === articleName);
@@ -378,6 +382,7 @@ function itemTotalQty(n){
   return Object.entries(st.cart).filter(([key,q])=>key.startsWith(n+"||")&&q>0).reduce((a,[,q])=>a+q,0);
 }
 function maxDays(){ const c=cartItems(); return c.length?Math.max(...c.map(x=>x.days)):0; }
+function getArticleEstDays(articleName) { return articleEstDays[articleName] || 0; }
 function estDisplay(){
   // Prioritas 1: batch (pakai ends_at terlama dari cart)
   const raw = getCartEndsAt();
@@ -385,8 +390,16 @@ function estDisplay(){
     const d = daysUntil(raw);
     if(d !== null) return '±' + d + ' hari';
   }
-  // Prioritas 2: global est days
-  if(globalEstDays > 0 && cartItems().length > 0) return '±' + globalEstDays + ' hari';
+  // Prioritas 2: per-artikel est days (ambil yang terbesar dari cart)
+  const items = cartItems();
+  if(items.length > 0) {
+    const maxArt = Math.max(...items.map(i => {
+      const slot = getSlot(i.name, i.color, i.size);
+      if(slot && slot.endsAt) return daysUntil(slot.endsAt) || 0;
+      return getArticleEstDays(i.name);
+    }));
+    if(maxArt > 0) return '±' + maxArt + ' hari';
+  }
   return '—';
 }
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
@@ -761,7 +774,12 @@ async function submitOrder(){
       if(!le&&last&&last.length>0){ const n=parseInt(last[0].po_number.replace("JD-","")); if(!isNaN(n)) nextNum=n+1; }
     } catch(e){}
     const poNumber="JD-"+String(nextNum).padStart(4,"0");
-    const md = getCartEndsAt() ? 0 : (globalEstDays || maxDays());
+    const raw = getCartEndsAt();
+    const md = raw ? 0 : Math.max(...cartItems().map(i => {
+      const slot = getSlot(i.name, i.color, i.size);
+      if(slot && slot.endsAt) return 0;
+      return getArticleEstDays(i.name) || 0;
+    }), 0);
     const {data:order,error:oe}=await _supabase.from("po_orders").insert({
       po_number:poNumber, customer_name:st.name.trim(), customer_phone:st.phone.trim(),
       customer_city:"", address:st.address.trim(), notes:st.notes.trim()||null,
@@ -779,9 +797,10 @@ async function submitOrder(){
     );
     if(ie) throw ie;
     const raw = getCartEndsAt();
-    st.savedEstDate = raw
+    const estStr = raw
       ? '±' + daysUntil(raw) + ' hari'
-      : (globalEstDays > 0 ? '±' + globalEstDays + ' hari' : (md ? '±' + md + ' hari' : '—'));
+      : (md > 0 ? '±' + md + ' hari' : '—');
+    st.savedEstDate = estStr;
     st.orderNum=poNumber; st.phase="done"; render();
   } catch(err){
     let msg="unknown error";
