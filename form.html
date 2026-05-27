@@ -796,7 +796,6 @@ async function submitOrder(){
       }))
     );
     if(ie) throw ie;
-    const raw = getCartEndsAt();
     const estStr = raw
       ? '±' + daysUntil(raw) + ' hari'
       : (md > 0 ? '±' + md + ' hari' : '—');
