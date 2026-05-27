@@ -122,6 +122,8 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 /* soldout whole item card */
 .item-card.soldout { opacity: 0.4; pointer-events: none; }
 .item-card.soldout .item-card-colors::after { content: ' — habis'; color: #c0392b; }
+/* disabled = belum ada batch */
+.item-card.disabled { opacity: 0.35; pointer-events: none; cursor: default; }
 
 /* ── back ── */
 .back-btn { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 28px 28px 0; display: block; font-weight: 300; }
@@ -258,15 +260,26 @@ const st = { phase:"items", cart:{}, activeSheet:null, name:"", phone:"", addres
 
 let slotData = {}; // key: "Article · Color · Size" → { total, used, remaining, endsAt }
 let batchLoaded = false;
+let globalEstDays = 0; // fallback dari po_settings kalau tidak ada batch
 
 async function loadBatchSlots() {
   try {
     const today = new Date().toISOString().slice(0,10);
-    const { data: batches } = await _supabase.from('po_batches').select('*').gte('ends_at', today).order('ends_at', { ascending: true });
-    const { data: activeOrders } = await _supabase.from('po_orders').select('id').in('status', ['baru','tunggu_ongkir','diproses']);
-    const activeIds = new Set((activeOrders||[]).map(o => o.id));
-    const { data: items } = await _supabase.from('po_items').select('article, color, size, qty, order_id');
+    const [
+      { data: batches },
+      { data: activeOrders },
+      { data: items },
+      { data: settings }
+    ] = await Promise.all([
+      _supabase.from('po_batches').select('*').gte('ends_at', today).order('ends_at', { ascending: true }),
+      _supabase.from('po_orders').select('id').in('status', ['baru','tunggu_ongkir','diproses']),
+      _supabase.from('po_items').select('article, color, size, qty, order_id'),
+      _supabase.from('po_settings').select('global_est_days').eq('id', 1).single()
+    ]);
 
+    globalEstDays = settings?.global_est_days || 0;
+
+    const activeIds = new Set((activeOrders||[]).map(o => o.id));
     const usedMap = {};
     (items||[]).filter(i => activeIds.has(i.order_id)).forEach(i => {
       const sz = i.size || 'OS';
@@ -304,11 +317,26 @@ function isSoldout(article, color, size) {
   if(!slot) return false;
   return slot.remaining <= 0;
 }
+// artikel disabled kalau tidak ada batch DAN tidak ada global est days
+function isArticleDisabled(articleName) {
+  if(!batchLoaded) return false;
+  if(globalEstDays > 0) return false; // global days aktif → semua artikel bisa dipilih
+  const p = PRODUCTS.find(x => x.name === articleName);
+  if(!p) return false;
+  const sizes = p.sizes || ['OS'];
+  return p.colors.every(c => sizes.every(s => !getSlot(articleName, c, s)));
+}
 function isArticleSoldout(articleName) {
   const p = PRODUCTS.find(x => x.name === articleName);
   if(!p) return false;
   const sizes = p.sizes || ['OS'];
   return p.colors.every(c => sizes.every(s => isSoldout(articleName, c, s)));
+}
+// hitung hari dari hari ini ke endsAt
+function daysUntil(endsAt) {
+  if(!endsAt) return null;
+  const diff = new Date(endsAt) - new Date(new Date().toDateString());
+  return Math.ceil(diff / 86400000);
 }
 function getCartEndsAt() {
   let latest = null;
@@ -351,9 +379,15 @@ function itemTotalQty(n){
 }
 function maxDays(){ const c=cartItems(); return c.length?Math.max(...c.map(x=>x.days)):0; }
 function estDisplay(){
-  const d=getCartEstDate(); if(d) return d;
-  const days=maxDays(); if(!days) return '—';
-  return '±'+days+' hari kerja';
+  // Prioritas 1: batch (pakai ends_at terlama dari cart)
+  const raw = getCartEndsAt();
+  if(raw) {
+    const d = daysUntil(raw);
+    if(d !== null) return '±' + d + ' hari';
+  }
+  // Prioritas 2: global est days
+  if(globalEstDays > 0 && cartItems().length > 0) return '±' + globalEstDays + ' hari';
+  return '—';
 }
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
 
@@ -384,8 +418,8 @@ function renderDialogColors(p){
       const q = getQty(p.name, col, 'OS');
       const slot = getSlot(p.name, col, 'OS');
       const soldout = isSoldout(p.name, col, 'OS');
-      const estNote = slot && slot.endsAt && !soldout
-        ? `<span class="est-batch-note">est. ${new Date(slot.endsAt).toLocaleDateString('id-ID',{day:'numeric',month:'long'})}</span>`
+    const estNote = slot && slot.endsAt && !soldout
+        ? `<span class="est-batch-note">est. ±${daysUntil(slot.endsAt)} hari</span>`
         : '';
       return `<div class="dcolor-row${soldout?' soldout':''}">
         <div>
@@ -412,7 +446,7 @@ function renderDialogColors(p){
     });
     const allSoldout = p.sizes.every(sz => isSoldout(p.name, col, sz));
     const estLabel = colorEst && !allSoldout
-      ? `<span class="dcolor-section-est">est. ${new Date(colorEst).toLocaleDateString('id-ID',{day:'numeric',month:'long'})}</span>`
+      ? `<span class="dcolor-section-est">est. ±${daysUntil(colorEst)} hari</span>`
       : (allSoldout ? `<span class="dcolor-section-soldout">habis</span>` : '');
 
     const sizeRows = p.sizes.map(sz => {
@@ -671,10 +705,12 @@ function render(){
     if(!ps.length) return '';
     const cards=ps.map(p=>{
       const tq=itemTotalQty(p.name);
-      const soldout=isArticleSoldout(p.name);
+      const disabled=isArticleDisabled(p.name);
+      const soldout=!disabled&&isArticleSoldout(p.name);
       const safeName=p.name.replace(/'/g,"\\'");
-      const sizeLabel = p.sizes ? p.sizes.join(' · ') : 'one size';
-      return `<div class="item-card ${tq>0?'has-qty':''} ${soldout?'soldout':''}" id="ic-${esc(p.name)}" onclick="openSheet('${safeName}')">
+      const cardClass=['item-card', tq>0?'has-qty':'', disabled?'disabled':'', soldout?'soldout':''].filter(Boolean).join(' ');
+      const onclick = disabled||soldout ? '' : `onclick="openSheet('${safeName}')"`;
+      return `<div class="${cardClass}" id="ic-${esc(p.name)}" ${onclick}>
         <div class="item-card-name">${p.name}</div>
         <div class="item-card-colors">${p.colors.join(" · ")}</div>
         ${tq>0?`<div class="item-card-badge" onclick="event.stopPropagation();openSheet('${safeName}')">${tq}</div>`:""}
@@ -725,7 +761,7 @@ async function submitOrder(){
       if(!le&&last&&last.length>0){ const n=parseInt(last[0].po_number.replace("JD-","")); if(!isNaN(n)) nextNum=n+1; }
     } catch(e){}
     const poNumber="JD-"+String(nextNum).padStart(4,"0");
-    const md=maxDays();
+    const md = getCartEndsAt() ? 0 : (globalEstDays || maxDays());
     const {data:order,error:oe}=await _supabase.from("po_orders").insert({
       po_number:poNumber, customer_name:st.name.trim(), customer_phone:st.phone.trim(),
       customer_city:"", address:st.address.trim(), notes:st.notes.trim()||null,
@@ -744,8 +780,8 @@ async function submitOrder(){
     if(ie) throw ie;
     const raw = getCartEndsAt();
     st.savedEstDate = raw
-      ? new Date(raw).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})
-      : (md ? "±" + md + " hari kerja" : "—");
+      ? '±' + daysUntil(raw) + ' hari'
+      : (globalEstDays > 0 ? '±' + globalEstDays + ' hari' : (md ? '±' + md + ' hari' : '—'));
     st.orderNum=poNumber; st.phase="done"; render();
   } catch(err){
     let msg="unknown error";
