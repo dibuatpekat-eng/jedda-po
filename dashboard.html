@@ -264,6 +264,18 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .bm-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
 .bm-btn-dark:hover { opacity: 0.8; }
 
+/* ── artday cards ── */
+.artday-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.artday-card { border: 1px solid #d8d4ce; padding: 14px 16px; transition: border-color 0.15s; }
+.artday-card.artday-active { border-color: #9aab9a; }
+.artday-name { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 10px; line-height: 1.3; }
+.artday-status { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; color: #bbb; margin-bottom: 10px; }
+.artday-card.artday-active .artday-status { color: #3a5a3a; }
+.artday-input-row { display: flex; align-items: center; gap: 8px; }
+.artday-input { width: 52px; border: none; border-bottom: 1px solid #ccc; padding: 4px 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px; background: transparent; outline: none; color: #111; text-align: center; transition: border-color 0.15s; }
+.artday-input:focus { border-bottom-color: #111; }
+.artday-unit { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; letter-spacing: 1px; }
+
 /* ── resi modal ── */
 /* ── resi modal ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 30; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
@@ -407,7 +419,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
         <div class="settings-section-label" style="border:none;padding:0">estimasi sementara</div>
         <button class="add-article-btn" style="margin:0" onclick="saveArticleDays()">simpan semua</button>
       </div>
-      <div id="article-days-list"></div>
+      <div id="article-days-list" class="artday-grid"></div>
       <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#aaa;margin-top:12px;letter-spacing:0.5px">isi hari per artikel kalau batch belum siap. 0 = artikel tidak bisa dipilih di form.</div>
     </div>
 
@@ -886,11 +898,17 @@ async function loadArticleDays() {
   const html = PRODUCTS.map(p => {
     const days = map[p.name] || 0;
     const active = days > 0;
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #eae6e0;gap:16px">
-      <span style="font-size:13px;font-weight:300;font-family:'IBM Plex Sans',sans-serif;color:${active?'#111':'#aaa'};flex:1">${p.name}</span>
-      <span style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#bbb;margin-right:8px">${active?'aktif':'nonaktif'}</span>
-      <input type="number" min="0" max="99" class="bm-slot-input" style="width:56px;text-align:center" placeholder="0" value="${days||''}" id="artdays-${p.name.replace(/[^a-zA-Z0-9]/g,'_')}">
-      <span style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#bbb">hari</span>
+    const artKey = p.name.replace(/[^a-zA-Z0-9]/g,'_');
+    return `<div class="artday-card ${active?'artday-active':''}" id="artday-card-${artKey}">
+      <div class="artday-name">${p.name}</div>
+      <div class="artday-status" id="artday-status-${artKey}">${active?'aktif':'—'}</div>
+      <div class="artday-input-row">
+        <input type="number" min="0" max="99" class="artday-input" placeholder="0"
+          value="${days||''}"
+          id="artdays-${artKey}"
+          oninput="updateArtdayCard('${artKey}')">
+        <span class="artday-unit">hari</span>
+      </div>
     </div>`;
   }).join('');
 
@@ -907,6 +925,16 @@ async function saveArticleDays() {
   });
   await _sb.from('po_settings').update({ article_est_days: map, updated_at: new Date().toISOString() }).eq('id', 1);
   loadArticleDays();
+}
+
+function updateArtdayCard(artKey) {
+  const input = document.getElementById('artdays-' + artKey);
+  const card = document.getElementById('artday-card-' + artKey);
+  const statusEl = document.getElementById('artday-status-' + artKey);
+  if(!input || !card || !statusEl) return;
+  const active = parseInt(input.value) > 0;
+  card.classList.toggle('artday-active', active);
+  statusEl.textContent = active ? 'aktif' : '—';
 }
 
 async function loadBatches() {
