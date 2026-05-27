@@ -106,7 +106,7 @@ html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webk
 <body>
 
 <!-- PIN screen -->
-<div id="pin-screen" class="pin-screen">
+<div id="pin-screen" class="pin-screen" onclick="document.getElementById('pin-hidden').focus()">
   <div class="pin-brand">jedda</div>
   <div class="pin-label">masukkan PIN</div>
   <div class="pin-dots">
@@ -130,6 +130,10 @@ html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webk
     <div class="pin-key" onclick="pinPress('0')">0</div>
     <div class="pin-key del" onclick="pinDel()">del</div>
   </div>
+  <!-- hidden input: triggers native keyboard on mobile, accepts keyboard on desktop -->
+  <input id="pin-hidden" inputmode="numeric" pattern="[0-9]*" maxlength="4"
+    style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;"
+    autocomplete="off" autofocus>
 </div>
 
 <!-- Main content -->
@@ -200,20 +204,24 @@ function pinPress(digit) {
   if(pinBuffer.length >= 4) return;
   pinBuffer += digit;
   updatePinDots();
-  if(pinBuffer.length === 4) {
-    setTimeout(() => checkPin(), 100);
-  }
+  syncHiddenInput();
+  if(pinBuffer.length === 4) setTimeout(() => checkPin(), 100);
 }
 
 function pinDel() {
   pinBuffer = pinBuffer.slice(0, -1);
   updatePinDots();
+  syncHiddenInput();
+}
+
+function syncHiddenInput() {
+  const el = document.getElementById('pin-hidden');
+  if(el) el.value = pinBuffer;
 }
 
 function updatePinDots() {
   for(let i = 0; i < 4; i++) {
-    const dot = document.getElementById('pd' + i);
-    dot.classList.toggle('filled', i < pinBuffer.length);
+    document.getElementById('pd' + i).classList.toggle('filled', i < pinBuffer.length);
   }
 }
 
@@ -226,14 +234,36 @@ function checkPin() {
     document.getElementById('pin-error').classList.add('show');
     pinBuffer = '';
     updatePinDots();
+    syncHiddenInput();
     setTimeout(() => document.getElementById('pin-error').classList.remove('show'), 1500);
   }
 }
+
+// Listen to native keyboard input
+document.addEventListener('DOMContentLoaded', () => {
+  const hidden = document.getElementById('pin-hidden');
+  if(!hidden) return;
+  hidden.addEventListener('input', () => {
+    const val = hidden.value.replace(/\D/g, '').slice(0, 4);
+    hidden.value = val;
+    pinBuffer = val;
+    updatePinDots();
+    if(pinBuffer.length === 4) setTimeout(() => checkPin(), 100);
+  });
+  hidden.addEventListener('keydown', e => {
+    if(e.key === 'Backspace' && pinBuffer.length > 0) {
+      pinBuffer = pinBuffer.slice(0, -1);
+      updatePinDots();
+    }
+  });
+});
 function lock() {
   document.getElementById('main-content').style.display = 'none';
   document.getElementById('pin-screen').style.display = 'flex';
   pinBuffer = '';
   updatePinDots();
+  syncHiddenInput();
+  setTimeout(() => document.getElementById('pin-hidden')?.focus(), 100);
 }
 
 // ── data ──
