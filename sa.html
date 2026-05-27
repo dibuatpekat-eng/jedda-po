@@ -44,7 +44,7 @@ html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webk
 .refresh-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; }
 
 /* ── article blocks ── */
-.article-list { padding: 0 24px; }
+.article-list { }
 .article-block { border-bottom: 1px solid #d8d4ce; }
 .article-block:last-child { border-bottom: none; }
 .article-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; cursor: pointer; user-select: none; gap: 12px; }
@@ -86,14 +86,14 @@ html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webk
 .cr-sisa.low  { color: #c8a04a; }
 .cr-est { font-size: 9px; font-weight: 300; font-family: 'IBM Plex Mono', monospace; text-align: right; white-space: nowrap; color: #aaa; }
 
-/* ── flat article rows ── */
-.sa-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #eae6e0; gap: 16px; }
-.sa-row:last-child { border-bottom: none; }
-.sa-art-name { font-size: 14px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.sa-est { font-size: 11px; font-family: 'IBM Plex Mono', monospace; font-weight: 300; white-space: nowrap; }
+/* ── 2-col article grid ── */
+.sa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #d8d4ce; margin-top: 1px; }
+.sa-card { background: #f0ede8; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.sa-art-name { font-size: 12px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; line-height: 1.3; }
+.sa-est { font-size: 10px; font-family: 'IBM Plex Mono', monospace; font-weight: 300; }
 .sa-est-active { color: #3a5a3a; }
 .sa-est-temp   { color: #888; }
-.sa-est-closed { color: #ccc; letter-spacing: 0.5px; }
+.sa-est-closed { color: #ccc; }
 </style>
 </head>
 <body>
@@ -322,13 +322,13 @@ function render() {
       estCls = 'sa-est-closed';
     }
 
-    return `<div class="sa-row">
+    return `<div class="sa-card">
       <span class="sa-art-name">${p.name}</span>
       <span class="sa-est ${estCls}">${estText}</span>
     </div>`;
   }).join('');
 
-  document.getElementById('article-list').innerHTML = html;
+  document.getElementById('article-list').innerHTML = '<div class="sa-grid">' + html + '</div>';
 }
 </script>
 </body>
