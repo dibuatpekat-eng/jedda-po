@@ -184,7 +184,7 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .done-cell:nth-last-child(-n+2) { border-bottom: none; }
 .done-cell-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 8px; font-weight: 300; }
 .done-cell-val { font-size: 14px; color: #111; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.4; }
-.done-note { margin-top: 40px; font-size: 12px; color: #777; line-height: 1.9; font-weight: 300; max-width: 320px; font-family: 'IBM Plex Sans', sans-serif; }
+.done-note { margin-top: 40px; font-size: 12px; color: #777; line-height: 1.8; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; }
 .done-new-btn { margin-top: 40px; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; text-decoration: underline; text-decoration-color: #d8d4ce; font-weight: 300; }
 .done-footer { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #ccc; font-weight: 300; margin-top: 48px; }
 </style>
@@ -565,7 +565,7 @@ function render(){
             <div class="done-cell-val">${esc(st.phone)}</div>
           </div>
         </div>
-        <div class="done-note">tim jedda akan menghubungi via whatsapp dalam 1x24 jam untuk konfirmasi pesanan dan informasi pengiriman.</div>
+        <div class="done-note">tim jedda akan menghubungi via whatsapp dalam 2x24 jam untuk konfirmasi pesanan dan informasi pengiriman.</div>
         <button class="done-new-btn" onclick="resetAll()">+ order baru</button>
       </div>
       <div class="done-footer">jedda — ${new Date().getFullYear()}</div>
@@ -614,7 +614,7 @@ function render(){
       </div>
       <div class="submit-area">
         <button class="submit-btn" id="submit-btn" onclick="submitOrder()">confirm order →</button>
-        <div class="submit-note">tim jedda akan menghubungi via whatsapp dalam 1x24 jam</div>
+        <div class="submit-note">tim jedda akan menghubungi via whatsapp dalam 2x24 jam</div>
       </div>`;
     return;
   }
