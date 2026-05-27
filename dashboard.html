@@ -514,7 +514,7 @@ async function loadOrders(){
         status:         o.status || "baru",
         created:        new Date(o.created_at),
         maxDays:        maxDays,
-        items:          items.map(i => ({name: i.article, color: i.color, qty: i.qty}))
+        items:          items.map(i => ({name: i.article, color: i.color, size: i.size||null, qty: i.qty}))
       };
     });
 
@@ -607,9 +607,10 @@ function renderTable(){
     const entry = fmtEntry(o.created);
 
     // item: full list, each on its own line
-    const itemList = o.items.map(i =>
-      `<div class="item-line">${i.name} <span class="item-meta">${i.color} · ${i.qty}pc</span></div>`
-    ).join("");
+    const itemList = o.items.map(i => {
+      const meta = [i.color, i.size].filter(Boolean).join(' · ');
+      return `<div class="item-line">${i.name} <span class="item-meta">${meta} · ${i.qty}pc</span></div>`;
+    }).join("");
 
     // aksi kolom per status
     let aksiHtml = "";
@@ -666,7 +667,10 @@ function setDateFilter(mode, el){
 function setSearch(v){ searchQuery = v; renderTable(); }
 
 function buildWaKonfirmasi(o){
-  const lines = o.items.map(i=>`• ${i.name} — ${i.color} (${i.qty} pcs)`).join("\n");
+  const lines = o.items.map(i=>{
+    const meta = [i.color, i.size].filter(Boolean).join(' · ');
+    return `• ${i.name} — ${meta} (${i.qty} pcs)`;
+  }).join("\n");
   return `Halo ${o.name.split(" ")[0]}!\n\nPesanan pre-order kamu di Jedda sudah kami terima dan sedang diproses.\n\nRingkasan pesanan:\n${lines}\n\nEstimasi kirim: ${getEstDate(o.maxDays,o.created)}\n\nUntuk konfirmasi pengiriman, mohon transfer ongkos kirim ke:\nBCA 1234567890 a/n Jedda\nNominal: Rp [ONGKIR]\n\nSetelah transfer, kirim bukti ke sini ya. Terima kasih!`;
 }
 function buildWaFollowUp(o){
@@ -767,11 +771,13 @@ function renderPanel(o){
     return `<span class="flow-step ${isDone?'done':''} ${isCurrent?'current':''}">${STATUS_LABEL[s]}</span>${i<STATUSES.length-1?'<span class="flow-sep"> › </span>':''}`;
   }).join("");
 
-  const itemRows = o.items.map(i=>`
-    <div class="dp-item-row">
-      <div><div class="dp-item-name">${i.name}</div><div class="dp-item-color">${i.color}</div></div>
+  const itemRows = o.items.map(i=>{
+    const meta = [i.color, i.size].filter(Boolean).join(' · ');
+    return `<div class="dp-item-row">
+      <div><div class="dp-item-name">${i.name}</div><div class="dp-item-color">${meta}</div></div>
       <div class="dp-item-qty">${i.qty} pcs</div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 
   const notesHtml = o.notes
     ? `<div class="dp-row"><span class="dp-key">catatan</span><span class="dp-val" style="color:#666;font-style:italic">${o.notes}</span></div>`
@@ -836,6 +842,24 @@ let batches = [];
 let allItems = [];
 let editingBatchId = null;
 
+// Mirror of form.html PRODUCTS — single source of truth for artikel+warna+size
+const PRODUCTS = [
+  { name:"Rhea Jacket",      colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
+  { name:"Phi Jacket",       colors:["Auburn","Breen"],          sizes:["S/M","L/XL"] },
+  { name:"The Classic Coat", colors:["Ecru","Bistre"],           sizes:["S/M","L/XL"] },
+  { name:"The Overcape",     colors:["Ecru"],                    sizes:null            },
+  { name:"Semi Blazer",      colors:["Grain"],                   sizes:["S","M","L"]   },
+  { name:"Kiro Cropped Vest",colors:["Breen","Auburn"],          sizes:["S/M","L/XL"] },
+  { name:"Minji Vest",       colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
+  { name:"Sichi Vest",       colors:["Auburn"],                  sizes:["S","M","L"]   },
+  { name:"Yuwa Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
+  { name:"Riku Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
+  { name:"Kato Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
+  { name:"Miru Pants",       colors:["Bistre","Breen"],          sizes:["S","M","L"]   },
+  { name:"Kae Pants",        colors:["Bistre","Auburn"],         sizes:["S","M","L"]   },
+  { name:"Rho Pants",        colors:["Bistre","Breen"],          sizes:["S","M","L"]   },
+];
+
 function showPage(page) {
   const poPage = document.getElementById('po-page');
   const settingsPage = document.getElementById('settings-page');
@@ -847,26 +871,26 @@ function showPage(page) {
 }
 
 async function loadBatches() {
-  // Ambil semua data
   const { data: batchData } = await _sb.from('po_batches').select('*').order('starts_at');
-  const { data: items } = await _sb.from('po_items').select('article, color, qty, order_id');
+  const { data: items } = await _sb.from('po_items').select('article, color, size, qty, order_id');
   const { data: activeOrders } = await _sb.from('po_orders').select('id, status').in('status', ['baru','tunggu_ongkir','diproses']);
   const activeIds = new Set((activeOrders||[]).map(o => o.id));
 
   allItems = items || [];
 
-  // Hitung usage per batch per artikel per warna
+  // Hitung usage per slot key "Artikel · Warna · Size"
+  const usedMap = {};
+  allItems.filter(i => activeIds.has(i.order_id)).forEach(i => {
+    const sz = i.size || 'OS';
+    const key = i.article + ' · ' + i.color + ' · ' + sz;
+    usedMap[key] = (usedMap[key] || 0) + i.qty;
+  });
+
   batches = (batchData||[]).map(b => {
-    const slots = b.slots || {}; // { "Rhea · Cream": 50, "Rhea · Black": 30, ... }
+    const slots = b.slots || {};
     const used = {};
-    // used dihitung dari PO aktif yang ada di batch ini
-    // batch.articles = ["Rhea Flare Jacket", "Phi Top", ...]
-    const batchArticles = b.articles || [];
-    batchArticles.forEach(artName => {
-      allItems.filter(i => activeIds.has(i.order_id) && i.article === artName).forEach(i => {
-        const key = artName + ' · ' + i.color;
-        used[key] = (used[key] || 0) + i.qty;
-      });
+    Object.keys(slots).forEach(key => {
+      used[key] = usedMap[key] || 0;
     });
     return { ...b, used };
   });
@@ -934,33 +958,34 @@ function openBatchModal(batchId) {
   document.getElementById('bm-start').value = batch ? batch.starts_at.slice(0,10) : '';
   document.getElementById('bm-end').value   = batch ? batch.ends_at.slice(0,10)   : '';
 
-  // Derive all unique artikel+warna from po_items
-  const artColorMap = {};
-  allItems.forEach(i => {
-    if(!artColorMap[i.article]) artColorMap[i.article] = new Set();
-    artColorMap[i.article].add(i.color);
-  });
-
   const slots = batch ? (batch.slots || {}) : {};
   const checkedArts = batch ? (batch.articles || []) : [];
 
-  const html = Object.keys(artColorMap).sort().map(artName => {
-    const isChecked = checkedArts.includes(artName);
-    const colorRows = Array.from(artColorMap[artName]).sort().map(color => {
-      const key = artName + ' · ' + color;
-      const val = slots[key] || '';
-      return '<div class="bm-slot-row" id="bm-rows-'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'">'
-        + '<span class="bm-slot-color" style="color:#888;padding-left:12px">'+color+'</span>'
-        + '<input class="bm-slot-input" type="number" min="0" placeholder="0" value="'+val+'" id="bm-slot-'+key.replace(/[^a-zA-Z0-9]/g,'_')+'">'
-        + '<span class="bm-slot-unit">pcs</span></div>';
+  const html = PRODUCTS.map(p => {
+    const artKey = p.name.replace(/[^a-zA-Z0-9]/g,'_');
+    const isChecked = checkedArts.includes(p.name);
+    const sizes = p.sizes || ['OS'];
+
+    const colorRows = p.colors.map(color => {
+      const colorSections = sizes.map(sz => {
+        const key = p.name + ' · ' + color + ' · ' + sz;
+        const val = slots[key] || '';
+        const inputId = 'bm-slot-' + key.replace(/[^a-zA-Z0-9]/g,'_');
+        const sizeLabel = p.sizes ? sz : 'one size';
+        return '<div class="bm-slot-row">'
+          + '<span class="bm-slot-color" style="color:#888;padding-left:24px">'+color+' · '+sizeLabel+'</span>'
+          + '<input class="bm-slot-input" type="number" min="0" placeholder="0" value="'+val+'" id="'+inputId+'">'
+          + '<span class="bm-slot-unit">pcs</span></div>';
+      }).join('');
+      return colorSections;
     }).join('');
 
     return '<div style="margin-bottom:16px">'
       + '<div class="dp-checkbox-wrap" style="border-bottom:1px solid #d8d4ce;padding:10px 0">'
-      + '<input type="checkbox" class="dp-checkbox" id="bm-art-'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'"'+(isChecked?' checked':'')+' onchange=\"toggleBmArt(this,&quot;'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'&quot;)\">'
-      + '<label style="font-size:13px;font-weight:300;font-family:IBM Plex Sans,sans-serif;color:#111;cursor:pointer" for="bm-art-'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'">'+artName+'</label>'
+      + '<input type="checkbox" class="dp-checkbox" id="bm-art-'+artKey+'"'+(isChecked?' checked':'')+' onchange="toggleBmArt(this,\''+artKey+'\')">'
+      + '<label style="font-size:13px;font-weight:300;font-family:IBM Plex Sans,sans-serif;color:#111;cursor:pointer" for="bm-art-'+artKey+'">'+p.name+'</label>'
       + '</div>'
-      + '<div id="bm-colors-'+artName.replace(/[^a-zA-Z0-9]/g,'_')+'" style="display:'+(isChecked?'block':'none')+'">'+colorRows+'</div>'
+      + '<div id="bm-colors-'+artKey+'" style="display:'+(isChecked?'block':'none')+'">'+colorRows+'</div>'
       + '</div>';
   }).join('');
 
@@ -985,25 +1010,22 @@ async function saveBatch() {
   const end   = document.getElementById('bm-end').value;
   if(!start || !end) { alert('isi tanggal dulu.'); return; }
 
-  // Collect checked articles and their slots
-  const artColorMap = {};
-  allItems.forEach(i => {
-    if(!artColorMap[i.article]) artColorMap[i.article] = new Set();
-    artColorMap[i.article].add(i.color);
-  });
-
   const checkedArts = [];
   const slots = {};
-  Object.keys(artColorMap).sort().forEach(artName => {
-    const cbId = 'bm-art-' + artName.replace(/[^a-zA-Z0-9]/g,'_');
-    const cb = document.getElementById(cbId);
+
+  PRODUCTS.forEach(p => {
+    const artKey = p.name.replace(/[^a-zA-Z0-9]/g,'_');
+    const cb = document.getElementById('bm-art-' + artKey);
     if(cb && cb.checked) {
-      checkedArts.push(artName);
-      Array.from(artColorMap[artName]).sort().forEach(color => {
-        const key = artName + ' · ' + color;
-        const inputId = 'bm-slot-' + key.replace(/[^a-zA-Z0-9]/g,'_');
-        const el = document.getElementById(inputId);
-        slots[key] = parseInt(el ? el.value : 0) || 0;
+      checkedArts.push(p.name);
+      const sizes = p.sizes || ['OS'];
+      p.colors.forEach(color => {
+        sizes.forEach(sz => {
+          const key = p.name + ' · ' + color + ' · ' + sz;
+          const inputId = 'bm-slot-' + key.replace(/[^a-zA-Z0-9]/g,'_');
+          const el = document.getElementById(inputId);
+          slots[key] = parseInt(el ? el.value : 0) || 0;
+        });
       });
     }
   });

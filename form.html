@@ -19,7 +19,7 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .header-brand { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; }
 .header-meta { text-align: right; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; line-height: 1.9; font-weight: 300; }
 
-/* ── static rule (replaces ticker) ── */
+/* ── static rule ── */
 .header-rule { margin: 24px 0 0; border: none; border-top: 1px solid #ccc; }
 
 /* ── eyebrow ── */
@@ -69,7 +69,7 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .cart-panel-close:hover { color: #111; }
 .cart-item-row { display: flex; align-items: baseline; justify-content: space-between; padding: 13px 28px; border-bottom: 1px solid #e8e4df; }
 .cart-item-name { font-size: 13px; font-weight: 300; color: #222; font-family: 'IBM Plex Sans', sans-serif; }
-.cart-item-color { font-size: 10px; color: #bbb; margin-left: 5px; font-weight: 300; }
+.cart-item-meta { font-size: 10px; color: #bbb; margin-left: 5px; font-weight: 300; }
 .cart-item-right { display: flex; align-items: center; gap: 16px; }
 .cart-item-qty { font-size: 11px; color: #888; font-weight: 300; }
 .cart-item-del { font-size: 14px; color: #ccc; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; line-height: 1; transition: color 0.15s; }
@@ -82,28 +82,46 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 /* ── dialog ── */
 .dialog-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.55); z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.2s; display: flex; align-items: flex-end; justify-content: center; }
 .dialog-overlay.open { opacity: 1; pointer-events: all; }
-.dialog { background: #f0ede8; width: 100%; max-width: 600px; max-height: 75vh; overflow-y: auto; transform: translateY(20px); opacity: 0; transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.2s; pointer-events: none; }
+.dialog { background: #f0ede8; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; transform: translateY(20px); opacity: 0; transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.2s; pointer-events: none; }
 .dialog.open { transform: translateY(0); opacity: 1; pointer-events: all; }
 .dialog-top { padding: 28px 28px 20px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #d8d4ce; }
 .dialog-name { font-size: 14px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
 .dialog-hint { font-size: 7px; letter-spacing: 2px; text-transform: uppercase; color: #999; margin-top: 5px; font-weight: 300; }
 .dialog-close { font-size: 14px; color: #bbb; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; line-height: 1; }
 .dialog-close:hover { color: #111; }
+
+/* ── dialog: color section header ── */
+.dcolor-section { border-bottom: 1px solid #e8e4df; }
+.dcolor-section-header { padding: 14px 28px 10px; display: flex; justify-content: space-between; align-items: center; }
+.dcolor-section-name { font-size: 12px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
+.dcolor-section-est { font-size: 9px; color: #aaa; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.5px; }
+.dcolor-section-soldout { font-size: 9px; color: #c0392b; font-family: 'IBM Plex Mono', monospace; }
+
+/* ── dialog: size rows inside color section ── */
+.dsize-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 28px 10px 40px; border-top: 1px solid #f0ede8; background: #f8f6f3; }
+.dsize-row:first-child { border-top: none; }
+.dsize-row.soldout .dsize-label { opacity: 0.4; }
+.dsize-row.soldout .qty-btn { opacity: 0.3; pointer-events: none; }
+.dsize-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #555; font-family: 'IBM Plex Mono', monospace; font-weight: 300; min-width: 48px; }
+.dsize-sisa { font-size: 9px; color: #bbb; font-family: 'IBM Plex Mono', monospace; }
+.dsize-sisa.low { color: #c8a04a; }
+.dsize-sisa.zero { color: #c0392b; }
+
+/* one size variant — same as old dcolor-row */
 .dcolor-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid #e8e4df; }
 .dcolor-name { font-size: 11px; letter-spacing: 1px; font-weight: 300; color: #333; font-family: 'IBM Plex Sans', sans-serif; }
+.est-batch-note { font-size: 9px; color: #aaa; font-family: 'IBM Plex Mono', monospace; margin-top: 4px; letter-spacing: 0.5px; }
+
 .qty-ctrl { display: flex; align-items: center; gap: 20px; }
 .qty-btn { width: 24px; height: 24px; border: 1px solid #ccc; background: transparent; cursor: pointer; font-size: 14px; color: #666; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; line-height: 1; transition: all 0.15s; }
 .qty-btn:hover { border-color: #111; color: #111; }
 .qty-num { font-size: 12px; min-width: 20px; text-align: center; color: #111; font-weight: 300; }
 .dialog-next { display: block; width: 100%; padding: 18px 28px; background: #111; color: #f0ede8; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; font-weight: 300; text-align: left; transition: opacity 0.15s; }
 .dialog-next:hover { opacity: 0.85; }
-/* soldout */
+
+/* soldout whole item card */
 .item-card.soldout { opacity: 0.4; pointer-events: none; }
 .item-card.soldout .item-card-colors::after { content: ' — habis'; color: #c0392b; }
-.dcolor-row.soldout .dcolor-name::after { content: ' — habis'; color: #c0392b; font-size: 9px; margin-left: 6px; }
-.dcolor-row.soldout .qty-btn { opacity: 0.3; pointer-events: none; }
-/* est from batch */
-.est-batch-note { font-size: 9px; color: #aaa; font-family: 'IBM Plex Mono', monospace; margin-top: 4px; letter-spacing: 0.5px; }
 
 /* ── back ── */
 .back-btn { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 28px 28px 0; display: block; font-weight: 300; }
@@ -126,7 +144,6 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .est-inline { margin: 0 28px; padding: 12px 0; border-bottom: 1px solid #e0dbd4; display: flex; justify-content: space-between; align-items: baseline; }
 .est-inline-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 300; }
 .est-inline-val { font-size: 12px; font-weight: 300; color: #333; font-family: 'IBM Plex Sans', sans-serif; text-align: right; }
-.est-inline-days { font-size: 10px; color: #aaa; font-weight: 300; }
 
 /* ── fields ── */
 .fields-wrap { padding: 36px 28px 0; }
@@ -202,7 +219,7 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
     <div class="dialog-top">
       <div>
         <div id="dialog-title" class="dialog-name"></div>
-        <div class="dialog-hint">pilih warna & jumlah</div>
+        <div class="dialog-hint">pilih warna & ukuran</div>
       </div>
       <button class="dialog-close" onclick="closeSheet()">×</button>
     </div>
@@ -212,22 +229,23 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 </div>
 
 <script>
+// sizes: array of size labels. 
+// null = one size (no size selector, qty directly on color row)
 const PRODUCTS = [
-  { cat:"outerwear", name:"Rhea Jacket",       colors:["Breen","Bistre","Auburn"], days:7  },
-  { cat:"outerwear", name:"Phi Jacket",         colors:["Auburn","Breen"],          days:7  },
-  { cat:"outerwear", name:"The Classic Coat",   colors:["Ecru","Bistre"],           days:10 },
-  { cat:"outerwear", name:"The Overcape",       colors:["Ecru"],                    days:10 },
-  { cat:"outerwear", name:"Semi Blazer",        colors:["Grain"],                   days:7  },
-  { cat:"vest",      name:"Kiro Cropped Vest",  colors:["Breen","Auburn"],          days:5  },
-  { cat:"vest",      name:"Minji Vest",         colors:["Breen","Bistre","Auburn"], days:5  },
-  { cat:"vest",      name:"Chae Vest",          colors:["Grain","Bistre"],          days:5  },
-  { cat:"vest",      name:"Sichi Vest",         colors:["Auburn"],                  days:5  },
-  { cat:"shirt",     name:"Yuwa Shirt",         colors:["Pebble","Shell"],          days:5  },
-  { cat:"shirt",     name:"Riku Shirt",         colors:["Pebble","Shell"],          days:5  },
-  { cat:"shirt",     name:"Kato Shirt",         colors:["Pebble","Shell"],          days:5  },
-  { cat:"bottom",    name:"Miru Pants",         colors:["Bistre","Breen"],          days:5  },
-  { cat:"bottom",    name:"Kae Pants",          colors:["Bistre","Auburn"],         days:5  },
-  { cat:"bottom",    name:"Rho Pants",          colors:["Bistre","Breen"],          days:5  },
+  { cat:"outerwear", name:"Rhea Jacket",      colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"], days:7  },
+  { cat:"outerwear", name:"Phi Jacket",        colors:["Auburn","Breen"],          sizes:["S/M","L/XL"], days:7  },
+  { cat:"outerwear", name:"The Classic Coat",  colors:["Ecru","Bistre"],           sizes:["S/M","L/XL"], days:10 },
+  { cat:"outerwear", name:"The Overcape",      colors:["Ecru"],                    sizes:null,            days:10 },
+  { cat:"outerwear", name:"Semi Blazer",       colors:["Grain"],                   sizes:["S","M","L"],   days:7  },
+  { cat:"vest",      name:"Kiro Cropped Vest", colors:["Breen","Auburn"],          sizes:["S/M","L/XL"], days:5  },
+  { cat:"vest",      name:"Minji Vest",        colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"], days:5  },
+  { cat:"vest",      name:"Sichi Vest",        colors:["Auburn"],                  sizes:["S","M","L"],   days:5  },
+  { cat:"shirt",     name:"Yuwa Shirt",        colors:["Pebble","Shell"],          sizes:["S/M","L/XL"], days:5  },
+  { cat:"shirt",     name:"Riku Shirt",        colors:["Pebble","Shell"],          sizes:["S/M","L/XL"], days:5  },
+  { cat:"shirt",     name:"Kato Shirt",        colors:["Pebble","Shell"],          sizes:["S/M","L/XL"], days:5  },
+  { cat:"bottom",    name:"Miru Pants",        colors:["Bistre","Breen"],          sizes:["S","M","L"],   days:5  },
+  { cat:"bottom",    name:"Kae Pants",         colors:["Bistre","Auburn"],         sizes:["S","M","L"],   days:5  },
+  { cat:"bottom",    name:"Rho Pants",         colors:["Bistre","Breen"],          sizes:["S","M","L"],   days:5  },
 ];
 
 const _supabase = supabase.createClient(
@@ -235,121 +253,108 @@ const _supabase = supabase.createClient(
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
 );
 
-const st = { phase:"items", cart:{}, activeSheet:null, name:"", phone:"", address:"", notes:"", orderNum:null, savedDays:0 };
+// cart key: "ArticleName||Color||Size"  (size = "OS" for one-size)
+const st = { phase:"items", cart:{}, activeSheet:null, name:"", phone:"", address:"", notes:"", orderNum:null, savedEstDate:null };
 
-// batch slot state — loaded from Supabase
-let slotData = {}; // { "Rhea Jacket · Breen": { available: 50, batchId: 3, endsAt: "2026-06-03" } }
+let slotData = {}; // key: "Article · Color · Size" → { total, used, remaining, endsAt }
 let batchLoaded = false;
 
 async function loadBatchSlots() {
   try {
     const today = new Date().toISOString().slice(0,10);
-    // Get active batches (ends_at not past)
     const { data: batches } = await _supabase.from('po_batches').select('*').gte('ends_at', today).order('ends_at', { ascending: true });
-    // Get active PO items (baru, tunggu_ongkir, diproses)
     const { data: activeOrders } = await _supabase.from('po_orders').select('id').in('status', ['baru','tunggu_ongkir','diproses']);
     const activeIds = new Set((activeOrders||[]).map(o => o.id));
-    const { data: items } = await _supabase.from('po_items').select('article, color, qty, order_id');
+    const { data: items } = await _supabase.from('po_items').select('article, color, size, qty, order_id');
 
-    // Count used qty per artikel · warna across active orders
     const usedMap = {};
     (items||[]).filter(i => activeIds.has(i.order_id)).forEach(i => {
-      const key = i.article + ' · ' + i.color;
+      const sz = i.size || 'OS';
+      const key = i.article + ' · ' + i.color + ' · ' + sz;
       usedMap[key] = (usedMap[key] || 0) + i.qty;
     });
 
-    // Build slotData — find best available batch per artikel · warna
-    // Batch sudah diurutkan ends_at asc. Kalau batch pertama penuh, cek batch berikutnya.
     slotData = {};
     (batches||[]).forEach(b => {
       const slots = b.slots || {};
       Object.keys(slots).forEach(key => {
-        // Kalau sudah ada slot dari batch sebelumnya dan masih ada sisa, skip
         if(slotData[key] && slotData[key].remaining > 0) return;
         const total = slots[key] || 0;
         const used = usedMap[key] || 0;
         const remaining = total - used;
-        // Override ke batch ini (lebih awal yang punya sisa, atau batch terakhir kalau semua penuh)
         slotData[key] = { total, used, remaining, batchId: b.id, endsAt: b.ends_at };
       });
     });
   } catch(e) {
-    console.warn('batch load failed, form will work without slot restrictions', e);
+    console.warn('batch load failed', e);
   }
   batchLoaded = true;
   render();
 }
 
-function getSlot(articleName, color) {
-  return slotData[articleName + ' · ' + color] || null;
+function slotKey(article, color, size) {
+  return article + ' · ' + color + ' · ' + (size || 'OS');
 }
-function isColorSoldout(articleName, color) {
+function getSlot(article, color, size) {
+  return slotData[slotKey(article, color, size)] || null;
+}
+function isSoldout(article, color, size) {
   if(!batchLoaded) return false;
-  const slot = getSlot(articleName, color);
-  if(!slot) return false; // no batch configured = tetap bisa dipilih
+  const slot = getSlot(article, color, size);
+  if(!slot) return false;
   return slot.remaining <= 0;
 }
 function isArticleSoldout(articleName) {
   const p = PRODUCTS.find(x => x.name === articleName);
   if(!p) return false;
-  return p.colors.every(c => isColorSoldout(articleName, c));
-}
-function getBestEstDate(articleName, color) {
-  const slot = getSlot(articleName, color);
-  if(!slot || !slot.endsAt) return null;
-  return new Date(slot.endsAt).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
-}
-function getCartEstDate() {
-  // Find latest ends_at across all cart items
-  const items = cartItems();
-  if(!items.length) return null;
-  let latest = null;
-  items.forEach(i => {
-    const slot = getSlot(i.name, i.color);
-    if(slot && slot.endsAt) {
-      if(!latest || slot.endsAt > latest) latest = slot.endsAt;
-    }
-  });
-  if(!latest) return null;
-  return new Date(latest).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+  const sizes = p.sizes || ['OS'];
+  return p.colors.every(c => sizes.every(s => isSoldout(articleName, c, s)));
 }
 function getCartEndsAt() {
-  const items = cartItems();
   let latest = null;
-  items.forEach(i => {
-    const slot = getSlot(i.name, i.color);
+  cartItems().forEach(i => {
+    const slot = getSlot(i.name, i.color, i.size);
     if(slot && slot.endsAt) {
       if(!latest || slot.endsAt > latest) latest = slot.endsAt;
     }
   });
   return latest;
 }
+function getCartEstDate() {
+  const raw = getCartEndsAt();
+  if(!raw) return null;
+  return new Date(raw).toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'});
+}
 
-function k(n,c){ return n+"||"+c; }
-function getQty(n,c){ return st.cart[k(n,c)]||0; }
-function setQty(n,c,v){
-  const key=k(n,c);
-  if(v<=0) delete st.cart[key]; else st.cart[key]=v;
-  updateItemCard(n); updateDialogRow(n,c); updateCartFooter();
+// cart key helpers
+function k(n,c,s){ return n+"||"+c+"||"+(s||'OS'); }
+function getQty(n,c,s){ return st.cart[k(n,c,s)]||0; }
+function setQty(n,c,s,v){
+  const key=k(n,c,s);
+  if(v<=0) delete st.cart[key]; else st.cart[key]=Math.max(0,v);
+  updateItemCard(n); updateCartFooter();
+  // re-render the specific size row qty number in dialog
+  const el=document.getElementById('dq-'+esc(n+c+(s||'OS')));
+  if(el) el.textContent=getQty(n,c,s)||'—';
 }
 function totalQty(){ return Object.values(st.cart).reduce((a,b)=>a+b,0); }
 function cartItems(){
   return Object.entries(st.cart).filter(([,q])=>q>0).map(([key,q])=>{
-    const [n,c]=key.split("||"); const p=PRODUCTS.find(x=>x.name===n);
-    const slot = getSlot(n,c);
-    return {name:n,color:c,qty:q,days:p?.days||7,endsAt:slot?.endsAt||null};
+    const [n,c,s]=key.split("||");
+    const p=PRODUCTS.find(x=>x.name===n);
+    const slot=getSlot(n,c,s);
+    return {name:n,color:c,size:s==='OS'?null:s,qty:q,days:p?.days||7,endsAt:slot?.endsAt||null};
   });
 }
-function maxDays(){ const c=cartItems(); return c.length?Math.max(...c.map(x=>x.days)):0; }
-function estDisplay() {
-  const d = getCartEstDate();
-  if(d) return d;
-  const days = maxDays();
-  if(!days) return "—";
-  return "±" + days + " hari kerja";
+function itemTotalQty(n){
+  return Object.entries(st.cart).filter(([key,q])=>key.startsWith(n+"||")&&q>0).reduce((a,[,q])=>a+q,0);
 }
-function itemTotalQty(n){ return PRODUCTS.find(x=>x.name===n)?.colors.reduce((a,c)=>a+getQty(n,c),0)||0; }
-function getEstDate(days){ const d=new Date(); d.setDate(d.getDate()+days); return d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"}); }
+function maxDays(){ const c=cartItems(); return c.length?Math.max(...c.map(x=>x.days)):0; }
+function estDisplay(){
+  const d=getCartEstDate(); if(d) return d;
+  const days=maxDays(); if(!days) return '—';
+  return '±'+days+' hari kerja';
+}
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
 
 // ── dialog ──
@@ -357,6 +362,7 @@ function openSheet(name){
   st.activeSheet=name;
   const p=PRODUCTS.find(x=>x.name===name);
   document.getElementById("dialog-title").textContent=p.name;
+  document.getElementById("dialog-hint") && null; // hint already in HTML
   renderDialogColors(p);
   document.getElementById("dialog-overlay").classList.add("open");
   document.getElementById("dialog-el").classList.add("open");
@@ -367,36 +373,82 @@ function closeSheet(){
   st.activeSheet=null;
   updateCartFooter();
 }
-function proceedFromDialog(){
-  closeSheet();
-  // kalau sudah ada item, langsung tampilkan cart footer
-  updateCartFooter();
-}
+function proceedFromDialog(){ closeSheet(); updateCartFooter(); }
+
 function renderDialogColors(p){
-  document.getElementById("dialog-colors").innerHTML=p.colors.map(col=>{
-    const q=getQty(p.name,col);
-    const soldout=isColorSoldout(p.name,col);
-    const slot=getSlot(p.name,col);
-    const estNote=slot&&slot.endsAt&&!soldout
-      ? `<span class="est-batch-note">est. ${new Date(slot.endsAt).toLocaleDateString('id-ID',{day:'numeric',month:'long'})}</span>`
-      : "";
-    return `<div class="dcolor-row${soldout?' soldout':''}">
-      <div>
-        <span class="dcolor-name">${col}</span>
-        ${estNote}
+  const isOneSize = !p.sizes;
+
+  if(isOneSize){
+    // One size: same as old color rows, qty directly on each color
+    document.getElementById("dialog-colors").innerHTML = p.colors.map(col => {
+      const q = getQty(p.name, col, 'OS');
+      const slot = getSlot(p.name, col, 'OS');
+      const soldout = isSoldout(p.name, col, 'OS');
+      const estNote = slot && slot.endsAt && !soldout
+        ? `<span class="est-batch-note">est. ${new Date(slot.endsAt).toLocaleDateString('id-ID',{day:'numeric',month:'long'})}</span>`
+        : '';
+      return `<div class="dcolor-row${soldout?' soldout':''}">
+        <div>
+          <span class="dcolor-name">${col}</span>
+          ${estNote}
+        </div>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="setQty('${esc(p.name)}','${col}','OS',${q}-1)" ${soldout?'disabled':''}>−</button>
+          <span class="qty-num" id="dq-${esc(p.name+col+'OS')}">${q||'—'}</span>
+          <button class="qty-btn" onclick="setQty('${esc(p.name)}','${col}','OS',${q}+1)" ${soldout?'disabled':''}>+</button>
+        </div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  // Has sizes: color section header + indented size rows
+  document.getElementById("dialog-colors").innerHTML = p.colors.map(col => {
+    // Pick earliest endsAt for this color (across all sizes)
+    let colorEst = null;
+    p.sizes.forEach(sz => {
+      const slot = getSlot(p.name, col, sz);
+      if(slot && slot.endsAt) { if(!colorEst || slot.endsAt < colorEst) colorEst = slot.endsAt; }
+    });
+    const allSoldout = p.sizes.every(sz => isSoldout(p.name, col, sz));
+    const estLabel = colorEst && !allSoldout
+      ? `<span class="dcolor-section-est">est. ${new Date(colorEst).toLocaleDateString('id-ID',{day:'numeric',month:'long'})}</span>`
+      : (allSoldout ? `<span class="dcolor-section-soldout">habis</span>` : '');
+
+    const sizeRows = p.sizes.map(sz => {
+      const q = getQty(p.name, col, sz);
+      const soldout = isSoldout(p.name, col, sz);
+      const slot = getSlot(p.name, col, sz);
+      // sisa label
+      let sisaLabel = '';
+      if(slot) {
+        const rem = slot.remaining;
+        const pct = slot.total > 0 ? rem/slot.total : 1;
+        if(rem <= 0) sisaLabel = `<span class="dsize-sisa zero">habis</span>`;
+        else if(pct < 0.2) sisaLabel = `<span class="dsize-sisa low">${rem} sisa</span>`;
+        else sisaLabel = `<span class="dsize-sisa">${rem} sisa</span>`;
+      }
+      const safeName = p.name.replace(/'/g,"\\'");
+      const safeSz = sz.replace(/'/g,"\\'");
+      return `<div class="dsize-row${soldout?' soldout':''}">
+        <span class="dsize-label">${sz}</span>
+        ${sisaLabel}
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="setQty('${safeName}','${col}','${safeSz}',${q}-1)" ${soldout?'disabled':''}>−</button>
+          <span class="qty-num" id="dq-${esc(p.name+col+sz)}">${q||'—'}</span>
+          <button class="qty-btn" onclick="setQty('${safeName}','${col}','${safeSz}',${q}+1)" ${soldout?'disabled':''}>+</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="dcolor-section">
+      <div class="dcolor-section-header">
+        <span class="dcolor-section-name">${col}</span>
+        ${estLabel}
       </div>
-      <div class="qty-ctrl">
-        <button class="qty-btn" onclick="setQty('${p.name.replace(/'/g,"\\'")}','${col}',${q}-1)" ${soldout?'disabled':''}>−</button>
-        <span class="qty-num" id="dq-${esc(p.name+col)}">${q||"—"}</span>
-        <button class="qty-btn" onclick="setQty('${p.name.replace(/'/g,"\\'")}','${col}',${q}+1)" ${soldout?'disabled':''}>+</button>
-      </div>
+      ${sizeRows}
     </div>`;
-  }).join("");
-}
-function updateDialogRow(n,c){
-  const el=document.getElementById("dq-"+esc(n+c));
-  if(el) el.textContent=getQty(n,c)||"—";
-  if(st.activeSheet===n){ const p=PRODUCTS.find(x=>x.name===n); if(p) renderDialogColors(p); }
+  }).join('');
 }
 
 // ── lightweight DOM updates ──
@@ -419,10 +471,10 @@ function updateItemCard(n){
 function updateCartFooter(){
   const f=document.getElementById("cart-footer");
   if(!f||st.phase!=="items") return;
-  const tq=totalQty(), md=maxDays();
+  const tq=totalQty();
   f.classList.toggle("visible",tq>0);
   const left=f.querySelector(".cf-left");
-  if(left) left.innerHTML=`<strong>${tq} item</strong>est. ${md} hari kerja`;
+  if(left) left.innerHTML=`<strong>${tq} item</strong>est. ${estDisplay()}`;
 }
 
 function openCartPanel(){
@@ -444,14 +496,25 @@ function closeCartPanel(){
 }
 function renderCartPanel(){
   const items=cartItems();
-  document.getElementById("cart-panel-list").innerHTML=items.map(i=>`
-    <div class="cart-item-row">
-      <span class="cart-item-name">${esc(i.name)}<span class="cart-item-color">/ ${i.color}</span></span>
+  document.getElementById("cart-panel-list").innerHTML=items.map(i=>{
+    const meta = [i.color, i.size].filter(Boolean).join(' · ');
+    const cartKey = k(i.name, i.color, i.size||'OS');
+    return `<div class="cart-item-row">
+      <span class="cart-item-name">${esc(i.name)}<span class="cart-item-meta"> / ${meta}</span></span>
       <div class="cart-item-right">
         <span class="cart-item-qty">${i.qty} pcs</span>
-        <button class="cart-item-del" onclick="deleteCartItem('${i.name.replace(/'/g,"\'")}','${i.color}')">×</button>
+        <button class="cart-item-del" onclick="deleteCartItem('${cartKey}')">×</button>
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
+}
+function deleteCartItem(cartKey){
+  delete st.cart[cartKey];
+  const parts=cartKey.split("||");
+  updateItemCard(parts[0]);
+  updateCartFooter();
+  renderCartPanel();
+  if(totalQty()===0) closeCartPanel();
 }
 function toggleNotes(){
   const collapse=document.getElementById('notes-collapse');
@@ -466,18 +529,11 @@ function toggleNotes(){
     setTimeout(()=>{ const ni=document.getElementById('cart-notes-input'); if(ni) ni.focus(); },220);
   }
 }
-function deleteCartItem(n,c){
-  delete st.cart[k(n,c)];
-  updateItemCard(n);
-  updateCartFooter();
-  renderCartPanel();
-  if(totalQty()===0) closeCartPanel();
-}
 
 // ── render ──
 function render(){
   const root=document.getElementById("root");
-  const md=maxDays(), items=cartItems();
+  const items=cartItems();
 
   // ── done ──
   if(st.phase==="done"){
@@ -493,7 +549,7 @@ function render(){
         <div class="done-divider"></div>
         <div class="done-grid">
           <div class="done-cell">
-            <div class="done-cell-label">estimasi tiba</div>
+            <div class="done-cell-label">estimasi PO</div>
             <div class="done-cell-val">${st.savedEstDate||'—'}</div>
           </div>
           <div class="done-cell">
@@ -509,7 +565,7 @@ function render(){
             <div class="done-cell-val">${esc(st.phone)}</div>
           </div>
         </div>
-        <div class="done-note">tim jedda akan menghubungi via whatsapp untuk konfirmasi pesanan dan informasi pengiriman.</div>
+        <div class="done-note">tim jedda akan menghubungi via whatsapp dalam 1x24 jam untuk konfirmasi pesanan dan informasi pengiriman.</div>
         <button class="done-new-btn" onclick="resetAll()">+ order baru</button>
       </div>
       <div class="done-footer">jedda — ${new Date().getFullYear()}</div>
@@ -519,11 +575,13 @@ function render(){
 
   // ── review ──
   if(st.phase==="review"){
-    const irows=items.map(i=>`
-      <div class="r-row">
+    const irows=items.map(i=>{
+      const meta=[i.color,i.size].filter(Boolean).join(' · ');
+      return `<div class="r-row">
         <span class="r-key">${esc(i.name)}</span>
-        <span class="r-val">${i.color} · ${i.qty} pcs</span>
-      </div>`).join("");
+        <span class="r-val">${meta} · ${i.qty} pcs</span>
+      </div>`;
+    }).join("");
     root.innerHTML=`
       <div class="header">
         <div class="header-brand">Jedda</div>
@@ -563,11 +621,13 @@ function render(){
 
   // ── customer ──
   if(st.phase==="customer"){
-    const srows=items.map(i=>`
-      <div class="s-row">
-        <span class="s-name">${esc(i.name)}<span class="s-color">/ ${i.color}</span></span>
+    const srows=items.map(i=>{
+      const meta=[i.color,i.size].filter(Boolean).join(' · ');
+      return `<div class="s-row">
+        <span class="s-name">${esc(i.name)}<span class="s-color">/ ${meta}</span></span>
         <span class="s-qty">${i.qty}</span>
-      </div>`).join("");
+      </div>`;
+    }).join("");
     root.innerHTML=`
       <div class="header">
         <div class="header-brand">Jedda</div>
@@ -608,10 +668,13 @@ function render(){
   const CATS_ORDER=["outerwear","vest","shirt","bottom"];
   const sections=CATS_ORDER.map(cat=>{
     const ps=PRODUCTS.filter(p=>p.cat===cat);
+    if(!ps.length) return '';
     const cards=ps.map(p=>{
       const tq=itemTotalQty(p.name);
+      const soldout=isArticleSoldout(p.name);
       const safeName=p.name.replace(/'/g,"\\'");
-      return `<div class="item-card ${tq>0?'has-qty':''}" id="ic-${esc(p.name)}" onclick="openSheet('${safeName}')">
+      const sizeLabel = p.sizes ? p.sizes.join(' · ') : 'one size';
+      return `<div class="item-card ${tq>0?'has-qty':''} ${soldout?'soldout':''}" id="ic-${esc(p.name)}" onclick="openSheet('${safeName}')">
         <div class="item-card-name">${p.name}</div>
         <div class="item-card-colors">${p.colors.join(" · ")}</div>
         ${tq>0?`<div class="item-card-badge" onclick="event.stopPropagation();openSheet('${safeName}')">${tq}</div>`:""}
@@ -665,14 +728,24 @@ async function submitOrder(){
     const md=maxDays();
     const {data:order,error:oe}=await _supabase.from("po_orders").insert({
       po_number:poNumber, customer_name:st.name.trim(), customer_phone:st.phone.trim(),
-      customer_city:"", address:st.address.trim(), notes:st.notes.trim()||null, status:"baru", estimated_days:md, est_date: getCartEndsAt(),
+      customer_city:"", address:st.address.trim(), notes:st.notes.trim()||null,
+      status:"baru", estimated_days:md, est_date: getCartEndsAt(),
     }).select().single();
     if(oe) throw oe;
-    const {error:ie}=await _supabase.from("po_items").insert(cartItems().map(i=>({order_id:order.id,article:i.name,color:i.color,qty:i.qty})));
+    const {error:ie}=await _supabase.from("po_items").insert(
+      cartItems().map(i=>({
+        order_id:order.id,
+        article:i.name,
+        color:i.color,
+        size:i.size||null,
+        qty:i.qty
+      }))
+    );
     if(ie) throw ie;
-    st.savedEstDate = getCartEstDate()
-      ? new Date(getCartEndsAt()).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})
-      : (maxDays() ? "±" + maxDays() + " hari kerja" : "—");
+    const raw = getCartEndsAt();
+    st.savedEstDate = raw
+      ? new Date(raw).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})
+      : (md ? "±" + md + " hari kerja" : "—");
     st.orderNum=poNumber; st.phase="done"; render();
   } catch(err){
     let msg="unknown error";
@@ -688,10 +761,10 @@ async function submitOrder(){
 function resetAll(){
   st.phase="items"; st.cart={}; st.activeSheet=null;
   st.name=""; st.phone=""; st.address=""; st.notes="";
-  st.orderNum=null; st.savedDays=0; render();
+  st.orderNum=null; st.savedEstDate=null; render();
 }
 
-loadBatchSlots(); // loads batch data then calls render()
+loadBatchSlots();
 </script>
 </body>
 </html>
