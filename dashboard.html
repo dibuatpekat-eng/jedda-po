@@ -349,14 +349,13 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   </div>
 
   <div class="toolbar">
-    <button class="sort-btn active" id="sort-est" onclick="setSort('est',this)">↑ est. tiba</button>
-    <button class="sort-btn" id="sort-entry" onclick="setSort('entry',this)">terbaru masuk</button>
-    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
-    <button class="sort-btn" id="filter-today" onclick="setDateFilter('today',this)">hari ini</button>
-    <button class="sort-btn" id="filter-week" onclick="setDateFilter('week',this)">7 hari</button>
-    <button class="sort-btn active" id="filter-all" onclick="setDateFilter('all',this)">semua</button>
+    <button class="sort-btn active" id="sort-oldest" onclick="setSort('oldest',this)">↑ terlama masuk</button>
+    <button class="sort-btn" id="sort-newest" onclick="setSort('newest',this)">↓ terbaru masuk</button>
+    <button class="sort-btn" id="sort-est" onclick="setSort('est',this)">est. tiba</button>
     <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
     <button class="sort-btn active" id="toggle-dikirim" onclick="toggleHideDikirim(this)">sembunyikan dikirim</button>
+    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
+    <button class="sort-btn" id="btn-export" onclick="exportCSV()">↓ export CSV</button>
     <div class="toolbar-right">
       <input class="search-input" placeholder="cari nama / no. PO..." oninput="setSearch(this.value)">
     </div>
@@ -406,6 +405,22 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeResiModal()">batal</button>
       <button class="modal-btn modal-btn-dark" onclick="submitResi()">simpan & tandai dikirim</button>
+    </div>
+  </div>
+</div>
+
+<!-- ongkir modal -->
+<div class="modal-overlay" id="ongkir-modal" onclick="handleOngkirModalOverlay(event)">
+  <div class="modal-box">
+    <div class="modal-title">konfirmasi ongkos kirim</div>
+    <div class="modal-name" id="ongkir-modal-name">—</div>
+    <div class="modal-field">
+      <div class="modal-label">biaya ongkir (Rp)</div>
+      <input class="modal-input" id="ongkir-input" type="text" placeholder="contoh: 25.000" oninput="formatOngkirInput(this)">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeOngkirModal()">batal</button>
+      <button class="modal-btn modal-btn-dark" onclick="submitOngkirModal()">buka WA</button>
     </div>
   </div>
 </div>
@@ -511,8 +526,7 @@ const WA_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentCol
 
 let orders = [];
 let filterStatus = "semua";
-let dateFilter = "all";
-let sortMode = "est";
+let sortMode = "oldest";
 let searchQuery = "";
 let selectedId = null;
 let resiTargetId = null;
@@ -609,16 +623,9 @@ function toggleHideDikirim(el) {
 }
 
 function filtered(){
-  const now = new Date();
   let list = orders.filter(o => {
     if(hideDikirim && o.status === 'dikirim') return false;
     if(filterStatus !== "semua" && o.status !== filterStatus) return false;
-    if(dateFilter === "today"){
-      if(new Date(o.created).toDateString() !== now.toDateString()) return false;
-    } else if(dateFilter === "week"){
-      const cutoff = new Date(now); cutoff.setDate(cutoff.getDate()-7);
-      if(new Date(o.created) < cutoff) return false;
-    }
     if(searchQuery){
       const q = searchQuery.toLowerCase();
       if(!o.name.toLowerCase().includes(q) && !o.po_number.toLowerCase().includes(q)) return false;
@@ -627,12 +634,14 @@ function filtered(){
   });
   if(sortMode === "est"){
     list = list.slice().sort((a,b) => {
-      const da = new Date(a.created); da.setDate(da.getDate()+a.maxDays);
-      const db = new Date(b.created); db.setDate(db.getDate()+b.maxDays);
+      const da = a.est_date ? new Date(a.est_date) : (() => { const d = new Date(a.created); d.setDate(d.getDate()+a.maxDays); return d; })();
+      const db = b.est_date ? new Date(b.est_date) : (() => { const d = new Date(b.created); d.setDate(d.getDate()+b.maxDays); return d; })();
       return da-db;
     });
-  } else {
+  } else if(sortMode === "newest"){
     list = list.slice().sort((a,b) => new Date(b.created)-new Date(a.created));
+  } else {
+    list = list.slice().sort((a,b) => new Date(a.created)-new Date(b.created));
   }
   return list;
 }
@@ -704,21 +713,16 @@ function setFilter(f, el){
 }
 function setSort(mode, el){
   sortMode = mode;
-  document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
-  el.classList.add("active");
-  renderTable();
-}
-function setDateFilter(mode, el){
-  dateFilter = mode;
-  ["filter-today","filter-week","filter-all"].forEach(id => {
+  ["sort-oldest","sort-newest","sort-est"].forEach(id => {
     document.getElementById(id)?.classList.remove("active");
   });
   el.classList.add("active");
   renderTable();
 }
+
 function setSearch(v){ searchQuery = v; renderTable(); }
 
-function buildWaKonfirmasi(o){
+function buildWaKonfirmasi(o, ongkir){
   const lines = o.items.map(i=>{
     const meta = [i.color, i.size].filter(Boolean).join(' · ');
     return `• ${i.name} — ${meta} (${i.qty} pcs)`;
@@ -732,10 +736,10 @@ function buildWaKonfirmasi(o){
   } else {
     estStr = '±' + (o.maxDays || 7) + ' hari';
   }
-  return `Halo ${o.name.split(" ")[0]}!\n\nPesanan pre-order kamu di Jedda sudah kami terima dan sedang diproses.\n\nRingkasan pesanan:\n${lines}\n\nEstimasi: ${estStr}\n\nUntuk konfirmasi pengiriman, mohon transfer ongkos kirim ke:\nBCA 1234567890 a/n Jedda\nNominal: Rp [ONGKIR]\n\nSetelah transfer, kirim bukti ke sini ya. Terima kasih!`;
+  return `Halo, *Kak ${o.name.split(" ")[0]}*\nIni konfirmasi pesanan kamu di Jedda at Brightspot City:\n\n${lines}\n\n*Alamat pengiriman:* ${o.address || '-'}\n\nEstimasi pengiriman: *${estStr}*\nBiaya Ongkir: *Rp ${ongkir}*\n\nMohon untuk transfer ongkir ke:\n*BRI*\n*013701333555563*\n*a.n Priska Talitha Fatimah*\n\n• _Kirim bukti transfer sebelum tanggal kirim agar pesanan tidak tertunda._\n• _Jika ada perubahan data, mohon infokan sebelum pengiriman._\n• _Barang pre-order tidak dapat ditukar maupun direfund._\n\nPantau status pesanan kamu di: po.jeddawear.com/track?id=${o.po_number}\n\nSilakan konfirmasi jika sudah sesuai. Terima kasih!`;
 }
 function buildWaFollowUp(o){
-  return `Halo ${o.name.split(" ")[0]}! Mengingatkan kembali mengenai ongkos kirim pesanan Jedda kamu. Mohon segera ditransfer agar pesanan bisa segera dikirim. Terima kasih!`;
+  return `Halo, *Kak ${o.name.split(" ")[0]}* — ongkos kirim pesanan ${o.po_number} belum kami terima. Mohon segera ditransfer agar pesanan bisa diproses. Terima kasih!`;
 }
 
 function moveStatus(id, newStatus){
@@ -746,11 +750,35 @@ function moveStatus(id, newStatus){
   if(selectedId===id) renderPanel(o);
 }
 
+let ongkirTargetId = null;
 function handleWaKonfirmasi(id){
   const o = orders.find(x=>x.id===id); if(!o) return;
+  ongkirTargetId = id;
+  document.getElementById("ongkir-modal-name").textContent = o.name + " · " + o.po_number;
+  document.getElementById("ongkir-input").value = "";
+  document.getElementById("ongkir-modal").classList.add("open");
+  setTimeout(()=>document.getElementById("ongkir-input").focus(), 100);
+}
+function closeOngkirModal(){
+  document.getElementById("ongkir-modal").classList.remove("open");
+  ongkirTargetId = null;
+}
+function handleOngkirModalOverlay(e){
+  if(e.target === document.getElementById("ongkir-modal")) closeOngkirModal();
+}
+function formatOngkirInput(el){
+  const raw = el.value.replace(/\D/g,"");
+  el.value = raw ? parseInt(raw).toLocaleString("id-ID") : "";
+}
+function submitOngkirModal(){
+  const raw = document.getElementById("ongkir-input").value.replace(/\D/g,"");
+  if(!raw){ alert("isi biaya ongkir dulu."); return; }
+  const ongkir = parseInt(raw).toLocaleString("id-ID");
+  const o = orders.find(x=>x.id===ongkirTargetId); if(!o) return;
   const waNum = o.phone.replace(/^0/,"62").replace(/\D/g,"");
-  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaKonfirmasi(o))}`, "_blank");
-  moveStatus(id, "tunggu_ongkir");
+  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaKonfirmasi(o, ongkir))}`, "_blank");
+  moveStatus(ongkirTargetId, "tunggu_ongkir");
+  closeOngkirModal();
 }
 function handleWaFollowUp(id){
   const o = orders.find(x=>x.id===id); if(!o) return;
@@ -895,6 +923,22 @@ function renderPanel(o){
   }
 
   document.getElementById("dp-footer").innerHTML = footerHtml;
+}
+
+function exportCSV(){
+  const cols = ["no. PO","tanggal masuk","nama","hp","alamat","item","estimasi","status","resi","kurir"];
+  const rows = orders.map(o => {
+    const items = o.items.map(i => [i.name, i.color, i.size, i.qty+'pcs'].filter(Boolean).join(' ')).join(' | ');
+    const est = getEstDisplay(o);
+    const tgl = new Date(o.created).toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"});
+    return [o.po_number, tgl, o.name, o.phone, o.address, items, est, o.status, o.resi, o.kurir]
+      .map(v => '"'+(v||'').replace(/"/g,'""')+'"').join(',');
+  });
+  const csv = [cols.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = 'jedda-po-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
 }
 
 loadOrders();
