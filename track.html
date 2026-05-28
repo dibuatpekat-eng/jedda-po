@@ -203,7 +203,6 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
       <div>
         <div class="est-label">estimasi PO</div>
         <div class="est-date" id="res-est-date">—</div>
-        <div class="est-days" id="res-est-days"></div>
       </div>
     </div>
 
@@ -436,13 +435,11 @@ function showResult(o, items) {
   if(o.est_date) {
     const daysLeft = Math.ceil((new Date(o.est_date) - Date.now()) / 86400000);
     estLabel = fmtTgl(o.est_date);
-    estDaysLabel = daysLeft > 0 ? daysLeft + ' hari lagi' : daysLeft === 0 ? 'hari ini' : 'sudah lewat estimasi';
   } else {
     const maxDays = o.estimated_days || 7;
     const estDate = addWorkdays(new Date(o.created_at), maxDays);
     const daysLeft = Math.ceil((estDate - Date.now()) / 86400000);
     estLabel = fmtTgl(estDate);
-    estDaysLabel = daysLeft > 0 ? daysLeft + ' hari lagi' : daysLeft === 0 ? 'hari ini' : 'sudah lewat estimasi';
   }
 
   // header info
@@ -479,7 +476,6 @@ function showResult(o, items) {
 
   // est
   document.getElementById("res-est-date").textContent = estLabel;
-  document.getElementById("res-est-days").textContent = estDaysLabel;
 
   // est block: sembunyikan kalau sudah dikirim
   document.getElementById("est-block").style.display = (o.status === "dikirim" || o.status === "siap" || o.status === "selesai") ? "none" : "block";
