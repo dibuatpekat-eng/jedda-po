@@ -22,14 +22,14 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 
 /* ── search section ── */
 .search-section { padding: 48px 28px 0; }
-.search-eyebrow { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 20px; }
+.search-eyebrow { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #888; font-weight: 400; margin-bottom: 20px; }
 .search-field { display: flex; align-items: flex-end; gap: 0; border-bottom: 1px solid #bbb; padding-bottom: 10px; transition: border-color 0.2s; }
 .search-field:focus-within { border-bottom-color: #111; }
 .search-input { flex: 1; border: none; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 300; color: #111; outline: none; letter-spacing: 1px; }
-.search-input::placeholder { color: #ccc; font-size: 18px; }
-.search-btn { background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 300; padding: 0 0 2px; white-space: nowrap; transition: color 0.15s; }
+.search-input::placeholder { color: #bbb; font-size: 18px; font-weight: 300; }
+.search-btn { background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 400; padding: 0 0 2px; white-space: nowrap; transition: color 0.15s; }
 .search-btn:hover { color: #111; }
-.search-hint { font-size: 9px; color: #bbb; margin-top: 10px; font-weight: 300; letter-spacing: 0.5px; }
+.search-hint { font-size: 9px; color: #999; margin-top: 10px; font-weight: 400; letter-spacing: 0.5px; }
 .search-error { font-size: 9px; color: #c0392b; margin-top: 10px; font-weight: 300; letter-spacing: 0.5px; }
 
 .result { padding: 36px 28px 0; display: none; }
@@ -167,12 +167,12 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
   <div class="search-section">
     <div class="search-eyebrow">nomor pre-order</div>
     <div class="search-field">
-      <input class="search-input" id="po-input" placeholder="PO-XXXXX" maxlength="20"
+      <input class="search-input" id="po-input" placeholder="JD-XXXXX" maxlength="20"
         oninput="this.value = this.value.toUpperCase()"
         onkeydown="if(event.key==='Enter') doSearch()">
       <button class="search-btn" onclick="doSearch()">cek →</button>
     </div>
-    <div class="search-hint" id="search-hint">masukkan nomor PO yang kamu terima saat checkout.</div>
+    <div class="search-hint" id="search-hint">masukkan nomor PO yang kamu terima.</div>
   </div>
 
   <!-- result -->
@@ -394,7 +394,8 @@ function getEstDaysLeft(days, from) {
 }
 
 async function doSearch() {
-  const val = document.getElementById("po-input").value.trim();
+  let val = document.getElementById("po-input").value.trim().toUpperCase();
+  document.getElementById("po-input").value = val;
   if(!val) return;
   const hint = document.getElementById("search-hint");
   hint.className = "search-hint";
@@ -423,19 +424,25 @@ async function doSearch() {
 function showResult(o, items) {
   const cfg = STATUS_CONFIG[o.status] || STATUS_CONFIG["baru"];
 
-  // Estimasi: prioritas est_date dari batch, fallback estimated_days
+  // Estimasi: prioritas est_date dari batch, fallback estimated_days (hari kerja Senin-Sabtu)
+  function addWorkdays(from, days) {
+    const d = new Date(from);
+    let added = 0;
+    while(added < days) { d.setDate(d.getDate()+1); if(d.getDay()!==0) added++; }
+    return d;
+  }
+  const fmtTgl = d => new Date(d).toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
   let estLabel, estDaysLabel;
   if(o.est_date) {
-    const diff = new Date(o.est_date) - new Date(new Date().toDateString());
-    const daysLeft = Math.ceil(diff / 86400000);
-    estLabel = '±' + Math.max(0, daysLeft) + ' hari';
-    estDaysLabel = daysLeft > 0 ? daysLeft + ' hari lagi' : 'hari ini atau sudah lewat';
+    const daysLeft = Math.ceil((new Date(o.est_date) - Date.now()) / 86400000);
+    estLabel = fmtTgl(o.est_date);
+    estDaysLabel = daysLeft > 0 ? daysLeft + ' hari lagi' : daysLeft === 0 ? 'hari ini' : 'sudah lewat estimasi';
   } else {
     const maxDays = o.estimated_days || 7;
-    const est = new Date(o.created_at); est.setDate(est.getDate() + maxDays);
-    const daysLeft = Math.ceil((est - Date.now()) / 86400000);
-    estLabel = '±' + maxDays + ' hari';
-    estDaysLabel = daysLeft > 0 ? daysLeft + ' hari lagi' : 'hari ini atau sudah lewat';
+    const estDate = addWorkdays(new Date(o.created_at), maxDays);
+    const daysLeft = Math.ceil((estDate - Date.now()) / 86400000);
+    estLabel = fmtTgl(estDate);
+    estDaysLabel = daysLeft > 0 ? daysLeft + ' hari lagi' : daysLeft === 0 ? 'hari ini' : 'sudah lewat estimasi';
   }
 
   // header info
@@ -516,9 +523,19 @@ function doReset() {
   document.getElementById("result").classList.remove("visible");
   document.getElementById("po-input").value = "";
   document.getElementById("search-hint").className = "search-hint";
-  document.getElementById("search-hint").textContent = "masukkan nomor PO yang kamu terima saat checkout.";
+  document.getElementById("search-hint").textContent = "masukkan nomor PO yang kamu terima.";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
+// auto-load dari URL param ?id=JD-XXXX
+window.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const id = (params.get("id") || "").trim().toUpperCase();
+  if(id) {
+    document.getElementById("po-input").value = id;
+    doSearch();
+  }
+});
 </script>
 </body>
 </html>
