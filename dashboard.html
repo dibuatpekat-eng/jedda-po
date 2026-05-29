@@ -283,8 +283,22 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .artday-cancel-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: none; color: #aaa; border: none; cursor: pointer; padding: 5px 0; transition: color 0.15s; }
 .artday-cancel-btn:hover { color: #111; }
 
-/* ── resi modal ── */
-/* ── resi modal ── */
+/* ── PIN screen ── */
+.pin-screen { position: fixed; inset: 0; background: #f0ede8; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+.pin-brand { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; margin-bottom: 56px; }
+.pin-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 20px; }
+.pin-dots { display: flex; gap: 14px; margin-bottom: 8px; }
+.pin-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid #ccc; background: transparent; transition: background 0.15s, border-color 0.15s; }
+.pin-dot.filled { background: #111; border-color: #111; }
+.pin-error { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #c0392b; font-weight: 300; opacity: 0; transition: opacity 0.2s; height: 32px; display: flex; align-items: center; }
+.pin-error.show { opacity: 1; }
+.pin-keypad { display: grid; grid-template-columns: repeat(3, 72px); border-top: 1px solid #e0dbd4; border-left: 1px solid #e0dbd4; }
+.pin-key { height: 56px; border: none; border-right: 1px solid #e0dbd4; border-bottom: 1px solid #e0dbd4; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 300; color: #111; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; transition: background 0.1s; -webkit-tap-highlight-color: transparent; }
+.pin-key:active { background: #eae6e0; }
+.pin-key.del { font-size: 11px; color: #aaa; letter-spacing: 1px; text-transform: uppercase; }
+.pin-key.del:active { color: #111; background: #eae6e0; }
+.pin-key.empty { pointer-events: none; }
+</style>
 .modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 30; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal-box { background: #f0ede8; width: 360px; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
@@ -306,13 +320,46 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 </head>
 <body>
 
+<!-- PIN screen -->
+<div id="pin-screen" class="pin-screen" onclick="document.getElementById('pin-hidden').focus()">
+  <div class="pin-brand">jedda</div>
+  <div class="pin-label">masukkan PIN</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-error" id="pin-error">PIN salah</div>
+  <div class="pin-keypad">
+    <div class="pin-key" onclick="pinPress('1')">1</div>
+    <div class="pin-key" onclick="pinPress('2')">2</div>
+    <div class="pin-key" onclick="pinPress('3')">3</div>
+    <div class="pin-key" onclick="pinPress('4')">4</div>
+    <div class="pin-key" onclick="pinPress('5')">5</div>
+    <div class="pin-key" onclick="pinPress('6')">6</div>
+    <div class="pin-key" onclick="pinPress('7')">7</div>
+    <div class="pin-key" onclick="pinPress('8')">8</div>
+    <div class="pin-key" onclick="pinPress('9')">9</div>
+    <div class="pin-key empty"></div>
+    <div class="pin-key" onclick="pinPress('0')">0</div>
+    <div class="pin-key del" onclick="pinDel()">del</div>
+  </div>
+  <input id="pin-hidden" inputmode="numeric" pattern="[0-9]*" maxlength="4"
+    style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;"
+    autocomplete="off" autofocus>
+</div>
+
 <div class="sidebar">
   <div class="sidebar-brand">Jedda</div>
   <nav class="sidebar-nav">
     <div class="nav-item active" id="nav-po" onclick="showPage('po')">pre-order</div>
     <div class="nav-item" id="nav-settings" onclick="showPage('settings')">settings</div>
   </nav>
-  <div class="sidebar-footer">admin</div>
+  <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:10px">
+    <span>admin</span>
+    <button onclick="lock()" style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#ccc;background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:300;padding:0;text-align:left;transition:color 0.15s" onmouseover="this.style.color='#888'" onmouseout="this.style.color='#ccc'">kunci ↑</button>
+  </div>
 </div>
 
 <div class="main">
@@ -504,6 +551,69 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 </div>
 
 <script>
+// ── PIN ──
+const PIN = "2020";
+let pinBuffer = '';
+
+function pinPress(digit) {
+  if(pinBuffer.length >= 4) return;
+  pinBuffer += digit;
+  updatePinDots();
+  syncHiddenInput();
+  if(pinBuffer.length === 4) setTimeout(() => checkPin(), 100);
+}
+function pinDel() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+  syncHiddenInput();
+}
+function syncHiddenInput() {
+  const el = document.getElementById('pin-hidden');
+  if(el) el.value = pinBuffer;
+}
+function updatePinDots() {
+  for(let i = 0; i < 4; i++) {
+    document.getElementById('pd' + i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+function checkPin() {
+  if(pinBuffer === PIN) {
+    document.getElementById('pin-screen').style.display = 'none';
+    loadOrders();
+  } else {
+    document.getElementById('pin-error').classList.add('show');
+    pinBuffer = '';
+    updatePinDots();
+    syncHiddenInput();
+    setTimeout(() => document.getElementById('pin-error').classList.remove('show'), 1500);
+  }
+}
+function lock() {
+  document.getElementById('pin-screen').style.display = 'flex';
+  pinBuffer = '';
+  updatePinDots();
+  syncHiddenInput();
+  setTimeout(() => document.getElementById('pin-hidden')?.focus(), 100);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const hidden = document.getElementById('pin-hidden');
+  if(!hidden) return;
+  hidden.addEventListener('input', () => {
+    const val = hidden.value.replace(/\D/g, '').slice(0, 4);
+    hidden.value = val;
+    pinBuffer = val;
+    updatePinDots();
+    if(pinBuffer.length === 4) setTimeout(() => checkPin(), 100);
+  });
+  hidden.addEventListener('keydown', e => {
+    if(e.key === 'Backspace' && pinBuffer.length > 0) {
+      pinBuffer = pinBuffer.slice(0, -1);
+      updatePinDots();
+    }
+  });
+  setTimeout(() => hidden.focus(), 100);
+});
+
 const _sb = supabase.createClient(
   "https://okgcujdlwkcwvsdybkza.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
@@ -962,8 +1072,6 @@ function exportCSV(){
   a.download = 'jedda-po-'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 }
-
-loadOrders();
 
 // ── settings ──
 let batches = [];
