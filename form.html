@@ -348,7 +348,7 @@ const PRODUCTS = [
   { cat:"outerwear", name:"The Classic Coat",  colors:["Ecru","Bistre"],           sizes:["S/M","L/XL"], days:10 },
   { cat:"outerwear", name:"The Overcape",      colors:["Ecru"],                    sizes:null,            days:10 },
   { cat:"outerwear", name:"Semi Blazer",       colors:["Grain"],                   sizes:["S","M","L"],   days:7  },
-  { cat:"vest",      name:"Kiro Cropped Vest", colors:["Breen","Auburn"],          sizes:["S/M","L/XL"], days:5  },
+  { cat:"vest",      name:"Kiro Cropped Vest", colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"], days:5  },
   { cat:"vest",      name:"Minji Vest",        colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"], days:5  },
   { cat:"vest",      name:"Sichi Vest",        colors:["Auburn"],                  sizes:["S","M","L"],   days:5  },
   { cat:"shirt",     name:"Yuwa Shirt",        colors:["Pebble","Shell"],          sizes:["S/M","L/XL"], days:5  },
@@ -426,18 +426,28 @@ function isSoldout(article, color, size) {
   if(!slot) return false;
   return slot.remaining <= 0;
 }
-// artikel disabled kalau tidak ada batch DAN tidak ada est days untuk artikel itu
+// artikel disabled kalau SEMUA warnanya tidak ada batch DAN tidak ada est days
 function isArticleDisabled(articleName) {
   if(!batchLoaded) return false;
-  // cek batch dulu
   const p = PRODUCTS.find(x => x.name === articleName);
   if(!p) return false;
   const sizes = p.sizes || ['OS'];
-  const hasBatch = p.colors.some(c => sizes.some(s => getSlot(articleName, c, s)));
+  return p.colors.every(c => {
+    const hasBatch = sizes.some(s => getSlot(articleName, c, s));
+    if(hasBatch) return false;
+    const days = articleEstDays[articleName + ' · ' + c] || 0;
+    return days <= 0;
+  });
+}
+// warna disabled kalau tidak ada batch DAN tidak ada est days untuk warna itu
+function isColorDisabled(articleName, color) {
+  if(!batchLoaded) return false;
+  const p = PRODUCTS.find(x => x.name === articleName);
+  if(!p) return false;
+  const sizes = p.sizes || ['OS'];
+  const hasBatch = sizes.some(s => getSlot(articleName, color, s));
   if(hasBatch) return false;
-  // cek article est days
-  const days = articleEstDays[articleName] || 0;
-  return days <= 0;
+  return (articleEstDays[articleName + ' · ' + color] || 0) <= 0;
 }
 function isArticleSoldout(articleName) {
   const p = PRODUCTS.find(x => x.name === articleName);
@@ -491,15 +501,14 @@ function itemTotalQty(n){
   return Object.entries(st.cart).filter(([key,q])=>key.startsWith(n+"||")&&q>0).reduce((a,[,q])=>a+q,0);
 }
 function maxDays(){ const c=cartItems(); return c.length?Math.max(...c.map(x=>x.days)):0; }
-function getArticleEstDays(articleName) { return articleEstDays[articleName] || 0; }
+function getArticleEstDays(articleName, color) { return articleEstDays[articleName + ' · ' + color] || 0; }
 function estDisplay(){
   const items = cartItems();
   if(!items.length) return '—';
-  // Per item: prioritas batch, fallback global days. Ambil yang terbesar.
   const maxD = Math.max(...items.map(i => {
     const slot = getSlot(i.name, i.color, i.size);
     if(slot && slot.endsAt) return daysUntil(slot.endsAt) || 0;
-    return getArticleEstDays(i.name) || 0;
+    return getArticleEstDays(i.name, i.color) || 0;
   }));
   return maxD > 0 ? '±' + maxD + ' hari' : '—';
 }
@@ -527,23 +536,23 @@ function renderDialogColors(p){
   const isOneSize = !p.sizes;
 
   if(isOneSize){
-    // One size: same as old color rows, qty directly on each color
     document.getElementById("dialog-colors").innerHTML = p.colors.map(col => {
       const q = getQty(p.name, col, 'OS');
       const slot = getSlot(p.name, col, 'OS');
       const soldout = isSoldout(p.name, col, 'OS');
-    const estNote = slot && slot.endsAt && !soldout
+      const colorDisabled = isColorDisabled(p.name, col);
+      const estNote = slot && slot.endsAt && !soldout
         ? `<span class="est-batch-note">est. ±${daysUntil(slot.endsAt)} hari</span>`
-        : '';
-      return `<div class="dcolor-row${soldout?' soldout':''}">
+        : (colorDisabled ? `<span class="est-batch-note" style="color:#ccc">po blm dibuka</span>` : '');
+      return `<div class="dcolor-row${soldout?' soldout':''}${colorDisabled?' soldout':''}">
         <div>
-          <span class="dcolor-name">${col}</span>
+          <span class="dcolor-name" style="${colorDisabled?'color:#ccc':''}">${col}</span>
           ${estNote}
         </div>
         <div class="qty-ctrl">
-          <button class="qty-btn" onclick="setQty('${esc(p.name)}','${col}','OS',${q}-1)" ${soldout?'disabled':''}>−</button>
+          <button class="qty-btn" onclick="setQty('${esc(p.name)}','${col}','OS',${q}-1)" ${soldout||colorDisabled?'disabled':''}>−</button>
           <span class="qty-num" id="dq-${esc(p.name+col+'OS')}">${q||'—'}</span>
-          <button class="qty-btn" onclick="setQty('${esc(p.name)}','${col}','OS',${q}+1)" ${soldout?'disabled':''}>+</button>
+          <button class="qty-btn" onclick="setQty('${esc(p.name)}','${col}','OS',${q}+1)" ${soldout||colorDisabled?'disabled':''}>+</button>
         </div>
       </div>`;
     }).join('');
@@ -552,6 +561,7 @@ function renderDialogColors(p){
 
   // Has sizes: color section header + indented size rows
   document.getElementById("dialog-colors").innerHTML = p.colors.map(col => {
+    const colorDisabled = isColorDisabled(p.name, col);
     // Pick earliest endsAt for this color (across all sizes)
     let colorEst = null;
     p.sizes.forEach(sz => {
@@ -559,15 +569,16 @@ function renderDialogColors(p){
       if(slot && slot.endsAt) { if(!colorEst || slot.endsAt < colorEst) colorEst = slot.endsAt; }
     });
     const allSoldout = p.sizes.every(sz => isSoldout(p.name, col, sz));
-    const estLabel = colorEst && !allSoldout
-      ? `<span class="dcolor-section-est">est. ±${daysUntil(colorEst)} hari</span>`
-      : (allSoldout ? `<span class="dcolor-section-soldout">habis</span>` : '');
+    const estLabel = colorDisabled
+      ? `<span class="dcolor-section-est" style="color:#ccc">po blm dibuka</span>`
+      : colorEst && !allSoldout
+        ? `<span class="dcolor-section-est">est. ±${daysUntil(colorEst)} hari</span>`
+        : (allSoldout ? `<span class="dcolor-section-soldout">habis</span>` : '');
 
     const sizeRows = p.sizes.map(sz => {
       const q = getQty(p.name, col, sz);
-      const soldout = isSoldout(p.name, col, sz);
+      const soldout = isSoldout(p.name, col, sz) || colorDisabled;
       const slot = getSlot(p.name, col, sz);
-      // sisa label
       let sisaLabel = '';
       if(slot) {
         const rem = slot.remaining;
@@ -589,7 +600,7 @@ function renderDialogColors(p){
       </div>`;
     }).join('');
 
-    return `<div class="dcolor-section">
+    return `<div class="dcolor-section" style="${colorDisabled?'opacity:0.4':''}">
       <div class="dcolor-section-header">
         <span class="dcolor-section-name">${col}</span>
         ${estLabel}
@@ -894,7 +905,7 @@ async function submitOrder(){
     const maxEst = Math.max(...cartSnapshot.map(i => {
       const slot = getSlot(i.name, i.color, i.size);
       if(slot && slot.endsAt) return daysUntil(slot.endsAt) || 0;
-      return getArticleEstDays(i.name) || 0;
+      return getArticleEstDays(i.name, i.color) || 0;
     }), 0);
     // est_date: ambil ends_at terlama dari item yang punya batch (untuk tracking page)
     const estDateRaw = getCartEndsAt();

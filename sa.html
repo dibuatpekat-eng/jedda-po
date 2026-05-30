@@ -124,9 +124,9 @@ html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webk
 
 <script>
 // ── init ──
-document.addEventListener('DOMContentLoaded', () => {
-  loadData();
-});
+document.addEventListener('DOMContentLoaded', () => { loadData(); });
+
+const _sb = supabase.createClient(
   "https://okgcujdlwkcwvsdybkza.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
 );
@@ -137,7 +137,7 @@ const PRODUCTS = [
   { name:"The Classic Coat", colors:["Ecru","Bistre"],           sizes:["S/M","L/XL"] },
   { name:"The Overcape",     colors:["Ecru"],                    sizes:null            },
   { name:"Semi Blazer",      colors:["Grain"],                   sizes:["S","M","L"]   },
-  { name:"Kiro Cropped Vest",colors:["Breen","Auburn"],          sizes:["S/M","L/XL"] },
+  { name:"Kiro Cropped Vest",colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
   { name:"Minji Vest",       colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
   { name:"Sichi Vest",       colors:["Auburn"],                  sizes:["S","M","L"]   },
   { name:"Yuwa Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
@@ -147,8 +147,6 @@ const PRODUCTS = [
   { name:"Kae Pants",        colors:["Bistre","Auburn"],         sizes:["S","M","L"]   },
   { name:"Rho Pants",        colors:["Bistre","Breen"],          sizes:["S","M","L"]   },
 ];
-
-document.addEventListener('DOMContentLoaded', () => { loadData(); });
 
 // ── data ──
 let slotData = {}; // "Artikel · Warna · Size" → { total, used, remaining, endsAt }
@@ -233,11 +231,11 @@ function chipClass(total, used) {
 }
 
 function render() {
-  // Summary: hanya artikel yang ada batch atau est days
+  // Summary: hanya artikel yang ada batch atau est days (minimal 1 warna aktif)
   const activeArts = PRODUCTS.filter(p => {
     const sizes = p.sizes || ['OS'];
     const hasBatch = p.colors.some(c => sizes.some(s => getSlot(p.name, c, s)));
-    const hasEstDays = (articleEstDays[p.name] || 0) > 0;
+    const hasEstDays = p.colors.some(c => (articleEstDays[p.name + ' · ' + c] || 0) > 0);
     return hasBatch || hasEstDays;
   });
 
@@ -255,39 +253,37 @@ function render() {
   document.getElementById('sum-sisa').textContent = totalSisa || '—';
   document.getElementById('sum-habis').textContent = totalHabis || '—';
 
-  // Render semua artikel — 3 state:
-  // 1. ada batch → nama + estimasi hari dari batch
-  // 2. ada global est days tapi no batch → nama + ±X hari
-  // 3. tidak ada keduanya → nama + "po blm dibuka"
+  // Render semua artikel — tiap artikel tampilkan estimasi per warna
+  // Warna aktif: ada batch ATAU ada est days. Warna tidak aktif: "po blm dibuka"
   const html = PRODUCTS.map(p => {
     const sizes = p.sizes || ['OS'];
-    const hasBatch = p.colors.some(c => sizes.some(s => getSlot(p.name, c, s)));
-    const estDays = articleEstDays[p.name] || 0;
 
-    let estText, estCls;
-    if(hasBatch) {
-      // ambil ends_at terlama dari semua slot artikel ini
-      let latestEndsAt = null;
-      p.colors.forEach(c => sizes.forEach(s => {
-        const slot = getSlot(p.name, c, s);
-        if(slot && slot.endsAt) {
-          if(!latestEndsAt || slot.endsAt > latestEndsAt) latestEndsAt = slot.endsAt;
-        }
-      }));
-      const d = latestEndsAt ? daysUntil(latestEndsAt) : null;
-      estText = d !== null ? '±' + d + ' hari' : '—';
-      estCls = 'sa-est-active';
-    } else if(estDays > 0) {
-      estText = '±' + estDays + ' hari';
-      estCls = 'sa-est-temp';
-    } else {
-      estText = 'po blm dibuka';
-      estCls = 'sa-est-closed';
-    }
+    // Cek apakah ada batch di artikel ini
+    const hasBatch = p.colors.some(c => sizes.some(s => getSlot(p.name, c, s)));
+
+    // Tentukan est text untuk artikel secara keseluruhan (untuk sa-card)
+    // Ambil est dari warna yang paling lambat (aktif)
+    let bestEstText = null, bestEstCls = null;
+    p.colors.forEach(c => {
+      const colorHasBatch = sizes.some(s => getSlot(p.name, c, s));
+      const estDays = articleEstDays[p.name + ' · ' + c] || 0;
+      if(colorHasBatch) {
+        let latestEndsAt = null;
+        sizes.forEach(s => {
+          const slot = getSlot(p.name, c, s);
+          if(slot && slot.endsAt) { if(!latestEndsAt || slot.endsAt > latestEndsAt) latestEndsAt = slot.endsAt; }
+        });
+        const d = latestEndsAt ? daysUntil(latestEndsAt) : null;
+        if(d !== null) { bestEstText = '±' + d + ' hari'; bestEstCls = 'sa-est-active'; }
+      } else if(estDays > 0) {
+        if(!bestEstText || bestEstCls === 'sa-est-closed') { bestEstText = '±' + estDays + ' hari'; bestEstCls = 'sa-est-temp'; }
+      }
+    });
+    if(!bestEstText) { bestEstText = 'po blm dibuka'; bestEstCls = 'sa-est-closed'; }
 
     return `<div class="sa-card">
       <span class="sa-art-name">${p.name}</span>
-      <span class="sa-est ${estCls}">${estText}</span>
+      <span class="sa-est ${bestEstCls}">${bestEstText}</span>
     </div>`;
   }).join('');
 

@@ -265,7 +265,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .bm-btn-dark:hover { opacity: 0.8; }
 
 /* ── artday cards ── */
-.artday-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.artday-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 16px; }
 .artday-card { border: 1px solid #d8d4ce; padding: 14px 16px; transition: border-color 0.15s; }
 .artday-card.artday-active { border-color: #9aab9a; }
 .artday-name { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 12px; line-height: 1.3; }
@@ -1086,7 +1086,7 @@ const PRODUCTS = [
   { name:"The Classic Coat", colors:["Ecru","Bistre"],           sizes:["S/M","L/XL"] },
   { name:"The Overcape",     colors:["Ecru"],                    sizes:null            },
   { name:"Semi Blazer",      colors:["Grain"],                   sizes:["S","M","L"]   },
-  { name:"Kiro Cropped Vest",colors:["Breen","Auburn"],          sizes:["S/M","L/XL"] },
+  { name:"Kiro Cropped Vest",colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
   { name:"Minji Vest",       colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
   { name:"Sichi Vest",       colors:["Auburn"],                  sizes:["S","M","L"]   },
   { name:"Yuwa Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
@@ -1111,35 +1111,40 @@ async function loadArticleDays() {
   const { data } = await _sb.from('po_settings').select('article_est_days').eq('id', 1).single();
   const map = data?.article_est_days || {};
 
+  // Render per artikel → per warna (bukan per artikel)
   const html = PRODUCTS.map(p => {
-    const days = map[p.name] || 0;
-    const active = days > 0;
-    const artKey = p.name.replace(/[^a-zA-Z0-9]/g,'_');
-    return `<div class="artday-card ${active?'artday-active':''}" id="artday-card-${artKey}">
-      <div class="artday-name">${p.name}</div>
-      <div class="artday-view" id="artday-view-${artKey}">
-        <div class="artday-val" id="artday-val-${artKey}">${active ? days+' hari' : '—'}</div>
-        <button class="artday-edit-btn" onclick="artdayStartEdit('${artKey}','${p.name}')">edit</button>
-      </div>
-      <div class="artday-edit" id="artday-edit-${artKey}" style="display:none">
-        <div class="artday-input-row">
-          <input type="number" min="0" max="99" class="artday-input" placeholder="0"
-            value="${days||''}"
-            id="artdays-${artKey}">
-          <span class="artday-unit">hari</span>
+    const colorRows = p.colors.map(color => {
+      const key = p.name + ' · ' + color;
+      const artKey = key.replace(/[^a-zA-Z0-9]/g,'_');
+      const days = map[key] || 0;
+      const active = days > 0;
+      return `<div class="artday-card ${active?'artday-active':''}" id="artday-card-${artKey}">
+        <div class="artday-name" style="font-size:12px">${p.name} <span style="color:#aaa;font-weight:300">· ${color}</span></div>
+        <div class="artday-view" id="artday-view-${artKey}">
+          <div class="artday-val" id="artday-val-${artKey}">${active ? days+' hari' : '—'}</div>
+          <button class="artday-edit-btn" onclick="artdayStartEdit('${artKey}')">edit</button>
         </div>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="artday-save-btn" onclick="artdaySave('${artKey}','${p.name}')">simpan</button>
-          <button class="artday-cancel-btn" onclick="artdayCancel('${artKey}')">batal</button>
+        <div class="artday-edit" id="artday-edit-${artKey}" style="display:none">
+          <div class="artday-input-row">
+            <input type="number" min="0" max="99" class="artday-input" placeholder="0"
+              value="${days||''}"
+              id="artdays-${artKey}">
+            <span class="artday-unit">hari</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="artday-save-btn" onclick="artdaySave('${artKey}','${key}')">simpan</button>
+            <button class="artday-cancel-btn" onclick="artdayCancel('${artKey}')">batal</button>
+          </div>
         </div>
-      </div>
-    </div>`;
+      </div>`;
+    }).join('');
+    return colorRows;
   }).join('');
 
   document.getElementById('article-days-list').innerHTML = html;
 }
 
-function artdayStartEdit(artKey, artName) {
+function artdayStartEdit(artKey) {
   document.getElementById('artday-view-'+artKey).style.display = 'none';
   document.getElementById('artday-edit-'+artKey).style.display = 'block';
   document.getElementById('artdays-'+artKey).focus();
@@ -1150,15 +1155,15 @@ function artdayCancel(artKey) {
   document.getElementById('artday-edit-'+artKey).style.display = 'none';
 }
 
-async function artdaySave(artKey, artName) {
+async function artdaySave(artKey, colorKey) {
   const input = document.getElementById('artdays-'+artKey);
   const val = parseInt(input.value) || 0;
 
-  // Load current map, update just this artikel
+  // Load current map, update just this artikel · warna
   const { data } = await _sb.from('po_settings').select('article_est_days').eq('id', 1).single();
   const map = data?.article_est_days || {};
-  if(val > 0) map[artName] = val;
-  else delete map[artName];
+  if(val > 0) map[colorKey] = val;
+  else delete map[colorKey];
   await _sb.from('po_settings').update({ article_est_days: map, updated_at: new Date().toISOString() }).eq('id', 1);
 
   // Update UI
