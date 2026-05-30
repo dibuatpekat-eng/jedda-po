@@ -162,7 +162,14 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .btn-wa:hover { opacity: 0.85; color: #fff; }
 .btn-done-label { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #bbb; text-align: center; padding: 6px 0; font-weight: 300; }
 
-/* ── empty ── */
+/* ── edit item ── */
+.dp-item-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.dp-item-row:last-child { border-bottom: none; }
+.dp-item-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #ccc; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; margin-left: 10px; flex-shrink: 0; transition: color 0.15s; }
+.dp-item-edit-btn:hover { color: #111; }
+.edit-item-modal-confirm { background: #fff8e8; border: 1px solid #e8d8a0; padding: 14px 16px; margin-bottom: 16px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: #7a5a1a; line-height: 1.7; display: none; }
+.edit-item-modal-confirm.show { display: block; }
+
 .empty-state { text-align: center; padding: 80px 40px; }
 .empty-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #bbb; font-weight: 300; }
 
@@ -476,6 +483,38 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 
 </div><!-- end po-page -->
 
+<!-- edit item modal -->
+<div class="modal-overlay" id="edit-item-modal" onclick="handleEditItemOverlay(event)">
+  <div class="modal-box" style="width:400px">
+    <div class="modal-title">ubah item pesanan</div>
+    <div class="modal-name" id="edit-item-order-label">—</div>
+
+    <div class="modal-field">
+      <div class="modal-label">artikel</div>
+      <select class="modal-select" id="edit-item-article" onchange="onEditArticleChange()"></select>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">warna</div>
+      <select class="modal-select" id="edit-item-color" onchange="onEditColorChange()"></select>
+    </div>
+    <div class="modal-field" id="edit-item-size-wrap">
+      <div class="modal-label">size</div>
+      <select class="modal-select" id="edit-item-size"></select>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">qty</div>
+      <input class="modal-input" type="number" min="1" max="99" id="edit-item-qty" style="width:80px">
+    </div>
+
+    <div class="edit-item-modal-confirm" id="edit-item-confirm-box"></div>
+
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeEditItemModal()">batal</button>
+      <button class="modal-btn modal-btn-dark" id="edit-item-submit-btn" onclick="submitEditItem()">simpan perubahan</button>
+    </div>
+  </div>
+</div>
+
 <!-- settings page -->
 <div class="settings-page" id="settings-page">
   <div class="settings-topbar">
@@ -581,6 +620,7 @@ function checkPin() {
   if(pinBuffer === PIN) {
     document.getElementById('pin-screen').style.display = 'none';
     loadOrders();
+    loadArticleEstDaysCache();
   } else {
     document.getElementById('pin-error').classList.add('show');
     pinBuffer = '';
@@ -994,11 +1034,11 @@ function renderPanel(o){
     return `<span class="flow-step ${isDone?'done':''} ${isCurrent?'current':''}">${STATUS_LABEL[s]}</span>${i<STATUSES.length-1?'<span class="flow-sep"> › </span>':''}`;
   }).join("");
 
-  const itemRows = o.items.map(i=>{
+  const itemRows = o.items.map((i, idx)=>{
     const meta = [i.color, i.size].filter(Boolean).join(' · ');
     return `<div class="dp-item-row">
-      <div><div class="dp-item-name">${i.name}</div><div class="dp-item-color">${meta}</div></div>
-      <div class="dp-item-qty">${i.qty} pcs</div>
+      <div><div class="dp-item-name">${i.name}</div><div class="dp-item-color">${meta} · ${i.qty} pcs</div></div>
+      <button class="dp-item-edit-btn" onclick="openEditItemModal(${o.id}, ${idx})">ubah</button>
     </div>`;
   }).join("");
 
@@ -1056,6 +1096,203 @@ function renderPanel(o){
   }
 
   document.getElementById("dp-footer").innerHTML = footerHtml;
+}
+
+// ── edit item ──
+let editItemTargetOrderId = null;
+let editItemTargetIdx = null;
+let editItemConfirmed = false;
+
+function openEditItemModal(orderId, itemIdx) {
+  const o = orders.find(x => x.id === orderId); if(!o) return;
+  const item = o.items[itemIdx]; if(!item) return;
+
+  editItemTargetOrderId = orderId;
+  editItemTargetIdx = itemIdx;
+  editItemConfirmed = false;
+
+  document.getElementById('edit-item-order-label').textContent = o.po_number + ' · ' + o.name;
+  document.getElementById('edit-item-confirm-box').classList.remove('show');
+  document.getElementById('edit-item-submit-btn').textContent = 'simpan perubahan';
+
+  // Populate artikel dropdown
+  const artSel = document.getElementById('edit-item-article');
+  artSel.innerHTML = PRODUCTS.map(p => `<option value="${p.name}" ${p.name === item.name ? 'selected' : ''}>${p.name}</option>`).join('');
+
+  populateEditColors(item.name, item.color);
+  populateEditSizes(item.name, item.color, item.size);
+  document.getElementById('edit-item-qty').value = item.qty;
+
+  document.getElementById('edit-item-modal').classList.add('open');
+}
+
+function populateEditColors(articleName, selectedColor) {
+  const p = PRODUCTS.find(x => x.name === articleName); if(!p) return;
+  const sel = document.getElementById('edit-item-color');
+  sel.innerHTML = p.colors.map(c => `<option value="${c}" ${c === selectedColor ? 'selected' : ''}>${c}</option>`).join('');
+}
+
+function populateEditSizes(articleName, color, selectedSize) {
+  const p = PRODUCTS.find(x => x.name === articleName); if(!p) return;
+  const wrap = document.getElementById('edit-item-size-wrap');
+  const sel = document.getElementById('edit-item-size');
+  if(!p.sizes) {
+    wrap.style.display = 'none';
+    sel.innerHTML = '<option value="">one size</option>';
+  } else {
+    wrap.style.display = 'block';
+    sel.innerHTML = p.sizes.map(s => `<option value="${s}" ${s === selectedSize ? 'selected' : ''}>${s}</option>`).join('');
+  }
+}
+
+function onEditArticleChange() {
+  const art = document.getElementById('edit-item-article').value;
+  populateEditColors(art, null);
+  const p = PRODUCTS.find(x => x.name === art);
+  populateEditSizes(art, p?.colors[0], null);
+  resetEditConfirm();
+}
+
+function onEditColorChange() {
+  const art = document.getElementById('edit-item-article').value;
+  const col = document.getElementById('edit-item-color').value;
+  populateEditSizes(art, col, null);
+  resetEditConfirm();
+}
+
+function resetEditConfirm() {
+  editItemConfirmed = false;
+  document.getElementById('edit-item-confirm-box').classList.remove('show');
+  document.getElementById('edit-item-submit-btn').textContent = 'simpan perubahan';
+}
+
+function closeEditItemModal() {
+  document.getElementById('edit-item-modal').classList.remove('open');
+  editItemTargetOrderId = null;
+  editItemTargetIdx = null;
+  editItemConfirmed = false;
+}
+
+function handleEditItemOverlay(e) {
+  if(e.target === document.getElementById('edit-item-modal')) closeEditItemModal();
+}
+
+// Hitung estimasi baru dari item yang sudah diedit
+function calcNewEst(orderId, changedIdx, newArticle, newColor, newSize) {
+  const o = orders.find(x => x.id === orderId); if(!o) return null;
+  const today = new Date().toISOString().slice(0,10);
+
+  let maxEstDate = null;
+  let maxEstDays = 0;
+
+  o.items.forEach((item, idx) => {
+    const art = idx === changedIdx ? newArticle : item.name;
+    const col = idx === changedIdx ? newColor : item.color;
+    const sz  = idx === changedIdx ? (newSize || null) : item.size;
+
+    // Cek batch slot
+    const slotKey = art + ' · ' + col + ' · ' + (sz || 'OS');
+    // Batch data ada di slotData? Tidak — batch di dashboard tidak di-cache.
+    // Pakai article_est_days sebagai fallback, est_date dari order lama kalau artikel/warna sama
+    const estDaysVal = articleEstDays_cached[art + ' · ' + col] || 0;
+    if(estDaysVal > maxEstDays) maxEstDays = estDaysVal;
+  });
+
+  return maxEstDays;
+}
+
+let articleEstDays_cached = {};
+
+// Load article_est_days sekali saat dashboard load untuk dipakai di calcNewEst
+async function loadArticleEstDaysCache() {
+  const { data } = await _sb.from('po_settings').select('article_est_days').eq('id', 1).single();
+  articleEstDays_cached = data?.article_est_days || {};
+}
+
+async function submitEditItem() {
+  const o = orders.find(x => x.id === editItemTargetOrderId); if(!o) return;
+  const item = o.items[editItemTargetIdx]; if(!item) return;
+
+  const newArt  = document.getElementById('edit-item-article').value;
+  const newCol  = document.getElementById('edit-item-color').value;
+  const p = PRODUCTS.find(x => x.name === newArt);
+  const newSize = p?.sizes ? document.getElementById('edit-item-size').value : null;
+  const newQty  = parseInt(document.getElementById('edit-item-qty').value) || 1;
+
+  const unchanged = newArt === item.name && newCol === item.color && newSize === item.size && newQty === item.qty;
+  if(unchanged) { closeEditItemModal(); return; }
+
+  // Hitung estimasi lama dan baru
+  const estLama = getEstDisplay(o);
+  const newEstDays = calcNewEst(editItemTargetOrderId, editItemTargetIdx, newArt, newCol, newSize);
+  const newEstDate = newEstDays > 0 ? addWorkdaysFromDate(new Date(), newEstDays) : null;
+  const estBaru = newEstDate ? fmtTanggal(newEstDate) : estLama; // fallback ke lama kalau tidak ada data
+
+  if(!editItemConfirmed) {
+    // Tampilkan konfirmasi
+    const confirmBox = document.getElementById('edit-item-confirm-box');
+    const artChanged = newArt !== item.name || newCol !== item.color || newSize !== item.size;
+    let msg = '';
+    if(artChanged) {
+      msg += `item akan berubah ke ${newArt} · ${newCol}${newSize ? ' · '+newSize : ''}.\n`;
+    }
+    if(newQty !== item.qty) {
+      msg += `qty: ${item.qty} pcs → ${newQty} pcs.\n`;
+    }
+    if(artChanged && estBaru !== estLama) {
+      msg += `estimasi berubah: ${estLama} → ${estBaru}.\n`;
+      msg += `tracking page customer akan otomatis update.`;
+    } else if(artChanged) {
+      msg += `estimasi tetap: ${estLama}.`;
+    }
+    confirmBox.textContent = msg;
+    confirmBox.classList.add('show');
+    editItemConfirmed = true;
+    document.getElementById('edit-item-submit-btn').textContent = 'konfirmasi & simpan →';
+    return;
+  }
+
+  // Sudah konfirmasi — simpan ke DB
+  const btn = document.getElementById('edit-item-submit-btn');
+  btn.disabled = true; btn.textContent = 'menyimpan...';
+
+  try {
+    // Update po_items
+    const dbItem = await _sb.from('po_items').select('id').eq('order_id', o.id).order('id');
+    if(dbItem.data && dbItem.data[editItemTargetIdx]) {
+      await _sb.from('po_items').update({
+        article: newArt,
+        color: newCol,
+        size: newSize || null,
+        qty: newQty
+      }).eq('id', dbItem.data[editItemTargetIdx].id);
+    }
+
+    // Update estimasi di po_orders kalau ada perubahan artikel/warna
+    const artChanged = newArt !== item.name || newCol !== item.color || newSize !== item.size;
+    if(artChanged && newEstDate) {
+      await _sb.from('po_orders').update({
+        estimated_days: newEstDays,
+        est_date: null, // reset batch est_date karena item berubah
+        updated_at: new Date().toISOString()
+      }).eq('id', o.id);
+    }
+
+    // Update local state
+    o.items[editItemTargetIdx] = { name: newArt, color: newCol, size: newSize, qty: newQty };
+    if(artChanged && newEstDays > 0) {
+      o.maxDays = newEstDays;
+      o.est_date = null;
+    }
+
+    closeEditItemModal();
+    renderTable();
+    renderPanel(o);
+  } catch(e) {
+    alert('gagal menyimpan: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'konfirmasi & simpan →';
+  }
 }
 
 function exportCSV(){
