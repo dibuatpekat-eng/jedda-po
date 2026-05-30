@@ -77,12 +77,14 @@ html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webk
 
 /* ── 2-col article grid ── */
 .sa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #d8d4ce; margin-top: 1px; }
-.sa-card { background: #f0ede8; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
-.sa-art-name { font-size: 12px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; line-height: 1.3; }
-.sa-est { font-size: 11px; font-family: 'IBM Plex Mono', monospace; font-weight: 400; }
+.sa-card { background: #f0ede8; padding: 14px 16px; display: flex; flex-direction: column; gap: 0; }
+.sa-art-name { font-size: 12px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; line-height: 1.3; margin-bottom: 8px; }
+.sa-color-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; border-top: 1px solid #e8e4df; }
+.sa-color-name { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; color: #888; }
+.sa-est { font-size: 10px; font-family: 'IBM Plex Mono', monospace; font-weight: 400; }
 .sa-est-active { color: #3a5a3a; }
 .sa-est-temp   { color: #888; }
-.sa-est-closed { color: #c0392b; font-weight: 300; font-size: 9px; letter-spacing: 0.5px; }
+.sa-est-closed { color: #c0392b; font-weight: 300; font-size: 9px; }
 </style>
 </head>
 <body>
@@ -253,20 +255,15 @@ function render() {
   document.getElementById('sum-sisa').textContent = totalSisa || '—';
   document.getElementById('sum-habis').textContent = totalHabis || '—';
 
-  // Render semua artikel — tiap artikel tampilkan estimasi per warna
-  // Warna aktif: ada batch ATAU ada est days. Warna tidak aktif: "po blm dibuka"
+  // Render semua artikel — tiap card punya baris per warna
   const html = PRODUCTS.map(p => {
     const sizes = p.sizes || ['OS'];
 
-    // Cek apakah ada batch di artikel ini
-    const hasBatch = p.colors.some(c => sizes.some(s => getSlot(p.name, c, s)));
-
-    // Tentukan est text untuk artikel secara keseluruhan (untuk sa-card)
-    // Ambil est dari warna yang paling lambat (aktif)
-    let bestEstText = null, bestEstCls = null;
-    p.colors.forEach(c => {
+    const colorRows = p.colors.map(c => {
       const colorHasBatch = sizes.some(s => getSlot(p.name, c, s));
       const estDays = articleEstDays[p.name + ' · ' + c] || 0;
+
+      let estText, estCls;
       if(colorHasBatch) {
         let latestEndsAt = null;
         sizes.forEach(s => {
@@ -274,16 +271,25 @@ function render() {
           if(slot && slot.endsAt) { if(!latestEndsAt || slot.endsAt > latestEndsAt) latestEndsAt = slot.endsAt; }
         });
         const d = latestEndsAt ? daysUntil(latestEndsAt) : null;
-        if(d !== null) { bestEstText = '±' + d + ' hari'; bestEstCls = 'sa-est-active'; }
+        estText = d !== null ? '±' + d + ' hari' : '—';
+        estCls = 'sa-est-active';
       } else if(estDays > 0) {
-        if(!bestEstText || bestEstCls === 'sa-est-closed') { bestEstText = '±' + estDays + ' hari'; bestEstCls = 'sa-est-temp'; }
+        estText = '±' + estDays + ' hari';
+        estCls = 'sa-est-temp';
+      } else {
+        estText = 'blm dibuka';
+        estCls = 'sa-est-closed';
       }
-    });
-    if(!bestEstText) { bestEstText = 'po blm dibuka'; bestEstCls = 'sa-est-closed'; }
+
+      return `<div class="sa-color-row">
+        <span class="sa-color-name">${c}</span>
+        <span class="sa-est ${estCls}">${estText}</span>
+      </div>`;
+    }).join('');
 
     return `<div class="sa-card">
       <span class="sa-art-name">${p.name}</span>
-      <span class="sa-est ${bestEstCls}">${bestEstText}</span>
+      ${colorRows}
     </div>`;
   }).join('');
 
