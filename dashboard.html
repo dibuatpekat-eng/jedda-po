@@ -506,7 +506,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
       <input class="modal-input" type="number" min="1" max="99" id="edit-item-qty" style="width:80px">
     </div>
     <div class="modal-field" style="border-top:1px solid #eae6e0;padding-top:16px;margin-top:4px">
-      <div class="modal-label">tambah hari produksi <span style="color:#ccc;font-weight:300;letter-spacing:0">(dari tgl order masuk)</span></div>
+      <div class="modal-label">tambah hari produksi <span style="color:#ccc;font-weight:300;letter-spacing:0">(dari estimasi saat ini)</span></div>
       <div style="display:flex;align-items:baseline;gap:10px">
         <input class="modal-input" type="number" min="1" max="365" id="edit-item-days" placeholder="kosongkan jika tidak berubah" style="flex:1" oninput="onEditDaysChange()">
         <span style="font-size:9px;color:#aaa;font-family:'IBM Plex Mono',monospace;white-space:nowrap">hari kerja</span>
@@ -1175,9 +1175,10 @@ function onEditDaysChange() {
   const days = parseInt(document.getElementById('edit-item-days').value);
   const preview = document.getElementById('edit-item-days-preview');
   if(!days || days < 1) { preview.textContent = ''; return; }
-  // Hitung dari created_at order
-  const estDate = addWorkdaysFromDate(o.created, days);
-  preview.textContent = '→ est. ' + fmtTanggal(estDate);
+  // Hitung dari estimasi saat ini (bukan created_at)
+  const currentEst = o.est_date ? new Date(o.est_date) : addWorkdaysFromDate(o.created, o.maxDays || 7);
+  const newEstDate = addWorkdaysFromDate(currentEst, days);
+  preview.textContent = '→ est. ' + fmtTanggal(newEstDate);
   resetEditConfirm();
 }
 
@@ -1226,7 +1227,8 @@ async function submitEditItem() {
   let estBaru = null;
   let newEstDate = null;
   if(newDays) {
-    newEstDate = addWorkdaysFromDate(o.created, newDays);
+    const currentEst = o.est_date ? new Date(o.est_date) : addWorkdaysFromDate(o.created, o.maxDays || 7);
+    newEstDate = addWorkdaysFromDate(currentEst, newDays);
     estBaru = fmtTanggal(newEstDate);
   }
 
