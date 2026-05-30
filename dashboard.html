@@ -505,6 +505,14 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
       <div class="modal-label">qty</div>
       <input class="modal-input" type="number" min="1" max="99" id="edit-item-qty" style="width:80px">
     </div>
+    <div class="modal-field" style="border-top:1px solid #eae6e0;padding-top:16px;margin-top:4px">
+      <div class="modal-label">tambah hari produksi <span style="color:#ccc;font-weight:300;letter-spacing:0">(dari tgl order masuk)</span></div>
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <input class="modal-input" type="number" min="1" max="365" id="edit-item-days" placeholder="kosongkan jika tidak berubah" style="flex:1" oninput="onEditDaysChange()">
+        <span style="font-size:9px;color:#aaa;font-family:'IBM Plex Mono',monospace;white-space:nowrap">hari kerja</span>
+      </div>
+      <div id="edit-item-days-preview" style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#888;margin-top:8px;min-height:16px"></div>
+    </div>
 
     <div class="edit-item-modal-confirm" id="edit-item-confirm-box"></div>
 
@@ -1114,6 +1122,8 @@ function openEditItemModal(orderId, itemIdx) {
   document.getElementById('edit-item-order-label').textContent = o.po_number + ' · ' + o.name;
   document.getElementById('edit-item-confirm-box').classList.remove('show');
   document.getElementById('edit-item-submit-btn').textContent = 'simpan perubahan';
+  document.getElementById('edit-item-days').value = '';
+  document.getElementById('edit-item-days-preview').textContent = '';
 
   // Populate artikel dropdown
   const artSel = document.getElementById('edit-item-article');
@@ -1160,6 +1170,17 @@ function onEditColorChange() {
   resetEditConfirm();
 }
 
+function onEditDaysChange() {
+  const o = orders.find(x => x.id === editItemTargetOrderId); if(!o) return;
+  const days = parseInt(document.getElementById('edit-item-days').value);
+  const preview = document.getElementById('edit-item-days-preview');
+  if(!days || days < 1) { preview.textContent = ''; return; }
+  // Hitung dari created_at order
+  const estDate = addWorkdaysFromDate(o.created, days);
+  preview.textContent = '→ est. ' + fmtTanggal(estDate);
+  resetEditConfirm();
+}
+
 function resetEditConfirm() {
   editItemConfirmed = false;
   document.getElementById('edit-item-confirm-box').classList.remove('show');
@@ -1177,33 +1198,8 @@ function handleEditItemOverlay(e) {
   if(e.target === document.getElementById('edit-item-modal')) closeEditItemModal();
 }
 
-// Hitung estimasi baru dari item yang sudah diedit
-function calcNewEst(orderId, changedIdx, newArticle, newColor, newSize) {
-  const o = orders.find(x => x.id === orderId); if(!o) return null;
-  const today = new Date().toISOString().slice(0,10);
-
-  let maxEstDate = null;
-  let maxEstDays = 0;
-
-  o.items.forEach((item, idx) => {
-    const art = idx === changedIdx ? newArticle : item.name;
-    const col = idx === changedIdx ? newColor : item.color;
-    const sz  = idx === changedIdx ? (newSize || null) : item.size;
-
-    // Cek batch slot
-    const slotKey = art + ' · ' + col + ' · ' + (sz || 'OS');
-    // Batch data ada di slotData? Tidak — batch di dashboard tidak di-cache.
-    // Pakai article_est_days sebagai fallback, est_date dari order lama kalau artikel/warna sama
-    const estDaysVal = articleEstDays_cached[art + ' · ' + col] || 0;
-    if(estDaysVal > maxEstDays) maxEstDays = estDaysVal;
-  });
-
-  return maxEstDays;
-}
-
 let articleEstDays_cached = {};
 
-// Load article_est_days sekali saat dashboard load untuk dipakai di calcNewEst
 async function loadArticleEstDaysCache() {
   const { data } = await _sb.from('po_settings').select('article_est_days').eq('id', 1).single();
   articleEstDays_cached = data?.article_est_days || {};
@@ -1215,38 +1211,39 @@ async function submitEditItem() {
 
   const newArt  = document.getElementById('edit-item-article').value;
   const newCol  = document.getElementById('edit-item-color').value;
-  const p = PRODUCTS.find(x => x.name === newArt);
+  const p       = PRODUCTS.find(x => x.name === newArt);
   const newSize = p?.sizes ? document.getElementById('edit-item-size').value : null;
   const newQty  = parseInt(document.getElementById('edit-item-qty').value) || 1;
+  const newDays = parseInt(document.getElementById('edit-item-days').value) || null;
 
-  const unchanged = newArt === item.name && newCol === item.color && newSize === item.size && newQty === item.qty;
-  if(unchanged) { closeEditItemModal(); return; }
+  const itemChanged = newArt !== item.name || newCol !== item.color || newSize !== item.size || newQty !== item.qty;
+  const estChanged  = !!newDays;
+
+  if(!itemChanged && !estChanged) { closeEditItemModal(); return; }
 
   // Hitung estimasi lama dan baru
   const estLama = getEstDisplay(o);
-  const newEstDays = calcNewEst(editItemTargetOrderId, editItemTargetIdx, newArt, newCol, newSize);
-  const newEstDate = newEstDays > 0 ? addWorkdaysFromDate(new Date(), newEstDays) : null;
-  const estBaru = newEstDate ? fmtTanggal(newEstDate) : estLama; // fallback ke lama kalau tidak ada data
+  let estBaru = null;
+  let newEstDate = null;
+  if(newDays) {
+    newEstDate = addWorkdaysFromDate(o.created, newDays);
+    estBaru = fmtTanggal(newEstDate);
+  }
 
   if(!editItemConfirmed) {
     // Tampilkan konfirmasi
-    const confirmBox = document.getElementById('edit-item-confirm-box');
-    const artChanged = newArt !== item.name || newCol !== item.color || newSize !== item.size;
-    let msg = '';
-    if(artChanged) {
-      msg += `item akan berubah ke ${newArt} · ${newCol}${newSize ? ' · '+newSize : ''}.\n`;
+    const lines = [];
+    if(newArt !== item.name || newCol !== item.color || newSize !== item.size) {
+      const oldMeta = [item.color, item.size].filter(Boolean).join(' · ');
+      const newMeta = [newCol, newSize].filter(Boolean).join(' · ');
+      lines.push(`item: ${item.name} · ${oldMeta} → ${newArt} · ${newMeta}`);
     }
-    if(newQty !== item.qty) {
-      msg += `qty: ${item.qty} pcs → ${newQty} pcs.\n`;
-    }
-    if(artChanged && estBaru !== estLama) {
-      msg += `estimasi berubah: ${estLama} → ${estBaru}.\n`;
-      msg += `tracking page customer akan otomatis update.`;
-    } else if(artChanged) {
-      msg += `estimasi tetap: ${estLama}.`;
-    }
-    confirmBox.textContent = msg;
-    confirmBox.classList.add('show');
+    if(newQty !== item.qty) lines.push(`qty: ${item.qty} pcs → ${newQty} pcs`);
+    if(estBaru) lines.push(`estimasi: ${estLama} → ${estBaru}`);
+    lines.push('tracking page customer akan otomatis update.');
+
+    document.getElementById('edit-item-confirm-box').textContent = lines.join('\n');
+    document.getElementById('edit-item-confirm-box').classList.add('show');
     editItemConfirmed = true;
     document.getElementById('edit-item-submit-btn').textContent = 'konfirmasi & simpan →';
     return;
@@ -1258,31 +1255,29 @@ async function submitEditItem() {
 
   try {
     // Update po_items
-    const dbItem = await _sb.from('po_items').select('id').eq('order_id', o.id).order('id');
-    if(dbItem.data && dbItem.data[editItemTargetIdx]) {
-      await _sb.from('po_items').update({
-        article: newArt,
-        color: newCol,
-        size: newSize || null,
-        qty: newQty
-      }).eq('id', dbItem.data[editItemTargetIdx].id);
+    if(itemChanged) {
+      const { data: dbItems } = await _sb.from('po_items').select('id').eq('order_id', o.id).order('id');
+      if(dbItems && dbItems[editItemTargetIdx]) {
+        await _sb.from('po_items').update({
+          article: newArt, color: newCol, size: newSize || null, qty: newQty
+        }).eq('id', dbItems[editItemTargetIdx].id);
+      }
     }
 
-    // Update estimasi di po_orders kalau ada perubahan artikel/warna
-    const artChanged = newArt !== item.name || newCol !== item.color || newSize !== item.size;
-    if(artChanged && newEstDate) {
+    // Update estimasi di po_orders — hitung dari created_at + newDays hari kerja
+    if(newDays && newEstDate) {
       await _sb.from('po_orders').update({
-        estimated_days: newEstDays,
-        est_date: null, // reset batch est_date karena item berubah
+        estimated_days: newDays,
+        est_date: newEstDate.toISOString().slice(0, 10),
         updated_at: new Date().toISOString()
       }).eq('id', o.id);
     }
 
     // Update local state
-    o.items[editItemTargetIdx] = { name: newArt, color: newCol, size: newSize, qty: newQty };
-    if(artChanged && newEstDays > 0) {
-      o.maxDays = newEstDays;
-      o.est_date = null;
+    if(itemChanged) o.items[editItemTargetIdx] = { name: newArt, color: newCol, size: newSize, qty: newQty };
+    if(newDays && newEstDate) {
+      o.maxDays = newDays;
+      o.est_date = newEstDate.toISOString().slice(0, 10);
     }
 
     closeEditItemModal();
