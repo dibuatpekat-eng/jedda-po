@@ -324,6 +324,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .modal-btn:hover { border-color: #888; color: #555; }
 .modal-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
 .modal-btn-dark:hover { opacity: 0.8; }
+.est-edited-dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:#7b8fc7; margin-left:6px; vertical-align:middle; position:relative; top:-1px; }
 </style>
 </head>
 <body>
@@ -506,9 +507,9 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
       <input class="modal-input" type="number" min="1" max="99" id="edit-item-qty" style="width:80px">
     </div>
     <div class="modal-field" style="border-top:1px solid #eae6e0;padding-top:16px;margin-top:4px">
-      <div class="modal-label">tambah hari produksi <span style="color:#ccc;font-weight:300;letter-spacing:0">(dari estimasi saat ini)</span></div>
+      <div class="modal-label">ubah estimasi <span style="color:#ccc;font-weight:300;letter-spacing:0">(+ mundur · - percepat)</span></div>
       <div style="display:flex;align-items:baseline;gap:10px">
-        <input class="modal-input" type="number" min="1" max="365" id="edit-item-days" placeholder="kosongkan jika tidak berubah" style="flex:1" oninput="onEditDaysChange()">
+        <input class="modal-input" type="number" min="-365" max="365" id="edit-item-days" placeholder="kosongkan jika tidak berubah" style="flex:1" oninput="onEditDaysChange()">
         <span style="font-size:9px;color:#aaa;font-family:'IBM Plex Mono',monospace;white-space:nowrap">hari kerja</span>
       </div>
       <div id="edit-item-days-preview" style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#888;margin-top:8px;min-height:16px"></div>
@@ -719,6 +720,7 @@ async function loadOrders(){
         created:        new Date(o.created_at),
         est_date:       o.est_date || null,
         maxDays:        maxDays,
+        est_edited_at:  o.est_edited_at || null,
         items:          items.map(i => ({name: i.article, color: i.color, size: i.size||null, qty: i.qty}))
       };
     });
@@ -865,7 +867,7 @@ function renderTable(){
       <td>${(overdue||urgent)?'<span class="urgent-dot"></span>':''}${o.name}</td>
       <td>${itemList}</td>
       <td style="white-space:nowrap">
-        <div class="est-date ${overdue?'est-urgent':daysLeft<=2&&o.status!=='dikirim'?'est-urgent':''}">${estDisp}</div>
+        <div class="est-date ${overdue?'est-urgent':daysLeft<=2&&o.status!=='dikirim'?'est-urgent':''}">${estDisp}${o.est_edited_at?'<span class="est-edited-dot" title="estimasi diperbarui manual"></span>':''}</div>
         <div class="est-days ${overdue?'est-urgent':daysLeft<=2&&o.status!=='dikirim'?'est-urgent':''}">
           ${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':''}
         </div>
@@ -1058,8 +1060,9 @@ function renderPanel(o){
     <div class="dp-est">
       <div>
         <div class="dp-est-label">estimasi PO</div>
-        <div class="dp-est-date ${overdue||urgent?'est-urgent':''}">${estDisp}</div>
+        <div class="dp-est-date ${overdue||urgent?'est-urgent':''}">${estDisp}${o.est_edited_at?'<span class="est-edited-dot" title="estimasi diperbarui manual"></span>':''}</div>
         <div class="dp-est-days ${overdue||urgent?'est-urgent':''}">${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':''}</div>
+        ${o.est_edited_at?`<div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#7b8fc7;margin-top:4px;letter-spacing:0.5px">diperbarui · ${fmtEntry(new Date(o.est_edited_at)).date}</div>`:''}
       </div>
       ${overdue?`<div class="dp-est-alert">⚑ terlambat kirim</div>`:urgent?`<div class="dp-est-alert">⚑ ${daysLeft} hari lagi</div>`:""}
     </div>
@@ -1266,11 +1269,12 @@ async function submitEditItem() {
       }
     }
 
-    // Update estimasi di po_orders — hitung dari created_at + newDays hari kerja
+    // Update estimasi di po_orders
     if(newDays && newEstDate) {
       await _sb.from('po_orders').update({
-        estimated_days: newDays,
+        estimated_days: Math.abs(newDays),
         est_date: newEstDate.toISOString().slice(0, 10),
+        est_edited_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }).eq('id', o.id);
     }
@@ -1278,8 +1282,9 @@ async function submitEditItem() {
     // Update local state
     if(itemChanged) o.items[editItemTargetIdx] = { name: newArt, color: newCol, size: newSize, qty: newQty };
     if(newDays && newEstDate) {
-      o.maxDays = newDays;
+      o.maxDays = Math.abs(newDays);
       o.est_date = newEstDate.toISOString().slice(0, 10);
+      o.est_edited_at = new Date().toISOString();
     }
 
     closeEditItemModal();
