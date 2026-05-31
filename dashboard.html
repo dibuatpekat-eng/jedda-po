@@ -124,6 +124,12 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .dp-row:last-child { border-bottom: none; }
 .dp-key { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
 .dp-val { font-size: 13px; font-weight: 400; text-align: right; max-width: 200px; line-height: 1.5; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.dp-edit-btn { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #ccc; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 0 0 0 8px; flex-shrink: 0; transition: color 0.15s; }
+.dp-edit-btn:hover { color: #111; }
+.dp-inline-input { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; border: none; border-bottom: 1px solid #111; background: transparent; outline: none; text-align: right; width: 100%; padding: 0; }
+.dp-inline-actions { display: flex; gap: 8px; justify-content: flex-end; padding: 6px 0 2px; }
+.dp-inline-save { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #f0ede8; background: #111; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 4px 10px; }
+.dp-inline-cancel { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 4px 0; }
 .dp-item-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid #eae6e0; }
 .dp-item-row:last-child { border-bottom: none; }
 .dp-item-name { font-size: 13px; font-weight: 500; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
@@ -1072,9 +1078,27 @@ function renderPanel(o){
     </div>
     <div class="dp-section">
       <div class="dp-section-label">customer</div>
-      <div class="dp-row"><span class="dp-key">nama</span><span class="dp-val">${o.name}</span></div>
-      <div class="dp-row"><span class="dp-key">hp</span><span class="dp-val">${o.phone}</span></div>
-      <div class="dp-row"><span class="dp-key">alamat</span><span class="dp-val">${o.address}</span></div>
+      <div class="dp-row" id="dp-row-nama">
+        <span class="dp-key">nama</span>
+        <div style="display:flex;align-items:baseline;gap:0;flex:1;justify-content:flex-end">
+          <span class="dp-val" id="dp-val-nama">${o.name}</span>
+          <button class="dp-edit-btn" onclick="startInlineEdit(${o.id},'nama')">edit</button>
+        </div>
+      </div>
+      <div class="dp-row" id="dp-row-hp">
+        <span class="dp-key">hp</span>
+        <div style="display:flex;align-items:baseline;gap:0;flex:1;justify-content:flex-end">
+          <span class="dp-val" id="dp-val-hp">${o.phone}</span>
+          <button class="dp-edit-btn" onclick="startInlineEdit(${o.id},'hp')">edit</button>
+        </div>
+      </div>
+      <div class="dp-row" id="dp-row-alamat">
+        <span class="dp-key">alamat</span>
+        <div style="display:flex;align-items:baseline;gap:0;flex:1;justify-content:flex-end">
+          <span class="dp-val" id="dp-val-alamat">${o.address}</span>
+          <button class="dp-edit-btn" onclick="startInlineEdit(${o.id},'alamat')">edit</button>
+        </div>
+      </div>
       ${notesHtml}
       <div class="dp-row"><span class="dp-key">masuk</span><span class="dp-val">${entry.date}, ${entry.time}</span></div>
       ${o.resi?`<div class="dp-row"><span class="dp-key">resi</span><span class="dp-val" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${o.kurir?o.kurir+' · ':''}${o.resi}</span></div>`:""}
@@ -1311,6 +1335,62 @@ async function submitEditItem() {
     btn.disabled = false;
     btn.textContent = 'konfirmasi & simpan \u2192';
   }
+}
+
+// ── inline edit customer ──
+function startInlineEdit(orderId, field) {
+  const o = orders.find(x => x.id === orderId); if(!o) return;
+  const valMap = { nama: o.name, hp: o.phone, alamat: o.address };
+  const dbMap  = { nama: 'customer_name', hp: 'customer_phone', alamat: 'address' };
+  const cur = valMap[field];
+  const row = document.getElementById('dp-row-' + field); if(!row) return;
+
+  const isTextarea = field === 'alamat';
+  const inputHtml = isTextarea
+    ? `<textarea class="dp-inline-input" id="dp-inline-input" rows="2" style="resize:none;line-height:1.5">${cur}</textarea>`
+    : `<input class="dp-inline-input" id="dp-inline-input" type="${field==='hp'?'tel':'text'}" value="${cur}">`;
+
+  row.innerHTML = `
+    <span class="dp-key">${field}</span>
+    <div style="flex:1">
+      ${inputHtml}
+      <div class="dp-inline-actions">
+        <button class="dp-inline-cancel" onclick="cancelInlineEdit(${orderId},'${field}')">batal</button>
+        <button class="dp-inline-save" onclick="saveInlineEdit(${orderId},'${field}','${dbMap[field]}')">simpan</button>
+      </div>
+    </div>`;
+
+  setTimeout(() => {
+    const inp = document.getElementById('dp-inline-input');
+    if(inp) { inp.focus(); if(inp.select) inp.select(); }
+  }, 50);
+}
+
+async function saveInlineEdit(orderId, field, dbCol) {
+  const o = orders.find(x => x.id === orderId); if(!o) return;
+  const inp = document.getElementById('dp-inline-input'); if(!inp) return;
+  const newVal = inp.value.trim();
+  if(!newVal) { cancelInlineEdit(orderId, field); return; }
+
+  const btn = document.querySelector('.dp-inline-save');
+  if(btn) { btn.disabled = true; btn.textContent = '...'; }
+
+  try {
+    await _sb.from('po_orders').update({ [dbCol]: newVal, updated_at: new Date().toISOString() }).eq('id', o.id);
+    if(field === 'nama') o.name = newVal;
+    else if(field === 'hp') o.phone = newVal;
+    else if(field === 'alamat') o.address = newVal;
+    renderPanel(o);
+    renderTable();
+  } catch(e) {
+    alert('gagal menyimpan: ' + e.message);
+    if(btn) { btn.disabled = false; btn.textContent = 'simpan'; }
+  }
+}
+
+function cancelInlineEdit(orderId, field) {
+  const o = orders.find(x => x.id === orderId); if(!o) return;
+  renderPanel(o);
 }
 
 function exportCSV(){
