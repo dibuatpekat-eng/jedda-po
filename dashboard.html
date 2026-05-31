@@ -123,19 +123,19 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .dp-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 12px; }
 .dp-row:last-child { border-bottom: none; }
 .dp-key { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
-.dp-val { font-size: 13px; font-weight: 300; text-align: right; max-width: 200px; line-height: 1.5; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.dp-val { font-size: 13px; font-weight: 400; text-align: right; max-width: 200px; line-height: 1.5; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
 .dp-item-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid #eae6e0; }
 .dp-item-row:last-child { border-bottom: none; }
-.dp-item-name { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.dp-item-color { font-size: 11px; font-weight: 300; color: #aaa; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+.dp-item-name { font-size: 13px; font-weight: 500; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.dp-item-color { font-size: 11px; font-weight: 400; color: #888; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
 .dp-item-qty { font-size: 12px; font-weight: 400; color: #555; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
 
 /* ── est block in panel ── */
 .dp-est { margin: 20px 24px 0; padding: 14px 16px; border: 1px solid #d8d4ce; display: flex; justify-content: space-between; align-items: center; }
 .dp-est-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 6px; font-weight: 300; font-family: 'IBM Plex Mono', monospace; }
 .dp-est-date { font-size: 15px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
-.dp-est-days { font-size: 12px; font-weight: 300; color: #777; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
-.dp-est-alert { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #c0392b; font-weight: 300; font-family: 'IBM Plex Mono', monospace; }
+.dp-est-days { font-size: 12px; font-weight: 400; color: #777; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+.dp-est-alert { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #c0392b; font-weight: 400; font-family: 'IBM Plex Mono', monospace; }
 
 /* ── flow steps ── */
 .flow-wrap { padding: 14px 0 0; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
@@ -149,7 +149,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .dp-checkbox { width: 14px; height: 14px; border: 1px solid #bbb; background: transparent; appearance: none; cursor: pointer; position: relative; flex-shrink: 0; }
 .dp-checkbox:checked { background: #111; border-color: #111; }
 .dp-checkbox:checked::after { content: ''; position: absolute; top: 2px; left: 4px; width: 4px; height: 7px; border: 1px solid #f0ede8; border-top: none; border-left: none; transform: rotate(45deg); }
-.dp-checkbox-label { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
+.dp-checkbox-label { font-size: 11px; font-weight: 400; color: #444; font-family: 'IBM Plex Sans', sans-serif; }
 
 /* ── footer actions ── */
 .dp-footer { padding: 18px 24px; border-top: 1px solid #d8d4ce; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -486,27 +486,13 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 
 <!-- edit item modal -->
 <div class="modal-overlay" id="edit-item-modal" onclick="handleEditItemOverlay(event)">
-  <div class="modal-box" style="width:400px">
-    <div class="modal-title">ubah item pesanan</div>
+  <div class="modal-box" style="width:440px;max-height:85vh;overflow-y:auto">
+    <div class="modal-title">ubah pesanan</div>
     <div class="modal-name" id="edit-item-order-label">—</div>
 
-    <div class="modal-field">
-      <div class="modal-label">artikel</div>
-      <select class="modal-select" id="edit-item-article" onchange="onEditArticleChange()"></select>
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">warna</div>
-      <select class="modal-select" id="edit-item-color" onchange="onEditColorChange()"></select>
-    </div>
-    <div class="modal-field" id="edit-item-size-wrap">
-      <div class="modal-label">size</div>
-      <select class="modal-select" id="edit-item-size"></select>
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">qty</div>
-      <input class="modal-input" type="number" min="1" max="99" id="edit-item-qty" style="width:80px">
-    </div>
-    <div class="modal-field" style="border-top:1px solid #eae6e0;padding-top:16px;margin-top:4px">
+    <div id="edit-item-items-container"></div>
+
+    <div class="modal-field" style="border-top:1px solid #eae6e0;padding-top:16px;margin-top:8px">
       <div class="modal-label">ubah estimasi <span style="color:#ccc;font-weight:300;letter-spacing:0">(+ mundur · - percepat)</span></div>
       <div style="display:flex;align-items:baseline;gap:10px">
         <input class="modal-input" type="number" min="-365" max="365" id="edit-item-days" placeholder="kosongkan jika tidak berubah" style="flex:1" oninput="onEditDaysChange()">
@@ -1044,11 +1030,10 @@ function renderPanel(o){
     return `<span class="flow-step ${isDone?'done':''} ${isCurrent?'current':''}">${STATUS_LABEL[s]}</span>${i<STATUSES.length-1?'<span class="flow-sep"> › </span>':''}`;
   }).join("");
 
-  const itemRows = o.items.map((i, idx)=>{
+  const itemRows = o.items.map((i)=>{
     const meta = [i.color, i.size].filter(Boolean).join(' · ');
     return `<div class="dp-item-row">
       <div><div class="dp-item-name">${i.name}</div><div class="dp-item-color">${meta} · ${i.qty} pcs</div></div>
-      <button class="dp-item-edit-btn" onclick="openEditItemModal(${o.id}, ${idx})">ubah</button>
     </div>`;
   }).join("");
 
@@ -1064,7 +1049,10 @@ function renderPanel(o){
         <div class="dp-est-days ${overdue||urgent?'est-urgent':''}">${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':''}</div>
         ${o.est_edited_at?`<div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#7b8fc7;margin-top:4px;letter-spacing:0.5px">diperbarui · ${fmtEntry(new Date(o.est_edited_at)).date}</div>`:''}
       </div>
-      ${overdue?`<div class="dp-est-alert">⚑ terlambat kirim</div>`:urgent?`<div class="dp-est-alert">⚑ ${daysLeft} hari lagi</div>`:""}
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        ${overdue?`<div class="dp-est-alert">⚑ terlambat kirim</div>`:urgent?`<div class="dp-est-alert">⚑ ${daysLeft} hari lagi</div>`:""}
+        <button class="dp-item-edit-btn" onclick="openEditItemModal(${o.id})">ubah</button>
+      </div>
     </div>
     <div class="dp-section">
       <div class="dp-section-label">alur status</div>
@@ -1111,15 +1099,12 @@ function renderPanel(o){
 
 // ── edit item ──
 let editItemTargetOrderId = null;
-let editItemTargetIdx = null;
 let editItemConfirmed = false;
 
-function openEditItemModal(orderId, itemIdx) {
+function openEditItemModal(orderId) {
   const o = orders.find(x => x.id === orderId); if(!o) return;
-  const item = o.items[itemIdx]; if(!item) return;
 
   editItemTargetOrderId = orderId;
-  editItemTargetIdx = itemIdx;
   editItemConfirmed = false;
 
   document.getElementById('edit-item-order-label').textContent = o.po_number + ' · ' + o.name;
@@ -1128,48 +1113,50 @@ function openEditItemModal(orderId, itemIdx) {
   document.getElementById('edit-item-days').value = '';
   document.getElementById('edit-item-days-preview').textContent = '';
 
-  // Populate artikel dropdown
-  const artSel = document.getElementById('edit-item-article');
-  artSel.innerHTML = PRODUCTS.map(p => `<option value="${p.name}" ${p.name === item.name ? 'selected' : ''}>${p.name}</option>`).join('');
-
-  populateEditColors(item.name, item.color);
-  populateEditSizes(item.name, item.color, item.size);
-  document.getElementById('edit-item-qty').value = item.qty;
+  // Render semua item sebagai rows
+  const container = document.getElementById('edit-item-items-container');
+  container.innerHTML = o.items.map((item, idx) => {
+    const p = PRODUCTS.find(x => x.name === item.name);
+    const artOptions = PRODUCTS.map(pr => `<option value="${pr.name}" ${pr.name === item.name ? 'selected' : ''}>${pr.name}</option>`).join('');
+    const colOptions = p ? p.colors.map(c => `<option value="${c}" ${c === item.color ? 'selected' : ''}>${c}</option>`).join('') : '';
+    const sizeHtml = p && p.sizes
+      ? `<div class="modal-field" style="margin-bottom:8px"><div class="modal-label">size</div>
+          <select class="modal-select" id="ei-size-${idx}" onchange="resetEditConfirm()">${p.sizes.map(s => `<option value="${s}" ${s === item.size ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`
+      : `<input type="hidden" id="ei-size-${idx}" value="">`;
+    return `<div style="border-bottom:1px solid #eae6e0;padding:14px 0;margin-bottom:4px">
+      <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#bbb;font-family:'IBM Plex Mono',monospace;margin-bottom:10px">item ${idx+1}</div>
+      <div class="modal-field" style="margin-bottom:8px">
+        <div class="modal-label">artikel</div>
+        <select class="modal-select" id="ei-art-${idx}" onchange="onEditItemArticleChange(${idx})">${artOptions}</select>
+      </div>
+      <div class="modal-field" style="margin-bottom:8px">
+        <div class="modal-label">warna</div>
+        <select class="modal-select" id="ei-col-${idx}" onchange="resetEditConfirm()">${colOptions}</select>
+      </div>
+      ${sizeHtml}
+      <div class="modal-field" style="margin-bottom:0">
+        <div class="modal-label">qty</div>
+        <input class="modal-input" type="number" min="1" max="99" id="ei-qty-${idx}" value="${item.qty}" style="width:80px" onchange="resetEditConfirm()">
+      </div>
+    </div>`;
+  }).join('');
 
   document.getElementById('edit-item-modal').classList.add('open');
 }
 
-function populateEditColors(articleName, selectedColor) {
-  const p = PRODUCTS.find(x => x.name === articleName); if(!p) return;
-  const sel = document.getElementById('edit-item-color');
-  sel.innerHTML = p.colors.map(c => `<option value="${c}" ${c === selectedColor ? 'selected' : ''}>${c}</option>`).join('');
-}
-
-function populateEditSizes(articleName, color, selectedSize) {
-  const p = PRODUCTS.find(x => x.name === articleName); if(!p) return;
-  const wrap = document.getElementById('edit-item-size-wrap');
-  const sel = document.getElementById('edit-item-size');
-  if(!p.sizes) {
-    wrap.style.display = 'none';
-    sel.innerHTML = '<option value="">one size</option>';
-  } else {
-    wrap.style.display = 'block';
-    sel.innerHTML = p.sizes.map(s => `<option value="${s}" ${s === selectedSize ? 'selected' : ''}>${s}</option>`).join('');
-  }
-}
-
-function onEditArticleChange() {
-  const art = document.getElementById('edit-item-article').value;
-  populateEditColors(art, null);
+function onEditItemArticleChange(idx) {
+  const art = document.getElementById(`ei-art-${idx}`).value;
   const p = PRODUCTS.find(x => x.name === art);
-  populateEditSizes(art, p?.colors[0], null);
-  resetEditConfirm();
-}
-
-function onEditColorChange() {
-  const art = document.getElementById('edit-item-article').value;
-  const col = document.getElementById('edit-item-color').value;
-  populateEditSizes(art, col, null);
+  const colSel = document.getElementById(`ei-col-${idx}`);
+  colSel.innerHTML = p ? p.colors.map(c => `<option value="${c}">${c}</option>`).join('') : '';
+  const sizeSel = document.getElementById(`ei-size-${idx}`);
+  if(sizeSel && p && p.sizes) {
+    sizeSel.innerHTML = p.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
+    const wrap = sizeSel.closest('.modal-field');
+    if(wrap) wrap.style.display = 'block';
+  } else if(sizeSel) {
+    sizeSel.value = '';
+  }
   resetEditConfirm();
 }
 
@@ -1177,11 +1164,10 @@ function onEditDaysChange() {
   const o = orders.find(x => x.id === editItemTargetOrderId); if(!o) return;
   const days = parseInt(document.getElementById('edit-item-days').value);
   const preview = document.getElementById('edit-item-days-preview');
-  if(!days || days < 1) { preview.textContent = ''; return; }
-  // Hitung dari estimasi saat ini (bukan created_at)
+  if(!days) { preview.textContent = ''; return; }
   const currentEst = o.est_date ? new Date(o.est_date) : addWorkdaysFromDate(o.created, o.maxDays || 7);
   const newEstDate = addWorkdaysFromDate(currentEst, days);
-  preview.textContent = '→ est. ' + fmtTanggal(newEstDate);
+  preview.textContent = '\u2192 est. ' + fmtTanggal(newEstDate);
   resetEditConfirm();
 }
 
@@ -1194,7 +1180,6 @@ function resetEditConfirm() {
 function closeEditItemModal() {
   document.getElementById('edit-item-modal').classList.remove('open');
   editItemTargetOrderId = null;
-  editItemTargetIdx = null;
   editItemConfirmed = false;
 }
 
@@ -1211,24 +1196,28 @@ async function loadArticleEstDaysCache() {
 
 async function submitEditItem() {
   const o = orders.find(x => x.id === editItemTargetOrderId); if(!o) return;
-  const item = o.items[editItemTargetIdx]; if(!item) return;
 
-  const newArt  = document.getElementById('edit-item-article').value;
-  const newCol  = document.getElementById('edit-item-color').value;
-  const p       = PRODUCTS.find(x => x.name === newArt);
-  const newSize = p?.sizes ? document.getElementById('edit-item-size').value : null;
-  const newQty  = parseInt(document.getElementById('edit-item-qty').value) || 1;
+  const newItems = o.items.map((item, idx) => {
+    const newArt  = document.getElementById(`ei-art-${idx}`)?.value || item.name;
+    const newCol  = document.getElementById(`ei-col-${idx}`)?.value || item.color;
+    const p       = PRODUCTS.find(x => x.name === newArt);
+    const newSize = p && p.sizes ? (document.getElementById(`ei-size-${idx}`)?.value || item.size) : null;
+    const newQty  = parseInt(document.getElementById(`ei-qty-${idx}`)?.value) || item.qty;
+    return { name: newArt, color: newCol, size: newSize, qty: newQty };
+  });
+
   const newDays = parseInt(document.getElementById('edit-item-days').value) || null;
 
-  const itemChanged = newArt !== item.name || newCol !== item.color || newSize !== item.size || newQty !== item.qty;
-  const estChanged  = !!newDays;
+  const itemsChanged = o.items.some((item, idx) => {
+    const n = newItems[idx];
+    return n.name !== item.name || n.color !== item.color || n.size !== item.size || n.qty !== item.qty;
+  });
+  const estChanged = !!newDays;
 
-  if(!itemChanged && !estChanged) { closeEditItemModal(); return; }
+  if(!itemsChanged && !estChanged) { closeEditItemModal(); return; }
 
-  // Hitung estimasi lama dan baru
   const estLama = getEstDisplay(o);
-  let estBaru = null;
-  let newEstDate = null;
+  let estBaru = null, newEstDate = null;
   if(newDays) {
     const currentEst = o.est_date ? new Date(o.est_date) : addWorkdaysFromDate(o.created, o.maxDays || 7);
     newEstDate = addWorkdaysFromDate(currentEst, newDays);
@@ -1236,40 +1225,43 @@ async function submitEditItem() {
   }
 
   if(!editItemConfirmed) {
-    // Tampilkan konfirmasi
     const lines = [];
-    if(newArt !== item.name || newCol !== item.color || newSize !== item.size) {
-      const oldMeta = [item.color, item.size].filter(Boolean).join(' · ');
-      const newMeta = [newCol, newSize].filter(Boolean).join(' · ');
-      lines.push(`item: ${item.name} · ${oldMeta} → ${newArt} · ${newMeta}`);
-    }
-    if(newQty !== item.qty) lines.push(`qty: ${item.qty} pcs → ${newQty} pcs`);
-    if(estBaru) lines.push(`estimasi: ${estLama} → ${estBaru}`);
+    o.items.forEach((item, idx) => {
+      const n = newItems[idx];
+      const changed = n.name !== item.name || n.color !== item.color || n.size !== item.size || n.qty !== item.qty;
+      if(!changed) return;
+      const oldMeta = [item.color, item.size].filter(Boolean).join(' \u00b7 ');
+      const newMeta = [n.color, n.size].filter(Boolean).join(' \u00b7 ');
+      if(n.name !== item.name || n.color !== item.color || n.size !== item.size)
+        lines.push(`item ${idx+1}: ${item.name} \u00b7 ${oldMeta} \u2192 ${n.name} \u00b7 ${newMeta}`);
+      if(n.qty !== item.qty)
+        lines.push(`item ${idx+1} qty: ${item.qty} \u2192 ${n.qty} pcs`);
+    });
+    if(estBaru) lines.push(`estimasi: ${estLama} \u2192 ${estBaru}`);
     lines.push('tracking page customer akan otomatis update.');
-
     document.getElementById('edit-item-confirm-box').textContent = lines.join('\n');
     document.getElementById('edit-item-confirm-box').classList.add('show');
     editItemConfirmed = true;
-    document.getElementById('edit-item-submit-btn').textContent = 'konfirmasi & simpan →';
+    document.getElementById('edit-item-submit-btn').textContent = 'konfirmasi & simpan \u2192';
     return;
   }
 
-  // Sudah konfirmasi — simpan ke DB
   const btn = document.getElementById('edit-item-submit-btn');
   btn.disabled = true; btn.textContent = 'menyimpan...';
 
   try {
-    // Update po_items
-    if(itemChanged) {
+    if(itemsChanged) {
       const { data: dbItems } = await _sb.from('po_items').select('id').eq('order_id', o.id).order('id');
-      if(dbItems && dbItems[editItemTargetIdx]) {
-        await _sb.from('po_items').update({
-          article: newArt, color: newCol, size: newSize || null, qty: newQty
-        }).eq('id', dbItems[editItemTargetIdx].id);
+      if(dbItems) {
+        for(let idx = 0; idx < newItems.length; idx++) {
+          const item = o.items[idx], n = newItems[idx];
+          const changed = n.name !== item.name || n.color !== item.color || n.size !== item.size || n.qty !== item.qty;
+          if(changed && dbItems[idx]) {
+            await _sb.from('po_items').update({ article: n.name, color: n.color, size: n.size || null, qty: n.qty }).eq('id', dbItems[idx].id);
+          }
+        }
       }
     }
-
-    // Update estimasi di po_orders
     if(newDays && newEstDate) {
       await _sb.from('po_orders').update({
         estimated_days: Math.abs(newDays),
@@ -1278,22 +1270,19 @@ async function submitEditItem() {
         updated_at: new Date().toISOString()
       }).eq('id', o.id);
     }
-
-    // Update local state
-    if(itemChanged) o.items[editItemTargetIdx] = { name: newArt, color: newCol, size: newSize, qty: newQty };
+    newItems.forEach((n, idx) => { o.items[idx] = n; });
     if(newDays && newEstDate) {
       o.maxDays = Math.abs(newDays);
       o.est_date = newEstDate.toISOString().slice(0, 10);
       o.est_edited_at = new Date().toISOString();
     }
-
     closeEditItemModal();
     renderTable();
     renderPanel(o);
   } catch(e) {
     alert('gagal menyimpan: ' + e.message);
     btn.disabled = false;
-    btn.textContent = 'konfirmasi & simpan →';
+    btn.textContent = 'konfirmasi & simpan \u2192';
   }
 }
 
