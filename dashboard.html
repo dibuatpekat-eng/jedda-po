@@ -111,15 +111,15 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .detail-panel.open { transform: translateX(0); }
 
 .dp-header { padding: 24px 24px 20px; border-bottom: 1px solid #d8d4ce; flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-between; }
-.dp-po { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; font-weight: 300; }
-.dp-name { font-size: 20px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.dp-po { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #888; margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+.dp-name { font-size: 20px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
 .dp-close { background: none; border: none; font-size: 16px; color: #bbb; cursor: pointer; padding: 0; line-height: 1; font-family: 'IBM Plex Mono', monospace; }
 .dp-close:hover { color: #111; }
 
 .dp-body { flex: 1; overflow-y: auto; }
 .dp-section { padding: 20px 24px 0; }
 .dp-section:last-child { padding-bottom: 20px; }
-.dp-section-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 0; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; }
+.dp-section-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 0; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; }
 .dp-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 12px; }
 .dp-row:last-child { border-bottom: none; }
 .dp-key { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
@@ -132,17 +132,17 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 
 /* ── est block in panel ── */
 .dp-est { margin: 20px 24px 0; padding: 14px 16px; border: 1px solid #d8d4ce; display: flex; justify-content: space-between; align-items: center; }
-.dp-est-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; margin-bottom: 6px; font-weight: 300; font-family: 'IBM Plex Mono', monospace; }
+.dp-est-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; margin-bottom: 6px; font-weight: 400; font-family: 'IBM Plex Mono', monospace; }
 .dp-est-date { font-size: 15px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
 .dp-est-days { font-size: 12px; font-weight: 400; color: #777; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
 .dp-est-alert { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #c0392b; font-weight: 400; font-family: 'IBM Plex Mono', monospace; }
 
 /* ── flow steps ── */
 .flow-wrap { padding: 14px 0 0; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-.flow-step { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #ccc; font-weight: 300; }
-.flow-step.done { color: #888; }
-.flow-step.current { color: #111; font-weight: 400; }
-.flow-sep { font-size: 9px; color: #d8d4ce; }
+.flow-step { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #bbb; font-weight: 400; }
+.flow-step.done { color: #888; font-weight: 400; }
+.flow-step.current { color: #111; font-weight: 600; }
+.flow-sep { font-size: 9px; color: #ccc; }
 
 /* ── checkbox ── */
 .dp-checkbox-wrap { display: flex; align-items: center; gap: 10px; padding: 14px 0; border-bottom: 1px solid #eae6e0; cursor: pointer; }
@@ -153,7 +153,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 
 /* ── footer actions ── */
 .dp-footer { padding: 18px 24px; border-top: 1px solid #d8d4ce; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
-.dp-footer-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; }
+.dp-footer-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; }
 .btn { display: block; width: 100%; padding: 13px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2.5px; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-transform: uppercase; text-align: left; }
 .btn:hover { border-color: #111; color: #111; }
 .btn-dark { background: #111; color: #f0ede8; border-color: #111; }
@@ -310,10 +310,10 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 30; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal-box { background: #f0ede8; width: 360px; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
-.modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
-.modal-name { font-size: 16px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 24px; }
+.modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
+.modal-name { font-size: 16px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 24px; }
 .modal-field { margin-bottom: 20px; }
-.modal-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+.modal-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
 .modal-select { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; appearance: none; cursor: pointer; transition: border-color 0.15s; }
 .modal-select:focus { border-bottom-color: #111; }
 .modal-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; transition: border-color 0.15s; }
@@ -493,12 +493,20 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
     <div id="edit-item-items-container"></div>
 
     <div class="modal-field" style="border-top:1px solid #eae6e0;padding-top:16px;margin-top:8px">
-      <div class="modal-label">ubah estimasi <span style="color:#ccc;font-weight:300;letter-spacing:0">(+ mundur · - percepat)</span></div>
-      <div style="display:flex;align-items:baseline;gap:10px">
-        <input class="modal-input" type="number" min="-365" max="365" id="edit-item-days" placeholder="kosongkan jika tidak berubah" style="flex:1" oninput="onEditDaysChange()">
-        <span style="font-size:9px;color:#aaa;font-family:'IBM Plex Mono',monospace;white-space:nowrap">hari kerja</span>
+      <div class="modal-label">ubah estimasi</div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#bbb;font-family:'IBM Plex Mono',monospace;margin-bottom:6px">pilih tanggal</div>
+        <input class="modal-input" type="date" id="edit-item-date" style="flex:1;color:#111" oninput="onEditDateChange()">
+        <div id="edit-item-date-preview" style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#888;margin-top:6px;min-height:14px"></div>
       </div>
-      <div id="edit-item-days-preview" style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#888;margin-top:8px;min-height:16px"></div>
+      <div>
+        <div style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#bbb;font-family:'IBM Plex Mono',monospace;margin-bottom:6px">— atau tambah hari</div>
+        <div style="display:flex;align-items:baseline;gap:10px">
+          <input class="modal-input" type="number" min="1" max="365" id="edit-item-days" placeholder="kosongkan jika tidak berubah" style="flex:1" oninput="onEditDaysChange()">
+          <span style="font-size:9px;color:#aaa;font-family:'IBM Plex Mono',monospace;white-space:nowrap">hari kerja</span>
+        </div>
+        <div id="edit-item-days-preview" style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#888;margin-top:6px;min-height:14px"></div>
+      </div>
     </div>
 
     <div class="edit-item-modal-confirm" id="edit-item-confirm-box"></div>
@@ -1112,6 +1120,8 @@ function openEditItemModal(orderId) {
   document.getElementById('edit-item-submit-btn').textContent = 'simpan perubahan';
   document.getElementById('edit-item-days').value = '';
   document.getElementById('edit-item-days-preview').textContent = '';
+  document.getElementById('edit-item-date').value = '';
+  document.getElementById('edit-item-date-preview').textContent = '';
 
   // Render semua item sebagai rows
   const container = document.getElementById('edit-item-items-container');
@@ -1160,11 +1170,24 @@ function onEditItemArticleChange(idx) {
   resetEditConfirm();
 }
 
+function onEditDateChange() {
+  const dateVal = document.getElementById('edit-item-date').value;
+  const preview = document.getElementById('edit-item-date-preview');
+  if(!dateVal) { preview.textContent = ''; return; }
+  document.getElementById('edit-item-days').value = '';
+  document.getElementById('edit-item-days-preview').textContent = '';
+  const d = new Date(dateVal + 'T00:00:00');
+  preview.textContent = '\u2192 est. ' + fmtTanggal(d);
+  resetEditConfirm();
+}
+
 function onEditDaysChange() {
   const o = orders.find(x => x.id === editItemTargetOrderId); if(!o) return;
   const days = parseInt(document.getElementById('edit-item-days').value);
   const preview = document.getElementById('edit-item-days-preview');
-  if(!days) { preview.textContent = ''; return; }
+  if(!days || days < 1) { preview.textContent = ''; return; }
+  document.getElementById('edit-item-date').value = '';
+  document.getElementById('edit-item-date-preview').textContent = '';
   const currentEst = o.est_date ? new Date(o.est_date) : addWorkdaysFromDate(o.created, o.maxDays || 7);
   const newEstDate = addWorkdaysFromDate(currentEst, days);
   preview.textContent = '\u2192 est. ' + fmtTanggal(newEstDate);
@@ -1207,18 +1230,22 @@ async function submitEditItem() {
   });
 
   const newDays = parseInt(document.getElementById('edit-item-days').value) || null;
+  const newDateVal = document.getElementById('edit-item-date').value || null;
 
   const itemsChanged = o.items.some((item, idx) => {
     const n = newItems[idx];
     return n.name !== item.name || n.color !== item.color || n.size !== item.size || n.qty !== item.qty;
   });
-  const estChanged = !!newDays;
+  const estChanged = !!(newDays || newDateVal);
 
   if(!itemsChanged && !estChanged) { closeEditItemModal(); return; }
 
   const estLama = getEstDisplay(o);
   let estBaru = null, newEstDate = null;
-  if(newDays) {
+  if(newDateVal) {
+    newEstDate = new Date(newDateVal + 'T00:00:00');
+    estBaru = fmtTanggal(newEstDate);
+  } else if(newDays && newDays > 0) {
     const currentEst = o.est_date ? new Date(o.est_date) : addWorkdaysFromDate(o.created, o.maxDays || 7);
     newEstDate = addWorkdaysFromDate(currentEst, newDays);
     estBaru = fmtTanggal(newEstDate);
@@ -1262,17 +1289,17 @@ async function submitEditItem() {
         }
       }
     }
-    if(newDays && newEstDate) {
+    if(newEstDate) {
       await _sb.from('po_orders').update({
-        estimated_days: Math.abs(newDays),
+        estimated_days: newDays ? Math.abs(newDays) : null,
         est_date: newEstDate.toISOString().slice(0, 10),
         est_edited_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }).eq('id', o.id);
     }
     newItems.forEach((n, idx) => { o.items[idx] = n; });
-    if(newDays && newEstDate) {
-      o.maxDays = Math.abs(newDays);
+    if(newEstDate) {
+      o.maxDays = newDays ? Math.abs(newDays) : o.maxDays;
       o.est_date = newEstDate.toISOString().slice(0, 10);
       o.est_edited_at = new Date().toISOString();
     }
