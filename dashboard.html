@@ -143,7 +143,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .settings-page.active { display: block; }
 .po-page.hidden { display: none; }
 .settings-topbar { padding: 28px 36px 20px; border-bottom: 1px solid #d8d4ce; }
-.settings-section-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; padding-bottom: 10px; border-bottom: 1px solid #d8d4ce; }
+.settings-section-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #888; font-weight: 400; padding-bottom: 10px; border-bottom: 1px solid #d8d4ce; }
 .settings-body { padding: 36px 36px 80px; }
 
 /* artday grid */
@@ -165,7 +165,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 /* batch */
 .batch-card { border: 1px solid #d8d4ce; margin-bottom: 12px; }
 .batch-card-header { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e4df; cursor: pointer; }
-.batch-card-num { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 4px; }
+.batch-card-num { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 400; margin-bottom: 4px; }
 .batch-card-dates { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
 .batch-card-actions { display: flex; gap: 8px; align-items: center; }
 .batch-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; transition: color 0.15s; padding: 0; }
@@ -228,8 +228,8 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .ongkir-confirm-wrap.checked .ongkir-confirm-check { display: block; }
 .ongkir-confirm-label { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
 .channel-card { border: 1px solid #d8d4ce; padding: 18px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-.channel-card-left .ch-name { font-size: 14px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.channel-card-left .ch-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; margin-top: 4px; letter-spacing: 0.5px; }
+.channel-card-left .ch-name { font-size: 14px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.channel-card-left .ch-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #888; margin-top: 4px; letter-spacing: 0.5px; }
 .channel-card-right { display: flex; gap: 12px; align-items: center; }
 .ch-status { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 3px 9px; border: 1px solid; }
 .ch-active { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
@@ -239,8 +239,8 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 
 /* product settings */
 .product-card { border: 1px solid #d8d4ce; padding: 14px 18px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; }
-.prod-name { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 4px; }
-.prod-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; letter-spacing: 0.5px; }
+.prod-name { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 4px; }
+.prod-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #888; letter-spacing: 0.5px; }
 .prod-actions { display: flex; gap: 10px; }
 .prod-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; transition: color 0.15s; }
 .prod-btn:hover { color: #111; }
@@ -535,16 +535,6 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
       <input class="modal-input" id="pm-name" placeholder="contoh: Hana Blazer">
     </div>
     <div class="modal-field">
-      <div class="modal-label">kategori</div>
-      <select class="modal-select" id="pm-cat">
-        <option value="outerwear">outerwear</option>
-        <option value="vest">vest</option>
-        <option value="shirt">shirt</option>
-        <option value="bottom">bottom</option>
-        <option value="lainnya">lainnya</option>
-      </select>
-    </div>
-    <div class="modal-field">
       <div class="modal-label">warna</div>
       <div class="pm-chips" id="pm-colors-chips"></div>
       <div class="pm-add-row">
@@ -555,10 +545,10 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
     <div class="modal-field">
       <div class="modal-label">ukuran</div>
       <div class="pm-size-preset" id="pm-size-presets">
-        <div class="pm-size-option" onclick="selectSizePreset('S/M · L/XL')">S/M · L/XL</div>
-        <div class="pm-size-option" onclick="selectSizePreset('S · M · L')">S · M · L</div>
-        <div class="pm-size-option" onclick="selectSizePreset('one size')">one size</div>
-        <div class="pm-size-option" onclick="selectSizePreset('custom')">custom</div>
+        <div class="pm-size-option" data-preset="S/M-LXL" onclick="selectSizePreset('S/M-LXL')">S/M · L/XL</div>
+        <div class="pm-size-option" data-preset="SML" onclick="selectSizePreset('SML')">S · M · L</div>
+        <div class="pm-size-option" data-preset="onesize" onclick="selectSizePreset('onesize')">One Size</div>
+        <div class="pm-size-option" data-preset="custom" onclick="selectSizePreset('custom')">Custom</div>
       </div>
       <div id="pm-size-custom-wrap" style="display:none;margin-top:10px">
         <div class="pm-chips" id="pm-sizes-chips"></div>
@@ -1311,24 +1301,39 @@ function openProductModal(prodId){
   editingProductId=prodId;
   pmColors=[]; pmSizes=[];
   document.getElementById('product-modal-title').textContent=prodId?'edit artikel':'tambah artikel';
+  // reset preset buttons
+  document.querySelectorAll('.pm-size-option').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('pm-size-custom-wrap').style.display='none';
+  pmSizeMode='preset';
+
   if(prodId){
     const p=products.find(x=>x.id===prodId);
     if(p){
       document.getElementById('pm-name').value=p.name;
-      document.getElementById('pm-cat').value=p.cat||'lainnya';
       pmColors=[...p.colors];
-      pmSizes=p.sizes?[...p.sizes]:[];
+      // Detect which preset matches existing sizes, auto-select it
+      if(!p.sizes || p.sizes===null){
+        pmSizes=null; pmSizeMode='onesize';
+        document.querySelector('[data-preset="onesize"]')?.classList.add('selected');
+      } else if(JSON.stringify(p.sizes)===JSON.stringify(['S/M','L/XL'])){
+        pmSizes=[...p.sizes]; pmSizeMode='S/M-LXL';
+        document.querySelector('[data-preset="S/M-LXL"]')?.classList.add('selected');
+      } else if(JSON.stringify(p.sizes)===JSON.stringify(['S','M','L'])){
+        pmSizes=[...p.sizes]; pmSizeMode='SML';
+        document.querySelector('[data-preset="SML"]')?.classList.add('selected');
+      } else {
+        // custom
+        pmSizes=[...p.sizes]; pmSizeMode='custom';
+        document.querySelector('[data-preset="custom"]')?.classList.add('selected');
+        document.getElementById('pm-size-custom-wrap').style.display='block';
+      }
     }
   } else {
     document.getElementById('pm-name').value='';
-    document.getElementById('pm-cat').value='outerwear';
   }
-  // reset size presets
-  document.querySelectorAll('.pm-size-option').forEach(el=>el.classList.remove('selected'));
-  document.getElementById('pm-size-custom-wrap').style.display='none';
-  pmSizeMode='preset';
   renderPmColors(); renderPmSizes();
   document.getElementById('product-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('pm-name').focus(),100);
 }
 function closeProductModal(){ document.getElementById('product-modal').classList.remove('open'); editingProductId=null; }
 
@@ -1344,12 +1349,12 @@ function addPmColor(){
 function removePmColor(i){ pmColors.splice(i,1); renderPmColors(); }
 
 function selectSizePreset(mode){
-  document.querySelectorAll('.pm-size-option').forEach(el=>el.classList.toggle('selected',el.textContent===mode));
+  document.querySelectorAll('.pm-size-option').forEach(el=>el.classList.toggle('selected',el.dataset.preset===mode));
   pmSizeMode=mode;
-  if(mode==='one size'){ pmSizes=null; document.getElementById('pm-size-custom-wrap').style.display='none'; }
-  else if(mode==='S/M · L/XL'){ pmSizes=['S/M','L/XL']; document.getElementById('pm-size-custom-wrap').style.display='none'; }
-  else if(mode==='S · M · L'){ pmSizes=['S','M','L']; document.getElementById('pm-size-custom-wrap').style.display='none'; }
-  else { pmSizes=[]; document.getElementById('pm-size-custom-wrap').style.display='block'; renderPmSizes(); }
+  if(mode==='onesize'){ pmSizes=null; document.getElementById('pm-size-custom-wrap').style.display='none'; }
+  else if(mode==='S/M-LXL'){ pmSizes=['S/M','L/XL']; document.getElementById('pm-size-custom-wrap').style.display='none'; }
+  else if(mode==='SML'){ pmSizes=['S','M','L']; document.getElementById('pm-size-custom-wrap').style.display='none'; }
+  else { if(!pmSizes||pmSizes===null) pmSizes=[]; document.getElementById('pm-size-custom-wrap').style.display='block'; renderPmSizes(); }
 }
 function renderPmSizes(){
   const el=document.getElementById('pm-sizes-chips'); if(!el) return;
@@ -1361,20 +1366,26 @@ function removePmSize(i){ if(pmSizes) pmSizes.splice(i,1); renderPmSizes(); }
 
 async function saveProduct(){
   const name=document.getElementById('pm-name').value.trim();
-  const cat=document.getElementById('pm-cat').value;
   if(!name){ alert('nama artikel wajib diisi.'); return; }
   if(!pmColors.length){ alert('tambah minimal 1 warna.'); return; }
-  const sizes=pmSizeMode==='one size'?null:(pmSizes&&pmSizes.length?pmSizes:null);
-  const payload={name,cat,colors:pmColors,sizes,is_active:true};
-  if(editingProductId){
-    await _sb.from('po_products').update(payload).eq('id',editingProductId);
-  } else {
-    const maxSort=products.length?Math.max(...products.map(p=>p.sort_order||0)):0;
-    await _sb.from('po_products').insert({...payload,sort_order:maxSort+1});
+  const sizes=pmSizeMode==='onesize'?null:(pmSizes&&pmSizes.length?pmSizes:null);
+  if(sizes===null && pmSizeMode!=='onesize'){ alert('pilih atau isi ukuran dulu.'); return; }
+  const payload={name, colors:pmColors, sizes, is_active:true};
+  try {
+    if(editingProductId){
+      const {error}=await _sb.from('po_products').update(payload).eq('id',editingProductId);
+      if(error) throw error;
+    } else {
+      const maxSort=products.length?Math.max(...products.map(p=>p.sort_order||0)):0;
+      const {error}=await _sb.from('po_products').insert({...payload,sort_order:maxSort+1});
+      if(error) throw error;
+    }
+    await loadProducts();
+    closeProductModal();
+    loadProductList();
+  } catch(e){
+    alert('gagal simpan: '+(e.message||JSON.stringify(e)));
   }
-  await loadProducts();
-  closeProductModal();
-  loadProductList();
 }
 async function toggleProductActive(id){
   const p=products.find(x=>x.id===id); if(!p) return;
@@ -1389,18 +1400,20 @@ async function deleteProduct(id){
 
 function loadProductList(){
   const el=document.getElementById('product-list'); if(!el) return;
-  el.innerHTML=products.map(p=>`
-    <div class="product-card">
+  el.innerHTML=products.map(p=>{
+    const sizesLabel = !p.sizes ? 'One Size' : p.sizes.join(' / ');
+    return `<div class="product-card">
       <div>
         <div class="prod-name">${p.name}</div>
-        <div class="prod-meta">${p.colors.join(' · ')} · ${p.sizes?p.sizes.join('/'):' one size'}</div>
+        <div class="prod-meta">${p.colors.join(' · ')} · ${sizesLabel}</div>
       </div>
       <div class="prod-actions">
         <button class="prod-btn" onclick="openProductModal(${p.id})">edit</button>
         <button class="prod-btn" onclick="toggleProductActive(${p.id})">${p.is_active?'nonaktifkan':'aktifkan'}</button>
         <button class="prod-btn prod-btn-del" onclick="deleteProduct(${p.id})">hapus</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // estimasi per channel

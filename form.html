@@ -336,7 +336,6 @@ async function loadAndRender() {
 async function loadProducts() {
   const { data } = await _supabase.from('po_products').select('*').eq('is_active', true).order('sort_order');
   PRODUCTS = (data || []).map(p => ({
-    cat: p.cat || 'lainnya',
     name: p.name,
     colors: p.colors || [],
     sizes: p.sizes || null
@@ -487,20 +486,19 @@ function render(){
 
   // items
   if(!batchLoaded){ root.innerHTML=`<div class="header"><div class="header-brand">Jedda</div><div class="header-meta">pre-order<br>${new Date().toLocaleDateString("id-ID",{month:"long",year:"numeric"})}</div></div><hr class="header-rule"><div class="loading-bar">memuat...</div>`; return; }
-  const CATS_ORDER=["outerwear","vest","shirt","bottom","lainnya"];
-  const sections=CATS_ORDER.map(cat=>{
-    const ps=PRODUCTS.filter(p=>p.cat===cat);
-    if(!ps.length) return '';
-    const cards=ps.map(p=>{
-      const tq=itemTotalQty(p.name); const disabled=isArticleDisabled(p.name); const soldout=!disabled&&isArticleSoldout(p.name);
-      const safeName=p.name.replace(/'/g,"\\'");
-      const cc=['item-card',tq>0?'has-qty':'',disabled?'disabled':'',soldout?'soldout':''].filter(Boolean).join(' ');
-      const oc=disabled||soldout?'':`onclick="openSheet('${safeName}')"`;
-      return `<div class="${cc}" id="ic-${esc(p.name)}" ${oc}><div class="item-card-name">${p.name}</div><div class="item-card-colors">${disabled?'po blm dibuka':p.colors.join(" · ")}</div>${tq>0?`<div class="item-card-badge" onclick="event.stopPropagation();openSheet('${safeName}')">${tq}</div>`:""}</div>`;
-    }).join("");
-    return `<div class="cat-block"><div class="cat-label">${cat}</div><div class="item-grid">${cards}</div></div>`;
+  const cards=PRODUCTS.map(p=>{
+    const tq=itemTotalQty(p.name); const disabled=isArticleDisabled(p.name); const soldout=!disabled&&isArticleSoldout(p.name);
+    const safeName=p.name.replace(/'/g,"\\'");
+    const cc=['item-card',tq>0?'has-qty':'',disabled?'disabled':'',soldout?'soldout':''].filter(Boolean).join(' ');
+    const oc=disabled||soldout?'':`onclick="openSheet('${safeName}')"`;
+    const subtitle = disabled
+      ? '<span style="color:#c0392b;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:300">po blm dibuka</span>'
+      : soldout
+      ? '<span style="color:#c0392b;font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:300">habis</span>'
+      : `<div class="item-card-colors">${p.colors.join(" · ")}</div>`;
+    return `<div class="${cc}" id="ic-${esc(p.name)}" ${oc}><div class="item-card-name">${p.name}</div>${subtitle}${tq>0?`<div class="item-card-badge" onclick="event.stopPropagation();openSheet('${safeName}')">${tq}</div>`:""}</div>`;
   }).join("");
-  root.innerHTML=`<div class="header"><div class="header-brand">Jedda</div><div class="header-meta">pre-order<br>${new Date().toLocaleDateString("id-ID",{month:"long",year:"numeric"})}</div></div><hr class="header-rule"><div class="items-eyebrow"><span class="eyebrow-left">01 — pilih item</span><span class="eyebrow-right">${totalQty()>0?totalQty()+" dipilih":"—"}</span></div>${sections}<div style="height:100px"></div><div id="cart-footer" class="cart-footer ${totalQty()>0?'visible':''}"><div class="cart-footer-inner" onclick="openCartPanel()"><div class="cf-left"><strong>${totalQty()} item</strong>est. ${estDisplay()}</div><button class="cf-btn" onclick="event.stopPropagation();openCartPanel()">lihat →</button></div></div>`;
+  root.innerHTML=`<div class="header"><div class="header-brand">Jedda</div><div class="header-meta">pre-order<br>${new Date().toLocaleDateString("id-ID",{month:"long",year:"numeric"})}</div></div><hr class="header-rule"><div class="items-eyebrow"><span class="eyebrow-left">01 — pilih item</span><span class="eyebrow-right">${totalQty()>0?totalQty()+" dipilih":"—"}</span></div><div class="cat-block"><div class="item-grid">${cards}</div></div><div style="height:100px"></div><div id="cart-footer" class="cart-footer ${totalQty()>0?'visible':''}"><div class="cart-footer-inner" onclick="openCartPanel()"><div class="cf-left"><strong>${totalQty()} item</strong>est. ${estDisplay()}</div><button class="cf-btn" onclick="event.stopPropagation();openCartPanel()">lihat →</button></div></div>`;
 }
 
 function goReview(){ if(!st.name.trim()){alert("nama wajib diisi.");return;} if(!st.phone.trim()){alert("nomor HP wajib diisi.");return;} if(!st.address.trim()){alert("alamat wajib diisi.");return;} st.phase="review"; render(); }
