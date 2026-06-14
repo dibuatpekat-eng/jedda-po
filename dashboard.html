@@ -11,7 +11,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialiased; color: #111; }
 
-/* ── sidebar ── */
 .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 180px; background: #e0ddd8; display: flex; flex-direction: column; padding: 32px 0 28px; z-index: 10; }
 .sidebar-brand { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; padding: 0 24px; margin-bottom: 48px; }
 .sidebar-nav { display: flex; flex-direction: column; gap: 0; padding: 0; flex: 1; }
@@ -20,30 +19,30 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .nav-item.active { color: #111; border-left-color: #111; font-weight: 400; }
 .sidebar-footer { padding: 0 24px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #999; font-weight: 300; }
 
-/* ── main ── */
 .main { margin-left: 180px; min-height: 100vh; }
-
-/* ── top bar ── */
 .topbar { padding: 28px 36px 0; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #d8d4ce; padding-bottom: 20px; }
 .topbar-section { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
 .topbar-title { font-size: 22px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -0.3px; }
 .topbar-title em { font-style: italic; color: #888; }
+.topbar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 .topbar-date { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; }
 
-/* ── stat cards ── */
+/* channel tabs */
+.channel-tabs { display: flex; gap: 0; border-bottom: 1px solid #d8d4ce; padding: 0 36px; background: #ebe8e2; }
+.channel-tab { padding: 10px 18px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.channel-tab:hover { color: #555; }
+.channel-tab.active { color: #111; border-bottom-color: #111; font-weight: 400; }
+
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-bottom: 1px solid #d8d4ce; }
 .stat-card { padding: 22px 28px; cursor: pointer; transition: background 0.15s; border-right: 1px solid #d8d4ce; position: relative; }
 .stat-card:last-child { border-right: none; }
 .stat-card:hover:not(.active) { background: #d8d4ce; }
 .stat-card.active { background: #111; }
-.stat-card.active .stat-label { color: #fff; }
-.stat-card.active .stat-num { color: #fff; }
-.stat-card.active .stat-sub { color: #fff; }
+.stat-card.active .stat-label, .stat-card.active .stat-num, .stat-card.active .stat-sub { color: #fff; }
 .stat-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 400; margin-bottom: 10px; }
 .stat-num { font-size: 36px; font-weight: 300; color: #111; line-height: 1; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -1px; }
 .stat-sub { font-size: 10px; color: #888; margin-top: 8px; font-weight: 300; letter-spacing: 0.3px; }
 
-/* ── toolbar ── */
 .toolbar { padding: 14px 36px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d8d4ce; }
 .sort-btn { padding: 6px 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; border: 1px solid #ccc; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', monospace; color: #999; transition: all 0.15s; }
 .sort-btn:hover { border-color: #888; color: #555; }
@@ -53,7 +52,6 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .search-input:focus { border-color: #111; }
 .search-input::placeholder { color: #999; font-size: 10px; }
 
-/* ── table ── */
 .table-wrap { overflow-x: auto; }
 table { width: 100%; table-layout: fixed; border-collapse: collapse; }
 thead tr { border-bottom: 1px solid #d8d4ce; }
@@ -72,231 +70,188 @@ thead th:nth-child(5), td:nth-child(5) { width: 170px; }
 thead th:nth-child(6), td:nth-child(6) { width: 170px; }
 thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .td-mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #666; letter-spacing: 0.5px; }
-
-/* ── urgent ── */
 .urgent-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #c0392b; margin-right: 7px; vertical-align: middle; }
-
-/* ── status badge ── */
 .status-badge { display: inline-block; padding: 3px 9px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; border: 1px solid; }
-.s-baru          { border-color: #c8b89a; color: #8a6a40; background: #f5efe6; }
-.s-tunggu_ongkir { border-color: #b0a898; color: #5a5248; background: #edeae5; }
-.s-diproses      { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
-.s-dikirim       { border-color: #aab0bb; color: #3a4a5a; background: #eceff3; }
+.s-baru { border-color: #d8d4ce; color: #999; }
+.s-tunggu_ongkir { border-color: #c8a04a; color: #7a5a1a; background: #f5edda; }
+.s-diproses { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
+.s-dikirim { border-color: #111; color: #111; }
 
-/* ── table action buttons ── */
-.tbl-action { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
-.tbl-action:hover { border-color: #111; color: #111; }
-.tbl-action-wa { border-color: #25d366; color: #1a9e4c; background: transparent; }
-.tbl-action-wa:hover { background: #25d366; color: #fff; }
-.tbl-action-resi { border-color: #aab0bb; color: #3a4a5a; }
-.tbl-action-resi:hover { background: #111; color: #f0ede8; border-color: #111; }
+.est-date { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Mono', monospace; color: #666; }
+.est-days { font-size: 9px; color: #aaa; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+.est-urgent { color: #c0392b !important; }
+.est-edited-dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:#7b8fc7; margin-left:6px; vertical-align:middle; position:relative; top:-1px; }
 
-/* ── est in table ── */
-.est-date { font-size: 13px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
-.est-days { font-size: 10px; font-weight: 400; color: #888; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
-.est-urgent { color: #c0392b; }
+.entry-date { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #666; }
+.entry-time { font-size: 9px; color: #bbb; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+.item-line { font-size: 12px; font-family: 'IBM Plex Sans', sans-serif; color: #333; line-height: 1.7; }
+.item-meta { color: #aaa; font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
 
-/* ── item list in table ── */
-.item-line { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; line-height: 1.6; }
-.item-meta { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #aaa; letter-spacing: 0.5px; margin-left: 6px; }
-
-/* ── entry ── */
-.entry-date { font-size: 12px; font-weight: 300; color: #333; font-family: 'IBM Plex Sans', sans-serif; }
-.entry-time { font-size: 11px; font-weight: 300; color: #777; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
-
-/* ── panel ── */
-.panel-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.25); z-index: 19; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-.panel-overlay.open { opacity: 1; pointer-events: all; }
-.detail-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 340px; background: #f0ede8; border-left: 1px solid #d8d4ce; transform: translateX(100%); transition: transform 0.3s cubic-bezier(.4,0,.2,1); z-index: 20; display: flex; flex-direction: column; }
-.detail-panel.open { transform: translateX(0); }
-
-.dp-header { padding: 24px 24px 20px; border-bottom: 1px solid #d8d4ce; flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-between; }
-.dp-po { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #888; margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
-.dp-name { font-size: 20px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.dp-close { background: none; border: none; font-size: 16px; color: #bbb; cursor: pointer; padding: 0; line-height: 1; font-family: 'IBM Plex Mono', monospace; }
-.dp-close:hover { color: #111; }
-
-.dp-body { flex: 1; overflow-y: auto; }
-.dp-section { padding: 20px 24px 0; }
-.dp-section:last-child { padding-bottom: 20px; }
-.dp-section-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 0; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; }
-.dp-row { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 12px; }
-.dp-row:last-child { border-bottom: none; }
-.dp-key { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
-.dp-val { font-size: 13px; font-weight: 400; text-align: right; max-width: 200px; line-height: 1.5; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.dp-edit-btn { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #ccc; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 0 0 0 8px; flex-shrink: 0; transition: color 0.15s; }
-.dp-edit-btn:hover { color: #111; }
-.dp-inline-input { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; border: none; border-bottom: 1px solid #111; background: transparent; outline: none; text-align: right; width: 100%; padding: 0; }
-.dp-inline-actions { display: flex; gap: 8px; justify-content: flex-end; padding: 6px 0 2px; }
-.dp-inline-save { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #f0ede8; background: #111; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 4px 10px; }
-.dp-inline-cancel { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 4px 0; }
-.dp-item-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid #eae6e0; }
-.dp-item-row:last-child { border-bottom: none; }
-.dp-item-name { font-size: 13px; font-weight: 500; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.dp-item-color { font-size: 11px; font-weight: 400; color: #888; margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
-.dp-item-qty { font-size: 12px; font-weight: 400; color: #555; flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
-
-/* ── est block in panel ── */
-.dp-est { margin: 20px 24px 0; padding: 14px 16px; border: 1px solid #d8d4ce; display: flex; justify-content: space-between; align-items: center; }
-.dp-est-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; margin-bottom: 6px; font-weight: 400; font-family: 'IBM Plex Mono', monospace; }
-.dp-est-date { font-size: 15px; font-weight: 400; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
-.dp-est-days { font-size: 12px; font-weight: 400; color: #777; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
-.dp-est-alert { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #c0392b; font-weight: 400; font-family: 'IBM Plex Mono', monospace; }
-
-/* ── flow steps ── */
-.flow-wrap { padding: 14px 0 0; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-.flow-step { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #bbb; font-weight: 400; }
-.flow-step.done { color: #888; font-weight: 400; }
-.flow-step.current { color: #111; font-weight: 600; }
-.flow-sep { font-size: 9px; color: #ccc; }
-
-/* ── checkbox ── */
-.dp-checkbox-wrap { display: flex; align-items: center; gap: 10px; padding: 14px 0; border-bottom: 1px solid #eae6e0; cursor: pointer; }
-.dp-checkbox { width: 14px; height: 14px; border: 1px solid #bbb; background: transparent; appearance: none; cursor: pointer; position: relative; flex-shrink: 0; }
-.dp-checkbox:checked { background: #111; border-color: #111; }
-.dp-checkbox:checked::after { content: ''; position: absolute; top: 2px; left: 4px; width: 4px; height: 7px; border: 1px solid #f0ede8; border-top: none; border-left: none; transform: rotate(45deg); }
-.dp-checkbox-label { font-size: 11px; font-weight: 400; color: #444; font-family: 'IBM Plex Sans', sans-serif; }
-
-/* ── footer actions ── */
-.dp-footer { padding: 18px 24px; border-top: 1px solid #d8d4ce; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
-.dp-footer-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; }
-.btn { display: block; width: 100%; padding: 13px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2.5px; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-transform: uppercase; text-align: left; }
-.btn:hover { border-color: #111; color: #111; }
-.btn-dark { background: #111; color: #f0ede8; border-color: #111; }
-.btn-dark:hover { opacity: 0.8; color: #f0ede8; }
-.btn-wa { background: #25d366; color: #fff; border-color: #25d366; display: flex; align-items: center; gap: 10px; }
-.btn-wa:hover { opacity: 0.85; color: #fff; }
-.btn-done-label { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #bbb; text-align: center; padding: 6px 0; font-weight: 300; }
-
-/* ── edit item ── */
-.dp-item-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-.dp-item-row:last-child { border-bottom: none; }
-.dp-item-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 500; padding: 0; margin-left: 10px; flex-shrink: 0; transition: color 0.15s; }
-.dp-item-edit-btn:hover { color: #111; }
-.edit-item-modal-confirm { background: #fff8e8; border: 1px solid #e8d8a0; padding: 14px 16px; margin-bottom: 16px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: #7a5a1a; line-height: 1.7; display: none; }
-.edit-item-modal-confirm.show { display: block; }
-
-.empty-state { text-align: center; padding: 80px 40px; }
+.empty-state { padding: 60px 36px; text-align: center; }
 .empty-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #bbb; font-weight: 300; }
 
-/* ── settings page ── */
-.settings-page { display: none; margin-left: 180px; min-height: 100vh; position: absolute; top: 0; left: 0; right: 0; }
+/* action buttons in table */
+.tbl-action { padding: 5px 12px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; border: 1px solid; cursor: pointer; font-family: 'IBM Plex Mono', monospace; background: transparent; transition: all 0.15s; white-space: nowrap; }
+.tbl-action-wa { border-color: #25D366; color: #1a9e4a; }
+.tbl-action-wa:hover { background: #25D366; color: #fff; }
+.tbl-action-resi { border-color: #ccc; color: #888; }
+.tbl-action-resi:hover { border-color: #111; color: #111; }
+
+/* ── detail panel ── */
+.panel-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.3); z-index: 20; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.panel-overlay.open { opacity: 1; pointer-events: all; }
+.detail-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 360px; background: #f0ede8; border-left: 1px solid #d8d4ce; z-index: 21; transform: translateX(100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; }
+.detail-panel.open { transform: translateX(0); }
+.dp-header { padding: 24px 24px 16px; border-bottom: 1px solid #d8d4ce; display: flex; justify-content: space-between; align-items: flex-start; flex-shrink: 0; }
+.dp-po { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
+.dp-name { font-size: 18px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
+.dp-close { font-size: 16px; color: #bbb; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; line-height: 1; transition: color 0.15s; }
+.dp-close:hover { color: #111; }
+.dp-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.dp-section { margin-bottom: 24px; }
+.dp-section-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; display: flex; justify-content: space-between; align-items: center; }
+.dp-row { display: flex; align-items: baseline; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 16px; }
+.dp-key { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-weight: 300; flex-shrink: 0; }
+.dp-val { font-size: 12px; color: #333; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; text-align: right; line-height: 1.5; }
+.dp-item-row { padding: 8px 0; border-bottom: 1px solid #eae6e0; }
+.dp-item-name { font-size: 12px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
+.dp-item-meta { font-size: 9px; color: #aaa; font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+.dp-footer { padding: 16px 24px 24px; border-top: 1px solid #d8d4ce; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+.dp-footer-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 4px; }
+.btn { width: 100%; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-align: left; }
+.btn:hover { border-color: #888; color: #555; }
+.btn-dark { background: #111; color: #f0ede8; border-color: #111; }
+.btn-dark:hover { opacity: 0.85; }
+.btn-wa { border-color: #25D366; color: #1a9e4a; }
+.btn-wa:hover { background: #25D366; color: #fff; }
+.btn-done-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; font-weight: 300; }
+.dp-checkbox-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.dp-checkbox { width: 14px; height: 14px; cursor: pointer; accent-color: #111; }
+.dp-checkbox-label { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; }
+.dp-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; transition: color 0.15s; }
+.dp-edit-btn:hover { color: #111; }
+.dp-inline-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 6px 0; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; background: transparent; outline: none; color: #111; transition: border-color 0.15s; margin-bottom: 6px; }
+.dp-inline-input:focus { border-bottom-color: #111; }
+.dp-inline-actions { display: flex; gap: 8px; margin-top: 4px; }
+.dp-inline-save { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: #111; color: #f0ede8; border: none; cursor: pointer; padding: 5px 10px; transition: opacity 0.15s; }
+.dp-inline-save:hover { opacity: 0.8; }
+.dp-inline-cancel { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: none; color: #aaa; border: none; cursor: pointer; padding: 5px 0; transition: color 0.15s; }
+.dp-inline-cancel:hover { color: #111; }
+
+/* settings */
+.settings-page { display: none; }
 .settings-page.active { display: block; }
-.po-page { display: block; }
 .po-page.hidden { display: none; }
+.settings-topbar { padding: 28px 36px 20px; border-bottom: 1px solid #d8d4ce; }
+.settings-section-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; padding-bottom: 10px; border-bottom: 1px solid #d8d4ce; }
+.settings-body { padding: 36px 36px 80px; }
 
-.settings-topbar { padding: 28px 36px 20px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #d8d4ce; }
-
-.settings-body { padding: 36px; }
-.settings-section-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; padding-bottom: 10px; border-bottom: 1px solid #d8d4ce; margin-bottom: 0; }
-
-/* article list */
-.article-list { margin-bottom: 40px; }
-.article-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #eae6e0; cursor: pointer; transition: background 0.1s; gap: 16px; }
-.article-row:hover { background: #ebe8e2; margin: 0 -36px; padding: 14px 36px; }
-.article-row:last-child { border-bottom: none; }
-.article-row-name { font-size: 14px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.article-row-meta { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #aaa; margin-top: 3px; }
-.article-row-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-.article-status-badge { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; font-family: 'IBM Plex Mono', monospace; padding: 3px 8px; border: 1px solid; }
-.badge-open { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
-.badge-closed { border-color: #ccc; color: #aaa; background: #f5f5f5; }
-.article-slot-summary { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #888; }
-.article-chevron { font-size: 12px; color: #ccc; }
-
-/* add article btn */
-.add-article-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; margin-top: 16px; }
-.add-article-btn:hover { border-color: #111; color: #111; }
-
-/* article detail panel */
-.art-panel { display: none; }
-.art-panel.active { display: block; }
-.art-back { display: inline-flex; align-items: center; gap: 6px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; cursor: pointer; font-weight: 300; background: none; border: none; font-family: 'IBM Plex Mono', monospace; padding: 0; margin-bottom: 28px; transition: color 0.15s; }
-.art-back:hover { color: #111; }
-.art-title { font-size: 22px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 6px; }
-.art-subtitle { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #aaa; margin-bottom: 32px; }
-
-/* toggle open/closed */
-.art-toggle-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; padding: 14px 16px; border: 1px solid #d8d4ce; }
-.art-toggle-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: #555; flex: 1; }
-.toggle-switch { position: relative; width: 36px; height: 20px; cursor: pointer; }
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-slider { position: absolute; inset: 0; background: #d8d4ce; transition: background 0.2s; }
-.toggle-slider::before { content: ''; position: absolute; width: 14px; height: 14px; left: 3px; top: 3px; background: #fff; transition: transform 0.2s; }
-.toggle-switch input:checked + .toggle-slider { background: #111; }
-.toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
-.toggle-status-text { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; font-weight: 300; font-family: 'IBM Plex Mono', monospace; color: #888; }
-
-/* batch cards */
-.batch-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; }
-.batch-list { margin-bottom: 24px; }
-.batch-card { border: 1px solid #d8d4ce; margin-bottom: 12px; }
-.batch-card-header { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e4df; cursor: pointer; }
-.batch-card-left { }
-.batch-card-num { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 4px; }
-.batch-card-dates { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.batch-card-actions { display: flex; gap: 8px; align-items: center; }
-.batch-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; transition: color 0.15s; padding: 0; }
-.batch-edit-btn:hover { color: #111; }
-.batch-del-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #c0392b; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; transition: opacity 0.15s; padding: 0; }
-.batch-del-btn:hover { opacity: 0.7; }
-
-/* slot rows */
-.batch-slots { padding: 12px 18px; }
-.slot-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eae6e0; }
-.slot-row:last-child { border-bottom: none; }
-.slot-color { font-size: 11px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #333; flex: 1; }
-.slot-bar-wrap { flex: 2; margin: 0 16px; height: 3px; background: #e8e4df; position: relative; }
-.slot-bar-fill { height: 100%; background: #111; transition: width 0.3s; }
-.slot-bar-fill.almost { background: #c8a04a; }
-.slot-bar-fill.full { background: #c0392b; }
-.slot-numbers { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #888; white-space: nowrap; }
-.slot-numbers strong { color: #111; }
-
-/* add batch / edit modal */
-.batch-modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 40; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-.batch-modal-overlay.open { opacity: 1; pointer-events: all; }
-.batch-modal-box { background: #f0ede8; width: 420px; max-height: 80vh; overflow-y: auto; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
-.batch-modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; }
-.batch-modal-article { font-size: 18px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 28px; }
-.bm-field { margin-bottom: 20px; }
-.bm-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
-.bm-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; transition: border-color 0.15s; }
-.bm-input:focus { border-bottom-color: #111; }
-.bm-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-.bm-slots-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; }
-.bm-slot-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #eae6e0; }
-.bm-slot-row:last-child { border-bottom: none; }
-.bm-slot-color { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; flex: 1; }
-.bm-slot-input { width: 72px; border: none; border-bottom: 1px solid #ccc; padding: 6px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; text-align: right; transition: border-color 0.15s; }
-.bm-slot-input:focus { border-bottom-color: #111; }
-.bm-slot-unit { font-size: 9px; color: #bbb; font-family: 'IBM Plex Mono', monospace; }
-.bm-actions { display: flex; gap: 8px; margin-top: 28px; }
-.bm-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-align: left; }
-.bm-btn:hover { border-color: #888; color: #555; }
-.bm-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
-.bm-btn-dark:hover { opacity: 0.8; }
-
-/* ── artday cards ── */
+/* artday grid */
 .artday-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 16px; }
 .artday-card { border: 1px solid #d8d4ce; padding: 14px 16px; transition: border-color 0.15s; }
 .artday-card.artday-active { border-color: #9aab9a; }
-.artday-name { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 12px; line-height: 1.3; }
+.artday-name { font-size: 12px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 12px; line-height: 1.3; }
 .artday-view { display: flex; align-items: center; justify-content: space-between; }
 .artday-val { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #bbb; font-weight: 300; }
 .artday-card.artday-active .artday-val { color: #3a5a3a; font-weight: 400; }
 .artday-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; color: #ccc; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s; }
 .artday-edit-btn:hover { color: #111; }
 .artday-input-row { display: flex; align-items: center; gap: 8px; }
-.artday-input { width: 52px; border: none; border-bottom: 1px solid #ccc; padding: 4px 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px; background: transparent; outline: none; color: #111; text-align: center; transition: border-color 0.15s; }
-.artday-input:focus { border-bottom-color: #111; }
+.artday-input { width: 52px; border: none; border-bottom: 1px solid #ccc; padding: 4px 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px; background: transparent; outline: none; color: #111; text-align: center; }
 .artday-unit { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; letter-spacing: 1px; }
-.artday-save-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: #111; color: #f0ede8; border: none; cursor: pointer; padding: 5px 10px; transition: opacity 0.15s; }
-.artday-save-btn:hover { opacity: 0.8; }
-.artday-cancel-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: none; color: #aaa; border: none; cursor: pointer; padding: 5px 0; transition: color 0.15s; }
-.artday-cancel-btn:hover { color: #111; }
+.artday-save-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: #111; color: #f0ede8; border: none; cursor: pointer; padding: 5px 10px; }
+.artday-cancel-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: none; color: #aaa; border: none; cursor: pointer; padding: 5px 0; }
 
-/* ── PIN screen ── */
+/* batch */
+.batch-card { border: 1px solid #d8d4ce; margin-bottom: 12px; }
+.batch-card-header { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e4df; cursor: pointer; }
+.batch-card-num { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 4px; }
+.batch-card-dates { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.batch-card-actions { display: flex; gap: 8px; align-items: center; }
+.batch-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; transition: color 0.15s; padding: 0; }
+.batch-edit-btn:hover { color: #111; }
+.batch-del-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #c0392b; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; }
+.batch-slots { padding: 12px 18px; }
+.slot-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eae6e0; }
+.slot-row:last-child { border-bottom: none; }
+.slot-color { font-size: 11px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #333; flex: 1; }
+.slot-bar-wrap { flex: 2; margin: 0 16px; height: 3px; background: #e8e4df; }
+.slot-bar-fill { height: 100%; background: #111; }
+.slot-bar-fill.almost { background: #c8a04a; }
+.slot-bar-fill.full { background: #c0392b; }
+.slot-numbers { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #888; white-space: nowrap; }
+.slot-numbers strong { color: #111; }
+
+/* batch modal */
+.batch-modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 40; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.batch-modal-overlay.open { opacity: 1; pointer-events: all; }
+.batch-modal-box { background: #f0ede8; width: 420px; max-height: 80vh; overflow-y: auto; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
+.batch-modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; }
+.bm-field { margin-bottom: 20px; }
+.bm-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+.bm-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; }
+.bm-input:focus { border-bottom-color: #111; }
+.bm-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.bm-slots-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; }
+.bm-slot-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #eae6e0; }
+.bm-slot-row:last-child { border-bottom: none; }
+.bm-slot-color { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; flex: 1; }
+.bm-slot-input { width: 72px; border: none; border-bottom: 1px solid #ccc; padding: 6px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; text-align: right; }
+.bm-slot-unit { font-size: 9px; color: #bbb; font-family: 'IBM Plex Mono', monospace; }
+.bm-actions { display: flex; gap: 8px; margin-top: 28px; }
+.bm-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; text-align: left; }
+.bm-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
+
+/* modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 40; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box { background: #f0ede8; width: 360px; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
+.modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
+.modal-name { font-size: 16px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 24px; }
+.modal-field { margin-bottom: 20px; }
+.modal-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+.modal-select { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; appearance: none; cursor: pointer; }
+.modal-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; }
+.modal-input::placeholder { color: #aaa; font-weight: 300; }
+.modal-actions { display: flex; gap: 8px; margin-top: 24px; }
+.modal-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; text-align: left; }
+.modal-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
+.edit-item-modal-confirm { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #7a5a1a; background: #f5edda; border: 1px solid #c8a04a; padding: 12px 14px; margin-top: 16px; white-space: pre-line; line-height: 1.7; display: none; }
+.edit-item-modal-confirm.show { display: block; }
+
+/* channel settings */
+.channel-card { border: 1px solid #d8d4ce; padding: 18px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.channel-card-left .ch-name { font-size: 14px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.channel-card-left .ch-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; margin-top: 4px; letter-spacing: 0.5px; }
+.channel-card-right { display: flex; gap: 12px; align-items: center; }
+.ch-status { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 3px 9px; border: 1px solid; }
+.ch-active { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
+.ch-inactive { border-color: #ccc; color: #aaa; }
+.ch-action-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; transition: color 0.15s; }
+.ch-action-btn:hover { color: #111; }
+
+/* product settings */
+.product-card { border: 1px solid #d8d4ce; padding: 14px 18px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; }
+.prod-name { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 4px; }
+.prod-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; letter-spacing: 0.5px; }
+.prod-actions { display: flex; gap: 10px; }
+.prod-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; transition: color 0.15s; }
+.prod-btn:hover { color: #111; }
+.prod-btn-del { color: #c0392b; }
+
+/* product modal */
+.pm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.pm-chip { font-size: 10px; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 4px 10px; border: 1px solid #d8d4ce; color: #555; display: flex; align-items: center; gap: 6px; }
+.pm-chip-del { color: #ccc; cursor: pointer; font-size: 12px; line-height: 1; background: none; border: none; padding: 0; transition: color 0.15s; }
+.pm-chip-del:hover { color: #c0392b; }
+.pm-add-row { display: flex; gap: 8px; margin-top: 10px; }
+.pm-add-input { flex: 1; border: none; border-bottom: 1px solid #ccc; padding: 6px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; }
+.pm-add-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: #111; color: #f0ede8; border: none; cursor: pointer; padding: 6px 12px; white-space: nowrap; }
+.pm-size-preset { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.pm-size-option { font-size: 9px; font-family: 'IBM Plex Mono', monospace; padding: 4px 10px; border: 1px solid #d8d4ce; cursor: pointer; color: #888; transition: all 0.15s; }
+.pm-size-option.selected { background: #111; color: #f0ede8; border-color: #111; }
+
+/* PIN screen */
 .pin-screen { position: fixed; inset: 0; background: #f0ede8; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
 .pin-brand { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; margin-bottom: 56px; }
 .pin-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 20px; }
@@ -309,28 +264,10 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .pin-key { height: 56px; border: none; border-right: 1px solid #e0dbd4; border-bottom: 1px solid #e0dbd4; background: transparent; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 300; color: #111; cursor: pointer; display: flex; align-items: center; justify-content: center; user-select: none; transition: background 0.1s; -webkit-tap-highlight-color: transparent; }
 .pin-key:active { background: #eae6e0; }
 .pin-key.del { font-size: 11px; color: #aaa; letter-spacing: 1px; text-transform: uppercase; }
-.pin-key.del:active { color: #111; background: #eae6e0; }
 .pin-key.empty { pointer-events: none; }
 
-/* ── resi modal ── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 30; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal-box { background: #f0ede8; width: 360px; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
-.modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
-.modal-name { font-size: 16px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 24px; }
-.modal-field { margin-bottom: 20px; }
-.modal-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #999; font-weight: 400; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
-.modal-select { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; appearance: none; cursor: pointer; transition: border-color 0.15s; }
-.modal-select:focus { border-bottom-color: #111; }
-.modal-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; transition: border-color 0.15s; }
-.modal-input:focus { border-bottom-color: #111; }
-.modal-input::placeholder { color: #aaa; font-weight: 300; }
-.modal-actions { display: flex; gap: 8px; margin-top: 24px; }
-.modal-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-align: left; }
-.modal-btn:hover { border-color: #888; color: #555; }
-.modal-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
-.modal-btn-dark:hover { opacity: 0.8; }
-.est-edited-dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:#7b8fc7; margin-left:6px; vertical-align:middle; position:relative; top:-1px; }
+.add-article-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; }
+.add-article-btn:hover { border-color: #111; color: #111; }
 </style>
 </head>
 <body>
@@ -340,29 +277,18 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   <div class="pin-brand">jedda</div>
   <div class="pin-label">masukkan PIN</div>
   <div class="pin-dots">
-    <div class="pin-dot" id="pd0"></div>
-    <div class="pin-dot" id="pd1"></div>
-    <div class="pin-dot" id="pd2"></div>
-    <div class="pin-dot" id="pd3"></div>
+    <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
   </div>
   <div class="pin-error" id="pin-error">PIN salah</div>
   <div class="pin-keypad">
-    <div class="pin-key" onclick="pinPress('1')">1</div>
-    <div class="pin-key" onclick="pinPress('2')">2</div>
-    <div class="pin-key" onclick="pinPress('3')">3</div>
-    <div class="pin-key" onclick="pinPress('4')">4</div>
-    <div class="pin-key" onclick="pinPress('5')">5</div>
-    <div class="pin-key" onclick="pinPress('6')">6</div>
-    <div class="pin-key" onclick="pinPress('7')">7</div>
-    <div class="pin-key" onclick="pinPress('8')">8</div>
-    <div class="pin-key" onclick="pinPress('9')">9</div>
-    <div class="pin-key empty"></div>
-    <div class="pin-key" onclick="pinPress('0')">0</div>
-    <div class="pin-key del" onclick="pinDel()">del</div>
+    <div class="pin-key" onclick="pinPress('1')">1</div><div class="pin-key" onclick="pinPress('2')">2</div><div class="pin-key" onclick="pinPress('3')">3</div>
+    <div class="pin-key" onclick="pinPress('4')">4</div><div class="pin-key" onclick="pinPress('5')">5</div><div class="pin-key" onclick="pinPress('6')">6</div>
+    <div class="pin-key" onclick="pinPress('7')">7</div><div class="pin-key" onclick="pinPress('8')">8</div><div class="pin-key" onclick="pinPress('9')">9</div>
+    <div class="pin-key empty"></div><div class="pin-key" onclick="pinPress('0')">0</div><div class="pin-key del" onclick="pinDel()">del</div>
   </div>
   <input id="pin-hidden" inputmode="numeric" pattern="[0-9]*" maxlength="4"
-    style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;"
-    autocomplete="off" autofocus>
+    style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;" autocomplete="off" autofocus>
 </div>
 
 <div class="sidebar">
@@ -373,19 +299,25 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   </nav>
   <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:10px">
     <span>admin</span>
-    <button onclick="lock()" style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#ccc;background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:300;padding:0;text-align:left;transition:color 0.15s" onmouseover="this.style.color='#888'" onmouseout="this.style.color='#ccc'">kunci ↑</button>
+    <button onclick="lock()" style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#ccc;background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:300;padding:0;text-align:left" onmouseover="this.style.color='#888'" onmouseout="this.style.color='#ccc'">kunci ↑</button>
   </div>
 </div>
 
 <div class="main">
+<!-- PO PAGE -->
 <div class="po-page" id="po-page">
   <div class="topbar">
-    <div class="topbar-left">
+    <div>
       <div class="topbar-section">dashboard</div>
       <div class="topbar-title"><em>pre-order</em> masuk.</div>
     </div>
-    <div class="topbar-date" id="topbar-date">—</div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbar-date">—</div>
+    </div>
   </div>
+
+  <!-- channel tabs -->
+  <div class="channel-tabs" id="channel-tabs"></div>
 
   <div class="stats-row">
     <div class="stat-card active" id="sc-semua" onclick="setFilter('semua',this)">
@@ -413,7 +345,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   <div class="toolbar">
     <button class="sort-btn active" id="sort-oldest" onclick="setSort('oldest',this)">↑ terlama masuk</button>
     <button class="sort-btn" id="sort-newest" onclick="setSort('newest',this)">↓ terbaru masuk</button>
-    <button class="sort-btn" id="sort-est" onclick="setSort('est',this)">est. tiba</button>
+    <button class="sort-btn" id="sort-est" onclick="setSort('est',this)">est. kirim</button>
     <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
     <button class="sort-btn active" id="toggle-dikirim" onclick="toggleHideDikirim(this)">sembunyikan dikirim</button>
     <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
@@ -427,13 +359,8 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
     <table>
       <thead>
         <tr>
-          <th>no. PO</th>
-          <th>masuk</th>
-          <th>nama</th>
-          <th>item</th>
-          <th>estimasi PO</th>
-          <th>status</th>
-          <th>aksi</th>
+          <th>no. PO</th><th>masuk</th><th>nama</th><th>item</th>
+          <th>estimasi kirim</th><th>status</th><th>aksi</th>
         </tr>
       </thead>
       <tbody id="table-body"></tbody>
@@ -442,10 +369,62 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
       <div class="empty-label">tidak ada order ditemukan</div>
     </div>
   </div>
-</div>
+</div><!-- end po-page -->
 
-<!-- resi modal -->
-<div class="modal-overlay" id="resi-modal" onclick="handleModalOverlayClick(event)">
+<!-- SETTINGS PAGE -->
+<div class="settings-page" id="settings-page">
+  <div class="settings-topbar">
+    <div class="topbar-section">settings</div>
+    <div class="topbar-title"><em>kelola</em> sistem.</div>
+  </div>
+  <div class="settings-body">
+
+    <!-- channels -->
+    <div style="margin-bottom:48px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:16px">
+        <div class="settings-section-label" style="border:none;padding:0;margin:0">channels</div>
+        <button class="add-article-btn" style="margin:0" onclick="openChannelModal(null)">+ tambah event</button>
+      </div>
+      <div id="channel-list"></div>
+    </div>
+
+    <!-- products -->
+    <div style="margin-bottom:48px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:16px">
+        <div class="settings-section-label" style="border:none;padding:0;margin:0">produk & artikel</div>
+        <button class="add-article-btn" style="margin:0" onclick="openProductModal(null)">+ tambah artikel</button>
+      </div>
+      <div id="product-list"></div>
+    </div>
+
+    <!-- estimasi per artikel per channel -->
+    <div style="margin-bottom:48px">
+      <div style="padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
+        <div class="settings-section-label" style="border:none;padding:0">estimasi sementara</div>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap" id="est-channel-tabs"></div>
+      </div>
+      <div id="article-days-list" class="artday-grid" style="margin-top:16px"></div>
+      <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#aaa;margin-top:12px">isi hari per artikel per warna. 0 = tidak bisa dipilih di form.</div>
+    </div>
+
+    <!-- batch list -->
+    <div id="batch-list-view">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
+        <div class="settings-section-label" style="border:none;padding:0">batch produksi</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="batch-channel-filter" style="font-size:8px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;border:1px solid #ccc;background:transparent;padding:5px 10px;color:#888;outline:none" onchange="loadBatches()"></select>
+          <button class="add-article-btn" style="margin:0" onclick="openBatchModal(null)">+ tambah batch</button>
+        </div>
+      </div>
+      <div id="batch-list-rows"></div>
+    </div>
+
+  </div>
+</div>
+</div><!-- end main -->
+
+<!-- modals -->
+<div class="modal-overlay" id="resi-modal" onclick="if(event.target===this)closeResiModal()">
   <div class="modal-box">
     <div class="modal-title">input pengiriman</div>
     <div class="modal-name" id="modal-name">—</div>
@@ -471,12 +450,11 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   </div>
 </div>
 
-<!-- ongkir modal -->
-<div class="modal-overlay" id="ongkir-modal" onclick="handleOngkirModalOverlay(event)">
+<div class="modal-overlay" id="ongkir-modal" onclick="if(event.target===this)closeOngkirModal()">
   <div class="modal-box">
     <div class="modal-title" style="font-weight:400;color:#111">konfirmasi ongkos kirim</div>
     <div class="modal-name" id="ongkir-modal-name">—</div>
-    <div class="modal-name" id="ongkir-modal-address" style="font-size:12px;font-weight:300;color:#888;font-family:'IBM Plex Sans',sans-serif;margin-top:-16px;margin-bottom:24px">—</div>
+    <div style="font-size:12px;font-weight:300;color:#888;font-family:'IBM Plex Sans',sans-serif;margin-top:-16px;margin-bottom:24px" id="ongkir-modal-address">—</div>
     <div class="modal-field">
       <div class="modal-label">biaya ongkir (Rp)</div>
       <input class="modal-input" id="ongkir-input" type="text" placeholder="contoh: 25.000" oninput="formatOngkirInput(this)">
@@ -488,35 +466,29 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   </div>
 </div>
 
-</div><!-- end po-page -->
-
 <!-- edit item modal -->
-<div class="modal-overlay" id="edit-item-modal" onclick="handleEditItemOverlay(event)">
+<div class="modal-overlay" id="edit-item-modal" onclick="if(event.target===this)closeEditItemModal()">
   <div class="modal-box" style="width:440px;max-height:85vh;overflow-y:auto">
     <div class="modal-title">ubah pesanan</div>
     <div class="modal-name" id="edit-item-order-label">—</div>
-
     <div id="edit-item-items-container"></div>
-
     <div class="modal-field" style="border-top:1px solid #eae6e0;padding-top:16px;margin-top:8px">
       <div class="modal-label">ubah estimasi</div>
       <div style="margin-bottom:12px">
         <div style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#999;font-family:'IBM Plex Mono',monospace;font-weight:400;margin-bottom:6px">pilih tanggal</div>
-        <input class="modal-input" type="date" id="edit-item-date" style="flex:1;color:#111" oninput="onEditDateChange()">
+        <input class="modal-input" type="date" id="edit-item-date" style="color:#111" oninput="onEditDateChange()">
         <div id="edit-item-date-preview" style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#888;margin-top:6px;min-height:14px"></div>
       </div>
       <div>
         <div style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#999;font-family:'IBM Plex Mono',monospace;font-weight:400;margin-bottom:6px">— atau tambah hari</div>
         <div style="display:flex;align-items:baseline;gap:10px">
           <input class="modal-input" type="number" min="1" max="365" id="edit-item-days" placeholder="kosongkan jika tidak berubah" style="flex:1" oninput="onEditDaysChange()">
-          <span style="font-size:9px;color:#888;font-family:'IBM Plex Mono',monospace;white-space:nowrap;font-weight:400">hari kerja</span>
+          <span style="font-size:9px;color:#888;font-family:'IBM Plex Mono',monospace;white-space:nowrap">hari kerja</span>
         </div>
         <div id="edit-item-days-preview" style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:#888;margin-top:6px;min-height:14px"></div>
       </div>
     </div>
-
     <div class="edit-item-modal-confirm" id="edit-item-confirm-box"></div>
-
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeEditItemModal()">batal</button>
       <button class="modal-btn modal-btn-dark" id="edit-item-submit-btn" onclick="submitEditItem()">simpan perubahan</button>
@@ -524,49 +496,86 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   </div>
 </div>
 
-<!-- settings page -->
-<div class="settings-page" id="settings-page">
-  <div class="settings-topbar">
-    <div>
-      <div class="topbar-section">settings</div>
-      <div class="topbar-title"><em>kelola</em> batch.</div>
+<!-- channel modal -->
+<div class="modal-overlay" id="channel-modal" onclick="if(event.target===this)closeChannelModal()">
+  <div class="modal-box">
+    <div class="modal-title" id="channel-modal-title">tambah event</div>
+    <div class="modal-field">
+      <div class="modal-label">nama channel</div>
+      <input class="modal-input" id="ch-name" placeholder="contoh: Brightspot City 2027">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">PIN (4 digit)</div>
+      <input class="modal-input" id="ch-pin" type="text" maxlength="4" inputmode="numeric" placeholder="0000">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">WA pretext</div>
+      <input class="modal-input" id="ch-pretext" placeholder="contoh: Jedda at Brightspot City">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeChannelModal()">batal</button>
+      <button class="modal-btn modal-btn-dark" onclick="saveChannel()">simpan</button>
     </div>
   </div>
-  <div class="settings-body">
+</div>
 
-    <!-- estimasi per artikel -->
-    <div style="margin-bottom:48px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
-        <div class="settings-section-label" style="border:none;padding:0">estimasi sementara</div>
+<!-- product modal -->
+<div class="modal-overlay" id="product-modal" onclick="if(event.target===this)closeProductModal()">
+  <div class="modal-box" style="width:440px">
+    <div class="modal-title" id="product-modal-title">tambah artikel</div>
+    <div class="modal-field">
+      <div class="modal-label">nama artikel</div>
+      <input class="modal-input" id="pm-name" placeholder="contoh: Hana Blazer">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">kategori</div>
+      <select class="modal-select" id="pm-cat">
+        <option value="outerwear">outerwear</option>
+        <option value="vest">vest</option>
+        <option value="shirt">shirt</option>
+        <option value="bottom">bottom</option>
+        <option value="lainnya">lainnya</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">warna</div>
+      <div class="pm-chips" id="pm-colors-chips"></div>
+      <div class="pm-add-row">
+        <input class="pm-add-input" id="pm-color-input" placeholder="tambah warna..." onkeydown="if(event.key==='Enter'){event.preventDefault();addPmColor();}">
+        <button class="pm-add-btn" onclick="addPmColor()">tambah</button>
       </div>
-      <div id="article-days-list" class="artday-grid"></div>
-      <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#aaa;margin-top:12px;letter-spacing:0.5px">isi hari per artikel kalau batch belum siap. 0 = artikel tidak bisa dipilih di form.</div>
     </div>
-
-    <!-- batch list view -->
-    <div id="batch-list-view">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
-        <div class="settings-section-label" style="border:none;padding:0">batch produksi</div>
-        <button class="add-article-btn" style="margin:0" onclick="openBatchModal(null)">+ tambah batch</button>
+    <div class="modal-field">
+      <div class="modal-label">ukuran</div>
+      <div class="pm-size-preset" id="pm-size-presets">
+        <div class="pm-size-option" onclick="selectSizePreset('S/M · L/XL')">S/M · L/XL</div>
+        <div class="pm-size-option" onclick="selectSizePreset('S · M · L')">S · M · L</div>
+        <div class="pm-size-option" onclick="selectSizePreset('one size')">one size</div>
+        <div class="pm-size-option" onclick="selectSizePreset('custom')">custom</div>
       </div>
-      <div id="batch-list-rows"></div>
+      <div id="pm-size-custom-wrap" style="display:none;margin-top:10px">
+        <div class="pm-chips" id="pm-sizes-chips"></div>
+        <div class="pm-add-row">
+          <input class="pm-add-input" id="pm-size-input" placeholder="tambah ukuran..." onkeydown="if(event.key==='Enter'){event.preventDefault();addPmSize();}">
+          <button class="pm-add-btn" onclick="addPmSize()">tambah</button>
+        </div>
+      </div>
     </div>
-
-    <!-- batch detail / edit view -->
-    <div id="batch-detail-view" style="display:none">
-      <button class="art-back" onclick="backToBatchList()">&#8592; kembali</button>
-      <div class="art-title" id="bd-title"></div>
-      <div class="art-subtitle" id="bd-dates"></div>
-      <div id="bd-article-slots"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeProductModal()">batal</button>
+      <button class="modal-btn modal-btn-dark" onclick="saveProduct()">simpan artikel</button>
     </div>
-
   </div>
 </div>
 
 <!-- batch modal -->
-<div class="batch-modal-overlay" id="batch-modal" onclick="handleBatchModalOverlay(event)">
+<div class="batch-modal-overlay" id="batch-modal" onclick="if(event.target===this)closeBatchModal()">
   <div class="batch-modal-box">
     <div class="batch-modal-title">batch produksi</div>
+    <div class="bm-field">
+      <div class="bm-label">channel</div>
+      <select class="bm-input" id="bm-channel"></select>
+    </div>
     <div class="bm-dates">
       <div class="bm-field">
         <div class="bm-label">mulai produksi</div>
@@ -589,10 +598,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 <div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
 <div class="detail-panel" id="detail-panel">
   <div class="dp-header">
-    <div>
-      <div class="dp-po" id="dp-po"></div>
-      <div class="dp-name" id="dp-name"></div>
-    </div>
+    <div><div class="dp-po" id="dp-po"></div><div class="dp-name" id="dp-name"></div></div>
     <button class="dp-close" onclick="closePanel()">×</button>
   </div>
   <div class="dp-body" id="dp-body"></div>
@@ -600,277 +606,244 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 </div>
 
 <script>
-// ── PIN ──
 const PIN = "2020";
-let pinBuffer = '';
+const SB_URL = "https://okgcujdlwkcwvsdybkza.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM";
+const _sb = supabase.createClient(SB_URL, SB_KEY);
 
-function pinPress(digit) {
-  if(pinBuffer.length >= 4) return;
-  pinBuffer += digit;
-  updatePinDots();
-  syncHiddenInput();
-  if(pinBuffer.length === 4) setTimeout(() => checkPin(), 100);
-}
-function pinDel() {
-  pinBuffer = pinBuffer.slice(0, -1);
-  updatePinDots();
-  syncHiddenInput();
-}
-function syncHiddenInput() {
-  const el = document.getElementById('pin-hidden');
-  if(el) el.value = pinBuffer;
-}
-function updatePinDots() {
-  for(let i = 0; i < 4; i++) {
-    document.getElementById('pd' + i).classList.toggle('filled', i < pinBuffer.length);
-  }
-}
-function checkPin() {
-  if(pinBuffer === PIN) {
-    document.getElementById('pin-screen').style.display = 'none';
-    loadOrders();
-    loadArticleEstDaysCache();
+// ── PIN ──
+let pinBuffer = '';
+function pinPress(d){ if(pinBuffer.length>=4)return; pinBuffer+=d; updatePinDots(); syncPin(); if(pinBuffer.length===4)setTimeout(checkPin,100); }
+function pinDel(){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); syncPin(); }
+function syncPin(){ const el=document.getElementById('pin-hidden'); if(el) el.value=pinBuffer; }
+function updatePinDots(){ for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length); }
+function checkPin(){
+  if(pinBuffer===PIN){
+    document.getElementById('pin-screen').style.display='none';
+    init();
   } else {
     document.getElementById('pin-error').classList.add('show');
-    pinBuffer = '';
-    updatePinDots();
-    syncHiddenInput();
-    setTimeout(() => document.getElementById('pin-error').classList.remove('show'), 1500);
+    pinBuffer=''; updatePinDots(); syncPin();
+    setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),1500);
   }
 }
-function lock() {
-  document.getElementById('pin-screen').style.display = 'flex';
-  pinBuffer = '';
-  updatePinDots();
-  syncHiddenInput();
-  setTimeout(() => document.getElementById('pin-hidden')?.focus(), 100);
-}
-document.addEventListener('DOMContentLoaded', () => {
-  const hidden = document.getElementById('pin-hidden');
-  if(!hidden) return;
-  hidden.addEventListener('input', () => {
-    const val = hidden.value.replace(/\D/g, '').slice(0, 4);
-    hidden.value = val;
-    pinBuffer = val;
-    updatePinDots();
-    if(pinBuffer.length === 4) setTimeout(() => checkPin(), 100);
-  });
-  hidden.addEventListener('keydown', e => {
-    if(e.key === 'Backspace' && pinBuffer.length > 0) {
-      pinBuffer = pinBuffer.slice(0, -1);
-      updatePinDots();
-    }
-  });
-  setTimeout(() => hidden.focus(), 100);
+function lock(){ document.getElementById('pin-screen').style.display='flex'; pinBuffer=''; updatePinDots(); syncPin(); setTimeout(()=>document.getElementById('pin-hidden')?.focus(),100); }
+document.addEventListener('DOMContentLoaded',()=>{
+  const h=document.getElementById('pin-hidden'); if(!h) return;
+  h.addEventListener('input',()=>{ const v=h.value.replace(/\D/g,'').slice(0,4); h.value=v; pinBuffer=v; updatePinDots(); if(pinBuffer.length===4)setTimeout(checkPin,100); });
+  h.addEventListener('keydown',e=>{ if(e.key==='Backspace'&&pinBuffer.length>0){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); } });
+  setTimeout(()=>h.focus(),100);
 });
 
-const _sb = supabase.createClient(
-  "https://okgcujdlwkcwvsdybkza.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
-);
-
-const STATUSES = ["baru", "tunggu_ongkir", "diproses", "dikirim"];
-const STATUS_LABEL = {
-  baru:          "baru",
-  tunggu_ongkir: "tunggu ongkir",
-  diproses:      "sedang diproses",
-  dikirim:       "sudah dikirim"
-};
-const STATUS_CLASS = {
-  baru:          "s-baru",
-  tunggu_ongkir: "s-tunggu_ongkir",
-  diproses:      "s-diproses",
-  dikirim:       "s-dikirim"
-};
-
-const WA_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L0 24l6.335-1.508A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.782 9.782 0 01-4.988-1.362l-.358-.213-3.761.896.952-3.656-.233-.376A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>`;
-
+// ── globals ──
 let orders = [];
+let channels = [];
+let products = [];
 let filterStatus = "semua";
 let sortMode = "oldest";
 let searchQuery = "";
 let selectedId = null;
 let resiTargetId = null;
-let hideDikirim = true; // default sembunyikan yang sudah dikirim
+let hideDikirim = true;
+let activeChannel = null; // null = semua
 
-// ── load ──
-async function loadOrders(){
-  document.getElementById("table-body").innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#aaa;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">memuat data...</td></tr>`;
-  try {
-    const {data: ordersData, error: oErr} = await _sb.from("po_orders").select("*").order("created_at", {ascending:false});
-    if(oErr){ showError(JSON.stringify(oErr)); return; }
-    const {data: itemsData, error: iErr} = await _sb.from("po_items").select("*");
-    if(iErr){ showError("error items: " + JSON.stringify(iErr)); return; }
+const STATUS_LABEL = { baru:"baru", tunggu_ongkir:"tunggu ongkir", diproses:"sedang diproses", dikirim:"sudah dikirim" };
+const STATUS_CLASS  = { baru:"s-baru", tunggu_ongkir:"s-tunggu_ongkir", diproses:"s-diproses", dikirim:"s-dikirim" };
+const WA_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L0 24l6.335-1.508A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.782 9.782 0 01-4.988-1.362l-.358-.213-3.761.896.952-3.656-.233-.376A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>`;
 
-    orders = ordersData.map(o => {
-      const items = itemsData.filter(i => i.order_id === o.id);
-      const maxDays = items.length
-        ? Math.max(...items.map(i => i.estimated_days || o.estimated_days || 7))
-        : (o.estimated_days || 7);
-      return {
-        id:             o.id,
-        po_number:      o.po_number,
-        name:           o.customer_name,
-        phone:          o.customer_phone,
-        address:        o.address || "",
-        notes:          o.notes || "",
-        resi:           o.resi || "",
-        kurir:          o.kurir || "",
-        status:         o.status || "baru",
-        created:        new Date(o.created_at),
-        est_date:       o.est_date || null,
-        maxDays:        maxDays,
-        est_edited_at:  o.est_edited_at || null,
-        items:          items.map(i => ({name: i.article, color: i.color, size: i.size||null, qty: i.qty}))
-      };
-    });
-
-    updateStats();
-    renderTable();
-  } catch(e) {
-    showError(e.message);
-  }
+// ── init ──
+async function init() {
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  await loadChannels();
+  await loadProducts();
+  await loadOrders();
 }
 
-function showError(msg){
-  document.getElementById("table-body").innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#c0392b;font-family:'IBM Plex Mono',monospace">${msg}</td></tr>`;
+// ── date utils — FIX timezone ──
+// est_date disimpan sebagai "YYYY-MM-DD" string (local date, bukan UTC)
+// Selalu parse dengan T00:00:00 supaya JS treat sebagai local time
+function parseLocalDate(dateStr) {
+  if(!dateStr) return null;
+  return new Date(dateStr + 'T00:00:00');
 }
-
-async function updateOrderStatus(id, newStatus){
-  await _sb.from("po_orders").update({status: newStatus, updated_at: new Date().toISOString()}).eq("id", id);
-}
-
-async function saveResiToDb(id, resi, kurir){
-  await _sb.from("po_orders").update({
-    resi: resi,
-    kurir: kurir,
-    status: "dikirim",
-    updated_at: new Date().toISOString()
-  }).eq("id", id);
-}
-
-function addWorkdaysFromDate(from, days) {
-  const d = new Date(from);
+function addWorkdays(fromDate, days) {
+  const d = new Date(fromDate);
   let added = 0;
   while(added < days) {
     d.setDate(d.getDate() + 1);
-    if(d.getDay() !== 0) added++;
+    if(d.getDay() !== 0) added++; // skip Minggu
   }
   return d;
 }
 function fmtTanggal(d) {
+  if(!d) return '—';
   return new Date(d).toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"});
 }
-function getEstDisplay(o) {
-  if(o.est_date) return fmtTanggal(o.est_date);
-  return fmtTanggal(addWorkdaysFromDate(o.created, o.maxDays || 7));
-}
-function getEstDaysLeft(o) {
-  if(o.est_date) {
-    const diff = new Date(o.est_date) - Date.now();
-    return Math.ceil(diff / 86400000);
-  }
-  const est = new Date(o.created); est.setDate(est.getDate() + (o.maxDays || 7));
-  return Math.ceil((est - Date.now()) / 86400000);
-}
-function getEstDate(days, from){
-  const d = new Date(from); d.setDate(d.getDate()+days);
-  return d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});
-}
-function fmtEntry(d){
+function fmtEntry(d) {
   const dt = new Date(d);
   return {
     date: dt.toLocaleDateString("id-ID",{day:"numeric",month:"short"}),
     time: dt.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})
   };
 }
-
-function toggleHideDikirim(el) {
-  hideDikirim = !hideDikirim;
-  el.classList.toggle('active', hideDikirim);
-  el.textContent = hideDikirim ? 'sembunyikan dikirim' : 'tampilkan dikirim';
-  renderTable();
+// Hitung tanggal estimasi — KONSISTEN: selalu pakai parseLocalDate untuk est_date
+function getEstDate(o) {
+  if(o.est_date) return parseLocalDate(o.est_date);
+  return addWorkdays(o.created, o.maxDays || 7);
+}
+function getEstDisplay(o) {
+  return fmtTanggal(getEstDate(o));
+}
+function getEstDaysLeft(o) {
+  const est = getEstDate(o);
+  if(!est) return 0;
+  // Bandingkan dengan awal hari ini (local midnight)
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  return Math.ceil((est - today) / 86400000);
 }
 
-function filtered(){
+// ── channels ──
+async function loadChannels() {
+  const { data } = await _sb.from('po_channels').select('*').order('created_at');
+  channels = data || [];
+  renderChannelTabs();
+}
+
+function renderChannelTabs() {
+  const el = document.getElementById('channel-tabs');
+  const tabs = [{ id: null, name: 'semua' }, ...channels];
+  el.innerHTML = tabs.map(ch => {
+    const isActive = activeChannel === ch.id;
+    return `<div class="channel-tab ${isActive?'active':''}" onclick="setChannel(${ch.id?`'${ch.id}'`:null})">${ch.name || 'semua'}</div>`;
+  }).join('');
+}
+
+function setChannel(chId) {
+  activeChannel = chId;
+  renderChannelTabs();
+  renderTable();
+  updateStats();
+}
+
+// ── products ──
+async function loadProducts() {
+  const { data } = await _sb.from('po_products').select('*').order('sort_order').order('id');
+  products = data || [];
+}
+
+// ── orders ──
+async function loadOrders() {
+  document.getElementById("table-body").innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#aaa;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">memuat data...</td></tr>`;
+  try {
+    const [{ data: od, error: oe }, { data: id_, error: ie }] = await Promise.all([
+      _sb.from("po_orders").select("*").order("created_at", {ascending:true}),
+      _sb.from("po_items").select("*")
+    ]);
+    if(oe) { showError(JSON.stringify(oe)); return; }
+    if(ie) { showError("error items: " + JSON.stringify(ie)); return; }
+
+    orders = od.map(o => {
+      const items = id_.filter(i => i.order_id === o.id);
+      const maxDays = items.length
+        ? Math.max(...items.map(i => i.estimated_days || o.estimated_days || 7))
+        : (o.estimated_days || 7);
+      return {
+        id:            o.id,
+        po_number:     o.po_number,
+        name:          o.customer_name,
+        phone:         o.customer_phone,
+        address:       o.address || "",
+        notes:         o.notes || "",
+        resi:          o.resi || "",
+        kurir:         o.kurir || "",
+        status:        o.status || "baru",
+        channel:       o.channel || "brightspot-city-2026",
+        created:       new Date(o.created_at),
+        est_date:      o.est_date || null,    // "YYYY-MM-DD" string or null
+        maxDays:       maxDays,
+        est_edited_at: o.est_edited_at || null,
+        items:         items.map(i => ({name:i.article,color:i.color,size:i.size||null,qty:i.qty}))
+      };
+    });
+    updateStats();
+    renderTable();
+  } catch(e) { showError(e.message); }
+}
+
+function showError(msg) {
+  document.getElementById("table-body").innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#c0392b;font-family:'IBM Plex Mono',monospace">${msg}</td></tr>`;
+}
+
+// ── channel name helper ──
+function getChannelName(chId) {
+  const ch = channels.find(c => c.id === chId);
+  return ch ? ch.name : chId;
+}
+function getChannelPretext(chId) {
+  const ch = channels.find(c => c.id === chId);
+  return ch ? ch.wa_pretext : 'Jedda';
+}
+
+// ── filter + sort ──
+function filteredOrders() {
   let list = orders.filter(o => {
+    if(activeChannel && o.channel !== activeChannel) return false;
     if(hideDikirim && o.status === 'dikirim') return false;
     if(filterStatus !== "semua" && o.status !== filterStatus) return false;
-    if(searchQuery){
+    if(searchQuery) {
       const q = searchQuery.toLowerCase();
       if(!o.name.toLowerCase().includes(q) && !o.po_number.toLowerCase().includes(q)) return false;
     }
     return true;
   });
-  if(sortMode === "est"){
-    list = list.slice().sort((a,b) => {
-      const da = a.est_date ? new Date(a.est_date) : (() => { const d = new Date(a.created); d.setDate(d.getDate()+a.maxDays); return d; })();
-      const db = b.est_date ? new Date(b.est_date) : (() => { const d = new Date(b.created); d.setDate(d.getDate()+b.maxDays); return d; })();
-      return da-db;
-    });
-  } else if(sortMode === "newest"){
-    list = list.slice().sort((a,b) => new Date(b.created)-new Date(a.created));
+  if(sortMode === "est") {
+    list = list.slice().sort((a,b) => getEstDate(a) - getEstDate(b));
+  } else if(sortMode === "newest") {
+    list = list.slice().sort((a,b) => b.created - a.created);
   } else {
-    list = list.slice().sort((a,b) => new Date(a.created)-new Date(b.created));
+    list = list.slice().sort((a,b) => a.created - b.created);
   }
   return list;
 }
 
-function updateStats(){
-  document.getElementById("stat-total").textContent          = orders.length;
-  document.getElementById("stat-baru").textContent           = orders.filter(o=>o.status==="baru").length;
-  document.getElementById("stat-tunggu_ongkir").textContent  = orders.filter(o=>o.status==="tunggu_ongkir").length;
-  document.getElementById("stat-diproses").textContent       = orders.filter(o=>o.status==="diproses").length;
-  document.getElementById("topbar-date").textContent = new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+function updateStats() {
+  const base = activeChannel ? orders.filter(o => o.channel === activeChannel) : orders;
+  document.getElementById("stat-total").textContent         = base.length;
+  document.getElementById("stat-baru").textContent          = base.filter(o=>o.status==="baru").length;
+  document.getElementById("stat-tunggu_ongkir").textContent = base.filter(o=>o.status==="tunggu_ongkir").length;
+  document.getElementById("stat-diproses").textContent      = base.filter(o=>o.status==="diproses").length;
 }
 
-function renderTable(){
+function renderTable() {
   const tbody = document.getElementById("table-body");
   const empty = document.getElementById("empty-state");
-  const rows = filtered();
+  const rows = filteredOrders();
   if(!rows.length){ tbody.innerHTML=""; empty.style.display="block"; return; }
   empty.style.display="none";
-
   tbody.innerHTML = rows.map(o => {
     const daysLeft = getEstDaysLeft(o);
-    const overdue = daysLeft < 0 && o.status !== "dikirim";
-    const urgent = daysLeft <= 2 && o.status !== "dikirim";
-    const entry = fmtEntry(o.created);
-    const estDisp = getEstDisplay(o);
-
-    // item: full list, each on its own line
+    const overdue  = daysLeft < 0 && o.status !== "dikirim";
+    const urgent   = daysLeft <= 2 && o.status !== "dikirim";
+    const entry    = fmtEntry(o.created);
+    const estDisp  = getEstDisplay(o);
     const itemList = o.items.map(i => {
-      const meta = [i.color, i.size].filter(Boolean).join(' · ');
+      const meta = [i.color,i.size].filter(Boolean).join(' · ');
       return `<div class="item-line">${i.name} <span class="item-meta">${meta} · ${i.qty}pc</span></div>`;
     }).join("");
-
-    // aksi kolom per status
     let aksiHtml = "";
-    if(o.status === "baru"){
-      aksiHtml = `<button class="tbl-action tbl-action-wa" onclick="event.stopPropagation();handleWaKonfirmasi(${o.id})">${WA_SVG} kirim WA</button>`;
-    } else if(o.status === "tunggu_ongkir"){
-      aksiHtml = `<button class="tbl-action tbl-action-wa" onclick="event.stopPropagation();handleWaFollowUp(${o.id})">${WA_SVG} follow-up</button>`;
-    } else if(o.status === "diproses"){
-      aksiHtml = `<button class="tbl-action tbl-action-resi" onclick="event.stopPropagation();openResiModal(${o.id})">input resi</button>`;
-    } else if(o.status === "dikirim"){
-      aksiHtml = o.resi
-        ? `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa;letter-spacing:0.5px">${o.kurir ? o.kurir+' · ' : ''}${o.resi}</span>`
-        : `<span style="font-size:9px;color:#ccc;font-family:'IBM Plex Mono',monospace">—</span>`;
-    }
-
+    if(o.status==="baru") aksiHtml=`<button class="tbl-action tbl-action-wa" onclick="event.stopPropagation();handleWaKonfirmasi(${o.id})">${WA_SVG} kirim WA</button>`;
+    else if(o.status==="tunggu_ongkir") aksiHtml=`<button class="tbl-action tbl-action-wa" onclick="event.stopPropagation();handleWaFollowUp(${o.id})">${WA_SVG} follow-up</button>`;
+    else if(o.status==="diproses") aksiHtml=`<button class="tbl-action tbl-action-resi" onclick="event.stopPropagation();openResiModal(${o.id})">input resi</button>`;
+    else if(o.status==="dikirim") aksiHtml=o.resi?`<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa">${o.kurir?o.kurir+' · ':''}${o.resi}</span>`:`<span style="font-size:9px;color:#ccc;font-family:'IBM Plex Mono',monospace">—</span>`;
     return `<tr onclick="openPanel(${o.id})" class="${selectedId===o.id?'selected':''}">
       <td class="td-mono">${o.po_number}</td>
-      <td style="white-space:nowrap">
-        <div class="entry-date">${entry.date}</div>
-        <div class="entry-time">${entry.time}</div>
-      </td>
+      <td style="white-space:nowrap"><div class="entry-date">${entry.date}</div><div class="entry-time">${entry.time}</div></td>
       <td>${(overdue||urgent)?'<span class="urgent-dot"></span>':''}${o.name}</td>
       <td>${itemList}</td>
       <td style="white-space:nowrap">
-        <div class="est-date ${overdue?'est-urgent':daysLeft<=2&&o.status!=='dikirim'?'est-urgent':''}">${estDisp}${o.est_edited_at?'<span class="est-edited-dot" title="estimasi diperbarui manual"></span>':''}</div>
-        <div class="est-days ${overdue?'est-urgent':daysLeft<=2&&o.status!=='dikirim'?'est-urgent':''}">
-          ${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':''}
-        </div>
+        <div class="est-date ${overdue||urgent?'est-urgent':''}">${estDisp}${o.est_edited_at?'<span class="est-edited-dot"></span>':''}</div>
+        <div class="est-days ${overdue||urgent?'est-urgent':''}">${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':''}</div>
       </td>
       <td><span class="status-badge ${STATUS_CLASS[o.status]||'s-baru'}">${STATUS_LABEL[o.status]||o.status}</span></td>
       <td>${aksiHtml}</td>
@@ -878,592 +851,566 @@ function renderTable(){
   }).join("");
 }
 
-function setFilter(f, el){
-  filterStatus = f;
-  document.querySelectorAll(".stat-card").forEach(c => c.classList.remove("active"));
-  (el || document.getElementById("sc-"+f))?.classList.add("active");
+function setFilter(f,el) {
+  filterStatus=f;
+  document.querySelectorAll(".stat-card").forEach(c=>c.classList.remove("active"));
+  (el||document.getElementById("sc-"+f))?.classList.add("active");
   renderTable();
 }
-function setSort(mode, el){
-  sortMode = mode;
-  ["sort-oldest","sort-newest","sort-est"].forEach(id => {
-    document.getElementById(id)?.classList.remove("active");
-  });
+function setSort(mode,el) {
+  sortMode=mode;
+  ["sort-oldest","sort-newest","sort-est"].forEach(id=>document.getElementById(id)?.classList.remove("active"));
   el.classList.add("active");
   renderTable();
 }
-
-function setSearch(v){ searchQuery = v; renderTable(); }
-
-function buildWaKonfirmasi(o, ongkir){
-  const lines = o.items.map(i=>{
-    const meta = [i.color, i.size].filter(Boolean).join(' · ');
-    return `• ${i.name} — ${meta} (${i.qty} pcs)`;
-  }).join("\n");
-  // estimasi: pakai est_date dari batch kalau ada, fallback hitung hari kerja (Senin-Sabtu)
-  function addWorkdays(from, days) {
-    const d = new Date(from);
-    let added = 0;
-    while(added < days) {
-      d.setDate(d.getDate() + 1);
-      if(d.getDay() !== 0) added++; // skip Minggu
-    }
-    return d;
-  }
-  const fmtTgl = d => d.toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"});
-  let estStr;
-  if(o.est_date) {
-    estStr = fmtTgl(new Date(o.est_date));
-  } else {
-    estStr = fmtTgl(addWorkdays(new Date(), o.maxDays || 7));
-  }
-  return `Halo, *Kak ${o.name.split(" ")[0]}*\nIni konfirmasi pesanan kamu di Jedda at Brightspot City:\n\n${lines}\n\n*Alamat pengiriman:* ${o.address || '-'}\n\nEstimasi pengiriman: *${estStr}*\nBiaya Ongkir: *Rp ${ongkir}*\n\nMohon untuk transfer ongkir ke:\n*BRI*\n*013701333555563*\n*a.n Priska Talitha Fatimah*\n\n• _Kirim bukti transfer sebelum tanggal kirim agar pesanan tidak tertunda._\n• _Jika ada perubahan data, mohon infokan sebelum pengiriman._\n• _Barang pre-order tidak dapat ditukar maupun direfund._\n\nPantau status pesanan kamu di: po.jeddawear.com/track?id=${o.po_number}\n\nSilakan konfirmasi jika sudah sesuai. Terima kasih!`;
-}
-function buildWaFollowUp(o){
-  return `Halo, *Kak ${o.name.split(" ")[0]}* — ongkos kirim pesanan ${o.po_number} belum kami terima. Mohon segera ditransfer agar pesanan bisa diproses. Terima kasih!`;
-}
-
-function moveStatus(id, newStatus){
-  const o = orders.find(x=>x.id===id); if(!o) return;
-  o.status = newStatus;
-  updateOrderStatus(id, newStatus);
-  updateStats(); renderTable();
-  if(selectedId===id) renderPanel(o);
-}
-
-let ongkirTargetId = null;
-function handleWaKonfirmasi(id){
-  const o = orders.find(x=>x.id===id); if(!o) return;
-  ongkirTargetId = id;
-  document.getElementById("ongkir-modal-name").textContent = o.name + " · " + o.po_number;
-  document.getElementById("ongkir-modal-address").textContent = o.address || "—";
-  document.getElementById("ongkir-input").value = "";
-  document.getElementById("ongkir-modal").classList.add("open");
-  setTimeout(()=>document.getElementById("ongkir-input").focus(), 100);
-}
-function closeOngkirModal(){
-  document.getElementById("ongkir-modal").classList.remove("open");
-  ongkirTargetId = null;
-}
-function handleOngkirModalOverlay(e){
-  if(e.target === document.getElementById("ongkir-modal")) closeOngkirModal();
-}
-function formatOngkirInput(el){
-  const raw = el.value.replace(/\D/g,"");
-  el.value = raw ? parseInt(raw).toLocaleString("id-ID") : "";
-}
-function submitOngkirModal(){
-  const raw = document.getElementById("ongkir-input").value.replace(/\D/g,"");
-  if(!raw){ alert("isi biaya ongkir dulu."); return; }
-  const ongkir = parseInt(raw).toLocaleString("id-ID");
-  const o = orders.find(x=>x.id===ongkirTargetId); if(!o) return;
-  const waNum = o.phone.replace(/^0/,"62").replace(/\D/g,"");
-  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaKonfirmasi(o, ongkir))}`, "_blank");
-  moveStatus(ongkirTargetId, "tunggu_ongkir");
-  closeOngkirModal();
-}
-function handleWaFollowUp(id){
-  const o = orders.find(x=>x.id===id); if(!o) return;
-  const waNum = o.phone.replace(/^0/,"62").replace(/\D/g,"");
-  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaFollowUp(o))}`, "_blank");
-}
-
-// ── resi modal ──
-function openResiModal(id){
-  const o = orders.find(x=>x.id===id); if(!o) return;
-  resiTargetId = id;
-  document.getElementById("modal-name").textContent = o.name + " · " + o.po_number;
-  document.getElementById("modal-kurir").value = "JNE";
-  document.getElementById("modal-kurir-custom-wrap").style.display = "none";
-  document.getElementById("modal-kurir-custom").value = "";
-  document.getElementById("modal-resi").value = o.resi || "";
-  document.getElementById("resi-modal").classList.add("open");
-}
-function closeResiModal(){
-  document.getElementById("resi-modal").classList.remove("open");
-  resiTargetId = null;
-}
-function handleModalOverlayClick(e){
-  if(e.target === document.getElementById("resi-modal")) closeResiModal();
-}
-function handleKurirChange(){
-  const val = document.getElementById("modal-kurir").value;
-  document.getElementById("modal-kurir-custom-wrap").style.display = val === "custom" ? "block" : "none";
-}
-async function submitResi(){
-  const resi = document.getElementById("modal-resi").value.trim();
-  if(!resi){ alert("masukkan nomor resi dulu."); return; }
-  const kurirSel = document.getElementById("modal-kurir").value;
-  const kurir = kurirSel === "custom"
-    ? (document.getElementById("modal-kurir-custom").value.trim() || "lainnya")
-    : kurirSel;
-  const o = orders.find(x=>x.id===resiTargetId); if(!o) return;
-  o.resi = resi;
-  o.kurir = kurir;
-  o.status = "dikirim";
-  await saveResiToDb(resiTargetId, resi, kurir);
-  closeResiModal();
-  updateStats(); renderTable();
-  if(selectedId===resiTargetId) renderPanel(o);
-}
+function setSearch(v){ searchQuery=v; renderTable(); }
+function toggleHideDikirim(el) { hideDikirim=!hideDikirim; el.classList.toggle('active',hideDikirim); el.textContent=hideDikirim?'sembunyikan dikirim':'tampilkan dikirim'; renderTable(); }
 
 // ── panel ──
-function openPanel(id){
-  const o = orders.find(x=>x.id===id); if(!o) return;
-  selectedId = id;
-  renderTable();
-  document.getElementById("dp-po").textContent = o.po_number;
-  document.getElementById("dp-name").textContent = o.name;
+function openPanel(id) {
+  selectedId=id;
+  const o=orders.find(x=>x.id===id); if(!o) return;
+  document.getElementById('dp-po').textContent=o.po_number;
+  document.getElementById('dp-name').textContent=o.name;
   renderPanel(o);
-  document.getElementById("detail-panel").classList.add("open");
-  document.getElementById("panel-overlay").classList.add("open");
+  document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('panel-overlay').classList.add('open');
+  renderTable();
 }
-function closePanel(){
-  selectedId = null; renderTable();
-  document.getElementById("detail-panel").classList.remove("open");
-  document.getElementById("panel-overlay").classList.remove("open");
+function closePanel() {
+  selectedId=null;
+  document.getElementById('detail-panel').classList.remove('open');
+  document.getElementById('panel-overlay').classList.remove('open');
+  renderTable();
 }
+function renderPanel(o) {
+  const entry=fmtEntry(o.created);
+  const estDate=getEstDate(o);
+  const daysLeft=getEstDaysLeft(o);
+  const overdue=daysLeft<0&&o.status!=='dikirim';
+  const estStr=fmtTanggal(estDate);
+  const chName=getChannelName(o.channel);
 
-function handleOngkirDiterima(id){
-  const cb = document.getElementById("cb-ongkir");
-  if(!cb || !cb.checked){ alert("centang konfirmasi dulu."); return; }
-  moveStatus(id, "diproses");
-}
+  document.getElementById('dp-po').textContent=o.po_number;
+  document.getElementById('dp-name').textContent=o.name;
 
-function renderPanel(o){
-  const daysLeft = getEstDaysLeft(o);
-  const overdue = daysLeft < 0 && o.status !== "dikirim";
-  const urgent = daysLeft <= 2 && o.status !== "dikirim";
-  const entry = fmtEntry(o.created);
-  const estDisp = getEstDisplay(o);
+  const itemsHtml=o.items.map(i=>{
+    const meta=[i.color,i.size].filter(Boolean).join(' · ');
+    return `<div class="dp-item-row"><div class="dp-item-name">${i.name}</div><div class="dp-item-meta">${meta} · ${i.qty} pcs</div></div>`;
+  }).join('');
 
-  const flowHtml = STATUSES.map((s,i) => {
-    const idx = STATUSES.indexOf(o.status);
-    const isDone = idx > i;
-    const isCurrent = o.status === s;
-    return `<span class="flow-step ${isDone?'done':''} ${isCurrent?'current':''}">${STATUS_LABEL[s]}</span>${i<STATUSES.length-1?'<span class="flow-sep"> › </span>':''}`;
-  }).join("");
-
-  const itemRows = o.items.map((i)=>{
-    const meta = [i.color, i.size].filter(Boolean).join(' · ');
-    return `<div class="dp-item-row">
-      <div><div class="dp-item-name">${i.name}</div><div class="dp-item-color">${meta} · ${i.qty} pcs</div></div>
-    </div>`;
-  }).join("");
-
-  const notesHtml = o.notes
-    ? `<div class="dp-row"><span class="dp-key">catatan</span><span class="dp-val" style="color:#666;font-style:italic">${o.notes}</span></div>`
-    : "";
-
-  document.getElementById("dp-body").innerHTML=`
-    <div class="dp-est">
-      <div>
-        <div class="dp-est-label">estimasi PO</div>
-        <div class="dp-est-date ${overdue||urgent?'est-urgent':''}">${estDisp}${o.est_edited_at?'<span class="est-edited-dot" title="estimasi diperbarui manual"></span>':''}</div>
-        <div class="dp-est-days ${overdue||urgent?'est-urgent':''}">${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':''}</div>
-        ${o.est_edited_at?`<div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#7b8fc7;margin-top:4px;letter-spacing:0.5px">diperbarui · ${fmtEntry(new Date(o.est_edited_at)).date}</div>`:''}
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-        ${overdue?`<div class="dp-est-alert">⚑ terlambat kirim</div>`:urgent?`<div class="dp-est-alert">⚑ ${daysLeft} hari lagi</div>`:""}
-        <button class="dp-item-edit-btn" onclick="openEditItemModal(${o.id})">ubah</button>
-      </div>
+  const notesHtml=o.notes?`<div class="dp-row"><span class="dp-key">notes</span><span class="dp-val">${o.notes}</span></div>`:'';
+  document.getElementById('dp-body').innerHTML=`
+    <div class="dp-section">
+      <div class="dp-section-label">pesanan <button class="dp-edit-btn" onclick="openEditItemModal(${o.id})">ubah</button></div>
+      ${itemsHtml}
     </div>
     <div class="dp-section">
-      <div class="dp-section-label">alur status</div>
-      <div class="flow-wrap">${flowHtml}</div>
-    </div>
-    <div class="dp-section">
-      <div class="dp-section-label">item</div>
-      ${itemRows}
+      <div class="dp-section-label">estimasi kirim</div>
+      <div style="font-size:16px;font-weight:300;font-family:'IBM Plex Sans',sans-serif;color:${overdue?'#c0392b':'#111'}">${estStr}</div>
+      <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:${overdue?'#c0392b':'#aaa'};margin-top:4px">${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':'—'}</div>
+      ${o.est_edited_at?`<div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#7b8fc7;margin-top:4px">diperbarui · ${fmtEntry(new Date(o.est_edited_at)).date}</div>`:''}
     </div>
     <div class="dp-section">
       <div class="dp-section-label">customer</div>
       <div class="dp-row" id="dp-row-nama">
         <span class="dp-key">nama</span>
-        <div style="display:flex;align-items:baseline;gap:0;flex:1;justify-content:flex-end">
-          <span class="dp-val" id="dp-val-nama">${o.name}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="dp-val">${o.name}</span>
           <button class="dp-edit-btn" onclick="startInlineEdit(${o.id},'nama')">edit</button>
         </div>
       </div>
       <div class="dp-row" id="dp-row-hp">
         <span class="dp-key">hp</span>
-        <div style="display:flex;align-items:baseline;gap:0;flex:1;justify-content:flex-end">
-          <span class="dp-val" id="dp-val-hp">${o.phone}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="dp-val">${o.phone}</span>
           <button class="dp-edit-btn" onclick="startInlineEdit(${o.id},'hp')">edit</button>
         </div>
       </div>
       <div class="dp-row" id="dp-row-alamat">
         <span class="dp-key">alamat</span>
-        <div style="display:flex;align-items:baseline;gap:0;flex:1;justify-content:flex-end">
-          <span class="dp-val" id="dp-val-alamat">${o.address}</span>
+        <div style="display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end">
+          <span class="dp-val" style="max-width:180px">${o.address}</span>
           <button class="dp-edit-btn" onclick="startInlineEdit(${o.id},'alamat')">edit</button>
         </div>
       </div>
       ${notesHtml}
+      <div class="dp-row"><span class="dp-key">channel</span><span class="dp-val">${chName}</span></div>
       <div class="dp-row"><span class="dp-key">masuk</span><span class="dp-val">${entry.date}, ${entry.time}</span></div>
-      ${o.resi?`<div class="dp-row"><span class="dp-key">resi</span><span class="dp-val" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${o.kurir?o.kurir+' · ':''}${o.resi}</span></div>`:""}
+      ${o.resi?`<div class="dp-row"><span class="dp-key">resi</span><span class="dp-val" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${o.kurir?o.kurir+' · ':''}${o.resi}</span></div>`:''}
     </div>`;
 
-  const waNum = o.phone.replace(/^0/,"62").replace(/\D/g,"");
-  let footerHtml = `<div class="dp-footer-label">aksi</div>`;
-
-  if(o.status === "baru"){
-    footerHtml += `
-      <button class="btn btn-wa" onclick="handleWaKonfirmasi(${o.id})">
-        ${WA_SVG} kirim WA konfirmasi
-      </button>`;
-  } else if(o.status === "tunggu_ongkir"){
-    footerHtml += `
-      <label class="dp-checkbox-wrap" for="cb-ongkir">
-        <input type="checkbox" class="dp-checkbox" id="cb-ongkir">
-        <span class="dp-checkbox-label">ongkos kirim sudah diterima</span>
-      </label>
-      <button class="btn btn-dark" onclick="handleOngkirDiterima(${o.id})">konfirmasi & proses</button>
-      <button class="btn" onclick="handleWaFollowUp(${o.id})">follow-up WA ongkir</button>`;
-  } else if(o.status === "diproses"){
-    footerHtml += `<button class="btn btn-dark" onclick="openResiModal(${o.id})">input resi & tandai dikirim</button>`;
-  } else {
-    footerHtml += `<div class="btn-done-label">sudah dikirim${o.kurir?' · '+o.kurir:''}${o.resi?' · '+o.resi:''}</div>`;
-  }
-
-  document.getElementById("dp-footer").innerHTML = footerHtml;
+  let footerHtml=`<div class="dp-footer-label">aksi</div>`;
+  if(o.status==="baru") footerHtml+=`<button class="btn btn-wa" onclick="handleWaKonfirmasi(${o.id})">${WA_SVG} kirim WA konfirmasi</button>`;
+  else if(o.status==="tunggu_ongkir") footerHtml+=`
+    <label class="dp-checkbox-wrap" for="cb-ongkir"><input type="checkbox" class="dp-checkbox" id="cb-ongkir"><span class="dp-checkbox-label">ongkos kirim sudah diterima</span></label>
+    <button class="btn btn-dark" onclick="handleOngkirDiterima(${o.id})">konfirmasi & proses</button>
+    <button class="btn" onclick="handleWaFollowUp(${o.id})">follow-up WA ongkir</button>`;
+  else if(o.status==="diproses") footerHtml+=`<button class="btn btn-dark" onclick="openResiModal(${o.id})">input resi & tandai dikirim</button>`;
+  else footerHtml+=`<div class="btn-done-label">sudah dikirim${o.kurir?' · '+o.kurir:''}${o.resi?' · '+o.resi:''}</div>`;
+  document.getElementById('dp-footer').innerHTML=footerHtml;
 }
 
-// ── edit item ──
-let editItemTargetOrderId = null;
-let editItemConfirmed = false;
+// ── WA ──
+function buildWaKonfirmasi(o, ongkir) {
+  const lines=o.items.map(i=>{ const m=[i.color,i.size].filter(Boolean).join(' · '); return `• ${i.name} — ${m} (${i.qty} pcs)`; }).join("\n");
+  // FIX: pakai parseLocalDate supaya est_date konsisten
+  const estDate = getEstDate(o);
+  const estStr = fmtTanggal(estDate);
+  const pretext = getChannelPretext(o.channel);
+  return `Halo, *Kak ${o.name.split(" ")[0]}*\nIni konfirmasi pesanan kamu di ${pretext}:\n\n${lines}\n\n*Alamat pengiriman:* ${o.address||'-'}\n\nEstimasi pengiriman: *${estStr}*\nBiaya Ongkir: *Rp ${ongkir}*\n\nMohon untuk transfer ongkir ke:\n*BRI*\n*013701333555563*\n*a.n Priska Talitha Fatimah*\n\n• _Kirim bukti transfer sebelum tanggal kirim agar pesanan tidak tertunda._\n• _Jika ada perubahan data, mohon infokan sebelum pengiriman._\n• _Barang pre-order tidak dapat ditukar maupun direfund._\n\nPantau status pesanan kamu di: po.jeddawear.com/track?id=${o.po_number}\n\nSilakan konfirmasi jika sudah sesuai. Terima kasih!`;
+}
+function buildWaFollowUp(o) {
+  return `Halo, *Kak ${o.name.split(" ")[0]}* — ongkos kirim pesanan ${o.po_number} belum kami terima. Mohon segera ditransfer agar pesanan bisa diproses. Terima kasih!`;
+}
 
-function openEditItemModal(orderId) {
-  const o = orders.find(x => x.id === orderId); if(!o) return;
+// ── actions ──
+async function updateOrderStatus(id,s){ await _sb.from("po_orders").update({status:s,updated_at:new Date().toISOString()}).eq("id",id); }
+async function saveResiToDb(id,resi,kurir){ await _sb.from("po_orders").update({resi,kurir,status:"dikirim",updated_at:new Date().toISOString()}).eq("id",id); }
 
-  editItemTargetOrderId = orderId;
-  editItemConfirmed = false;
+function moveStatus(id,s){ const o=orders.find(x=>x.id===id); if(!o) return; o.status=s; updateOrderStatus(id,s); updateStats(); renderTable(); if(selectedId===id) renderPanel(o); }
 
-  document.getElementById('edit-item-order-label').textContent = o.po_number + ' · ' + o.name;
+// resi modal
+function openResiModal(id){
+  resiTargetId=id; const o=orders.find(x=>x.id===id); if(!o) return;
+  document.getElementById('modal-name').textContent=o.name+' · '+o.po_number;
+  document.getElementById('modal-kurir').value='JNE';
+  document.getElementById('modal-kurir-custom-wrap').style.display='none';
+  document.getElementById('modal-resi').value='';
+  document.getElementById('resi-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-resi').focus(),100);
+}
+function closeResiModal(){ document.getElementById('resi-modal').classList.remove('open'); resiTargetId=null; }
+function handleKurirChange(){ document.getElementById('modal-kurir-custom-wrap').style.display=document.getElementById('modal-kurir').value==='custom'?'block':'none'; }
+async function submitResi(){
+  const kurir=document.getElementById('modal-kurir').value==='custom'?document.getElementById('modal-kurir-custom').value:document.getElementById('modal-kurir').value;
+  const resi=document.getElementById('modal-resi').value.trim();
+  if(!resi){ alert('isi nomor resi dulu.'); return; }
+  const o=orders.find(x=>x.id===resiTargetId); if(!o) return;
+  await saveResiToDb(o.id,resi,kurir);
+  o.resi=resi; o.kurir=kurir; o.status='dikirim';
+  closeResiModal(); updateStats(); renderTable();
+  if(selectedId===o.id) renderPanel(o);
+}
+
+// ongkir modal
+let ongkirTargetId=null;
+function handleWaKonfirmasi(id){ const o=orders.find(x=>x.id===id); if(!o) return; ongkirTargetId=id; document.getElementById('ongkir-modal-name').textContent=o.name+' · '+o.po_number; document.getElementById('ongkir-modal-address').textContent=o.address||'—'; document.getElementById('ongkir-input').value=''; document.getElementById('ongkir-modal').classList.add('open'); setTimeout(()=>document.getElementById('ongkir-input').focus(),100); }
+function closeOngkirModal(){ document.getElementById('ongkir-modal').classList.remove('open'); ongkirTargetId=null; }
+function formatOngkirInput(el){ const raw=el.value.replace(/\D/g,""); el.value=raw?parseInt(raw).toLocaleString("id-ID"):""; }
+function submitOngkirModal(){
+  const raw=document.getElementById('ongkir-input').value.replace(/\D/g,"");
+  if(!raw){ alert('isi biaya ongkir dulu.'); return; }
+  const ongkir=parseInt(raw).toLocaleString("id-ID");
+  const o=orders.find(x=>x.id===ongkirTargetId); if(!o) return;
+  const waNum=o.phone.replace(/^0/,"62").replace(/\D/g,"");
+  const msg=encodeURIComponent(buildWaKonfirmasi(o,ongkir));
+  window.open(`https://wa.me/${waNum}?text=${msg}`,'_blank');
+  moveStatus(o.id,'tunggu_ongkir');
+  closeOngkirModal();
+}
+
+function handleWaFollowUp(id){ const o=orders.find(x=>x.id===id); if(!o) return; const waNum=o.phone.replace(/^0/,"62").replace(/\D/g,""); window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaFollowUp(o))}`,'_blank'); }
+
+function handleOngkirDiterima(id){
+  const cb=document.getElementById('cb-ongkir');
+  if(!cb?.checked){ alert('centang konfirmasi dulu.'); return; }
+  moveStatus(id,'diproses');
+}
+
+// export CSV
+function exportCSV(){
+  const cols=["no. PO","channel","tanggal masuk","nama","hp","alamat","item","estimasi","status","resi","kurir"];
+  const rows=orders.map(o=>{
+    const items=o.items.map(i=>[i.name,i.color,i.size,i.qty+'pcs'].filter(Boolean).join(' ')).join(' | ');
+    const est=getEstDisplay(o);
+    const tgl=new Date(o.created).toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"});
+    const chName=getChannelName(o.channel);
+    return [o.po_number,chName,tgl,o.name,o.phone,o.address,items,est,o.status,o.resi,o.kurir]
+      .map(v=>'"'+(v||'').replace(/"/g,'""')+'"').join(',');
+  });
+  const csv=[cols.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='jedda-po-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ── edit item modal — FIX: reset state properly ──
+let editItemTargetOrderId=null;
+let editItemConfirmed=false;
+
+function openEditItemModal(orderId){
+  editItemTargetOrderId=orderId;
+  editItemConfirmed=false;
+  const o=orders.find(x=>x.id===orderId); if(!o) return;
+  document.getElementById('edit-item-order-label').textContent=o.po_number+' · '+o.name;
   document.getElementById('edit-item-confirm-box').classList.remove('show');
-  document.getElementById('edit-item-submit-btn').textContent = 'simpan perubahan';
-  document.getElementById('edit-item-days').value = '';
-  document.getElementById('edit-item-days-preview').textContent = '';
-  document.getElementById('edit-item-date').value = '';
-  document.getElementById('edit-item-date-preview').textContent = '';
-
-  // Render semua item sebagai rows
-  const container = document.getElementById('edit-item-items-container');
-  container.innerHTML = o.items.map((item, idx) => {
-    const p = PRODUCTS.find(x => x.name === item.name);
-    const artOptions = PRODUCTS.map(pr => `<option value="${pr.name}" ${pr.name === item.name ? 'selected' : ''}>${pr.name}</option>`).join('');
-    const colOptions = p ? p.colors.map(c => `<option value="${c}" ${c === item.color ? 'selected' : ''}>${c}</option>`).join('') : '';
-    const sizeHtml = p && p.sizes
-      ? `<div class="modal-field" style="margin-bottom:8px"><div class="modal-label">size</div>
-          <select class="modal-select" id="ei-size-${idx}" onchange="resetEditConfirm()">${p.sizes.map(s => `<option value="${s}" ${s === item.size ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`
-      : `<input type="hidden" id="ei-size-${idx}" value="">`;
+  const btn=document.getElementById('edit-item-submit-btn');
+  btn.disabled=false; btn.textContent='simpan perubahan';
+  document.getElementById('edit-item-days').value='';
+  document.getElementById('edit-item-days-preview').textContent='';
+  document.getElementById('edit-item-date').value='';
+  document.getElementById('edit-item-date-preview').textContent='';
+  const container=document.getElementById('edit-item-items-container');
+  container.innerHTML=o.items.map((item,idx)=>{
+    const p=products.find(x=>x.name===item.name)||{colors:[item.color],sizes:item.size?[item.size]:null};
+    const artOptions=products.map(pr=>`<option value="${pr.name}"${pr.name===item.name?' selected':''}>${pr.name}</option>`).join('');
+    const colOptions=(p.colors||[item.color]).map(c=>`<option value="${c}"${c===item.color?' selected':''}>${c}</option>`).join('');
+    const sizeHtml=p.sizes
+      ?`<div class="modal-field" style="margin-bottom:8px"><div class="modal-label">size</div><select class="modal-select" id="ei-size-${idx}" onchange="resetEditConfirm()">${p.sizes.map(s=>`<option value="${s}"${s===item.size?' selected':''}>${s}</option>`).join('')}</select></div>`
+      :`<input type="hidden" id="ei-size-${idx}" value="">`;
     return `<div style="border-bottom:1px solid #eae6e0;padding:14px 0;margin-bottom:4px">
-      <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#999;font-family:'IBM Plex Mono',monospace;font-weight:400;margin-bottom:10px">item ${idx+1}</div>
-      <div class="modal-field" style="margin-bottom:8px">
-        <div class="modal-label">artikel</div>
-        <select class="modal-select" id="ei-art-${idx}" onchange="onEditItemArticleChange(${idx})">${artOptions}</select>
-      </div>
-      <div class="modal-field" style="margin-bottom:8px">
-        <div class="modal-label">warna</div>
-        <select class="modal-select" id="ei-col-${idx}" onchange="resetEditConfirm()">${colOptions}</select>
-      </div>
+      <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#999;font-family:'IBM Plex Mono',monospace;margin-bottom:10px">item ${idx+1}</div>
+      <div class="modal-field" style="margin-bottom:8px"><div class="modal-label">artikel</div><select class="modal-select" id="ei-art-${idx}" onchange="onEditItemArticleChange(${idx})">${artOptions}</select></div>
+      <div class="modal-field" style="margin-bottom:8px"><div class="modal-label">warna</div><select class="modal-select" id="ei-col-${idx}" onchange="resetEditConfirm()">${colOptions}</select></div>
       ${sizeHtml}
-      <div class="modal-field" style="margin-bottom:0">
-        <div class="modal-label">qty</div>
-        <input class="modal-input" type="number" min="1" max="99" id="ei-qty-${idx}" value="${item.qty}" style="width:80px" onchange="resetEditConfirm()">
-      </div>
+      <div class="modal-field" style="margin-bottom:0"><div class="modal-label">qty</div><input class="modal-input" type="number" min="1" max="99" id="ei-qty-${idx}" value="${item.qty}" style="width:80px" onchange="resetEditConfirm()"></div>
     </div>`;
   }).join('');
-
   document.getElementById('edit-item-modal').classList.add('open');
 }
 
-function onEditItemArticleChange(idx) {
-  const art = document.getElementById(`ei-art-${idx}`).value;
-  const p = PRODUCTS.find(x => x.name === art);
-  const colSel = document.getElementById(`ei-col-${idx}`);
-  colSel.innerHTML = p ? p.colors.map(c => `<option value="${c}">${c}</option>`).join('') : '';
-  const sizeSel = document.getElementById(`ei-size-${idx}`);
-  if(sizeSel && p && p.sizes) {
-    sizeSel.innerHTML = p.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
-    const wrap = sizeSel.closest('.modal-field');
-    if(wrap) wrap.style.display = 'block';
-  } else if(sizeSel) {
-    sizeSel.value = '';
-  }
+function onEditItemArticleChange(idx){
+  const art=document.getElementById(`ei-art-${idx}`).value;
+  const p=products.find(x=>x.name===art);
+  const colSel=document.getElementById(`ei-col-${idx}`);
+  colSel.innerHTML=(p?p.colors:[]).map(c=>`<option value="${c}">${c}</option>`).join('');
+  const sizeSel=document.getElementById(`ei-size-${idx}`);
+  if(sizeSel&&p&&p.sizes){ sizeSel.innerHTML=p.sizes.map(s=>`<option value="${s}">${s}</option>`).join(''); const wrap=sizeSel.closest('.modal-field'); if(wrap) wrap.style.display='block'; }
+  else if(sizeSel){ sizeSel.value=''; }
   resetEditConfirm();
 }
 
-function onEditDateChange() {
-  const dateVal = document.getElementById('edit-item-date').value;
-  const preview = document.getElementById('edit-item-date-preview');
-  if(!dateVal) { preview.textContent = ''; return; }
-  document.getElementById('edit-item-days').value = '';
-  document.getElementById('edit-item-days-preview').textContent = '';
-  const d = new Date(dateVal + 'T00:00:00');
-  preview.textContent = '\u2192 est. ' + fmtTanggal(d);
+function onEditDateChange(){
+  const v=document.getElementById('edit-item-date').value;
+  const prev=document.getElementById('edit-item-date-preview');
+  if(!v){ prev.textContent=''; return; }
+  document.getElementById('edit-item-days').value='';
+  document.getElementById('edit-item-days-preview').textContent='';
+  prev.textContent='→ est. '+fmtTanggal(parseLocalDate(v));
   resetEditConfirm();
 }
 
-function onEditDaysChange() {
-  const o = orders.find(x => x.id === editItemTargetOrderId); if(!o) return;
-  const days = parseInt(document.getElementById('edit-item-days').value);
-  const preview = document.getElementById('edit-item-days-preview');
-  if(!days || days < 1) { preview.textContent = ''; return; }
-  document.getElementById('edit-item-date').value = '';
-  document.getElementById('edit-item-date-preview').textContent = '';
-  const currentEst = o.est_date ? new Date(o.est_date) : addWorkdaysFromDate(o.created, o.maxDays || 7);
-  const newEstDate = addWorkdaysFromDate(currentEst, days);
-  preview.textContent = '\u2192 est. ' + fmtTanggal(newEstDate);
+function onEditDaysChange(){
+  const o=orders.find(x=>x.id===editItemTargetOrderId); if(!o) return;
+  const days=parseInt(document.getElementById('edit-item-days').value);
+  const prev=document.getElementById('edit-item-days-preview');
+  if(!days||days<1){ prev.textContent=''; return; }
+  document.getElementById('edit-item-date').value='';
+  document.getElementById('edit-item-date-preview').textContent='';
+  const currentEst=getEstDate(o);
+  prev.textContent='→ est. '+fmtTanggal(addWorkdays(currentEst,days));
   resetEditConfirm();
 }
 
-function resetEditConfirm() {
-  editItemConfirmed = false;
+function resetEditConfirm(){
+  editItemConfirmed=false;
   document.getElementById('edit-item-confirm-box').classList.remove('show');
-  document.getElementById('edit-item-submit-btn').textContent = 'simpan perubahan';
+  const btn=document.getElementById('edit-item-submit-btn');
+  if(btn){ btn.disabled=false; btn.textContent='simpan perubahan'; }
 }
 
-function closeEditItemModal() {
+function closeEditItemModal(){
   document.getElementById('edit-item-modal').classList.remove('open');
-  editItemTargetOrderId = null;
-  editItemConfirmed = false;
+  // FIX: reset state saat modal ditutup
+  editItemTargetOrderId=null;
+  editItemConfirmed=false;
+  const btn=document.getElementById('edit-item-submit-btn');
+  if(btn){ btn.disabled=false; btn.textContent='simpan perubahan'; }
 }
 
-function handleEditItemOverlay(e) {
-  if(e.target === document.getElementById('edit-item-modal')) closeEditItemModal();
-}
-
-let articleEstDays_cached = {};
-
-async function loadArticleEstDaysCache() {
-  const { data } = await _sb.from('po_settings').select('article_est_days').eq('id', 1).single();
-  articleEstDays_cached = data?.article_est_days || {};
-}
-
-async function submitEditItem() {
-  const o = orders.find(x => x.id === editItemTargetOrderId); if(!o) return;
-
-  const newItems = o.items.map((item, idx) => {
-    const newArt  = document.getElementById(`ei-art-${idx}`)?.value || item.name;
-    const newCol  = document.getElementById(`ei-col-${idx}`)?.value || item.color;
-    const p       = PRODUCTS.find(x => x.name === newArt);
-    const newSize = p && p.sizes ? (document.getElementById(`ei-size-${idx}`)?.value || item.size) : null;
-    const newQty  = parseInt(document.getElementById(`ei-qty-${idx}`)?.value) || item.qty;
-    return { name: newArt, color: newCol, size: newSize, qty: newQty };
+async function submitEditItem(){
+  const o=orders.find(x=>x.id===editItemTargetOrderId); if(!o) return;
+  const newItems=o.items.map((item,idx)=>{
+    const newArt=document.getElementById(`ei-art-${idx}`)?.value||item.name;
+    const newCol=document.getElementById(`ei-col-${idx}`)?.value||item.color;
+    const p=products.find(x=>x.name===newArt);
+    const newSize=p&&p.sizes?(document.getElementById(`ei-size-${idx}`)?.value||item.size):null;
+    const newQty=parseInt(document.getElementById(`ei-qty-${idx}`)?.value)||item.qty;
+    return {name:newArt,color:newCol,size:newSize,qty:newQty};
   });
+  const newDays=parseInt(document.getElementById('edit-item-days').value)||null;
+  const newDateVal=document.getElementById('edit-item-date').value||null;
+  const itemsChanged=o.items.some((item,idx)=>{ const n=newItems[idx]; return n.name!==item.name||n.color!==item.color||n.size!==item.size||n.qty!==item.qty; });
+  const estChanged=!!(newDays||newDateVal);
+  if(!itemsChanged&&!estChanged){ closeEditItemModal(); return; }
 
-  const newDays = parseInt(document.getElementById('edit-item-days').value) || null;
-  const newDateVal = document.getElementById('edit-item-date').value || null;
+  let newEstDate=null;
+  if(newDateVal) newEstDate=parseLocalDate(newDateVal);
+  else if(newDays&&newDays>0) newEstDate=addWorkdays(getEstDate(o),newDays);
 
-  const itemsChanged = o.items.some((item, idx) => {
-    const n = newItems[idx];
-    return n.name !== item.name || n.color !== item.color || n.size !== item.size || n.qty !== item.qty;
-  });
-  const estChanged = !!(newDays || newDateVal);
-
-  if(!itemsChanged && !estChanged) { closeEditItemModal(); return; }
-
-  const estLama = getEstDisplay(o);
-  let estBaru = null, newEstDate = null;
-  if(newDateVal) {
-    newEstDate = new Date(newDateVal + 'T00:00:00');
-    estBaru = fmtTanggal(newEstDate);
-  } else if(newDays && newDays > 0) {
-    const currentEst = o.est_date ? new Date(o.est_date) : addWorkdaysFromDate(o.created, o.maxDays || 7);
-    newEstDate = addWorkdaysFromDate(currentEst, newDays);
-    estBaru = fmtTanggal(newEstDate);
-  }
-
-  if(!editItemConfirmed) {
-    const lines = [];
-    o.items.forEach((item, idx) => {
-      const n = newItems[idx];
-      const changed = n.name !== item.name || n.color !== item.color || n.size !== item.size || n.qty !== item.qty;
-      if(!changed) return;
-      const oldMeta = [item.color, item.size].filter(Boolean).join(' \u00b7 ');
-      const newMeta = [n.color, n.size].filter(Boolean).join(' \u00b7 ');
-      if(n.name !== item.name || n.color !== item.color || n.size !== item.size)
-        lines.push(`item ${idx+1}: ${item.name} \u00b7 ${oldMeta} \u2192 ${n.name} \u00b7 ${newMeta}`);
-      if(n.qty !== item.qty)
-        lines.push(`item ${idx+1} qty: ${item.qty} \u2192 ${n.qty} pcs`);
-    });
-    if(estBaru) lines.push(`estimasi: ${estLama} \u2192 ${estBaru}`);
+  if(!editItemConfirmed){
+    const lines=[];
+    o.items.forEach((item,idx)=>{ const n=newItems[idx]; const changed=n.name!==item.name||n.color!==item.color||n.size!==item.size||n.qty!==item.qty; if(!changed) return; if(n.name!==item.name||n.color!==item.color||n.size!==item.size) lines.push(`item ${idx+1}: ${item.name} · ${[item.color,item.size].filter(Boolean).join(' · ')} → ${n.name} · ${[n.color,n.size].filter(Boolean).join(' · ')}`); if(n.qty!==item.qty) lines.push(`item ${idx+1} qty: ${item.qty} → ${n.qty} pcs`); });
+    if(newEstDate) lines.push(`estimasi: ${getEstDisplay(o)} → ${fmtTanggal(newEstDate)}`);
     lines.push('tracking page customer akan otomatis update.');
-    document.getElementById('edit-item-confirm-box').textContent = lines.join('\n');
+    document.getElementById('edit-item-confirm-box').textContent=lines.join('\n');
     document.getElementById('edit-item-confirm-box').classList.add('show');
-    editItemConfirmed = true;
-    document.getElementById('edit-item-submit-btn').textContent = 'konfirmasi & simpan \u2192';
+    editItemConfirmed=true;
+    const btn=document.getElementById('edit-item-submit-btn');
+    btn.textContent='konfirmasi & simpan →';
     return;
   }
 
-  const btn = document.getElementById('edit-item-submit-btn');
-  btn.disabled = true; btn.textContent = 'menyimpan...';
-
+  const btn=document.getElementById('edit-item-submit-btn');
+  btn.disabled=true; btn.textContent='menyimpan...';
   try {
-    if(itemsChanged) {
-      const { data: dbItems } = await _sb.from('po_items').select('id').eq('order_id', o.id).order('id');
-      if(dbItems) {
-        for(let idx = 0; idx < newItems.length; idx++) {
-          const item = o.items[idx], n = newItems[idx];
-          const changed = n.name !== item.name || n.color !== item.color || n.size !== item.size || n.qty !== item.qty;
-          if(changed && dbItems[idx]) {
-            await _sb.from('po_items').update({ article: n.name, color: n.color, size: n.size || null, qty: n.qty }).eq('id', dbItems[idx].id);
-          }
-        }
-      }
+    if(itemsChanged){
+      const {data:dbItems}=await _sb.from('po_items').select('id').eq('order_id',o.id).order('id');
+      if(dbItems){ for(let idx=0;idx<newItems.length;idx++){ const item=o.items[idx],n=newItems[idx]; const changed=n.name!==item.name||n.color!==item.color||n.size!==item.size||n.qty!==item.qty; if(changed&&dbItems[idx]) await _sb.from('po_items').update({article:n.name,color:n.color,size:n.size||null,qty:n.qty}).eq('id',dbItems[idx].id); } }
     }
-    if(newEstDate) {
+    if(newEstDate){
       await _sb.from('po_orders').update({
-        estimated_days: newDays ? Math.abs(newDays) : null,
-        est_date: newEstDate.toISOString().slice(0, 10),
-        est_edited_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }).eq('id', o.id);
+        estimated_days:newDays?Math.abs(newDays):null,
+        est_date:newEstDate.toISOString().slice(0,10),
+        est_edited_at:new Date().toISOString(),
+        updated_at:new Date().toISOString()
+      }).eq('id',o.id);
     }
-    newItems.forEach((n, idx) => { o.items[idx] = n; });
-    if(newEstDate) {
-      o.maxDays = newDays ? Math.abs(newDays) : o.maxDays;
-      o.est_date = newEstDate.toISOString().slice(0, 10);
-      o.est_edited_at = new Date().toISOString();
-    }
+    newItems.forEach((n,idx)=>{ o.items[idx]=n; });
+    if(newEstDate){ o.maxDays=newDays?Math.abs(newDays):o.maxDays; o.est_date=newEstDate.toISOString().slice(0,10); o.est_edited_at=new Date().toISOString(); }
+    // FIX: reset state sebelum close
+    editItemTargetOrderId=null;
+    editItemConfirmed=false;
     closeEditItemModal();
     renderTable();
-    renderPanel(o);
-  } catch(e) {
-    alert('gagal menyimpan: ' + e.message);
-    btn.disabled = false;
-    btn.textContent = 'konfirmasi & simpan \u2192';
+    if(selectedId===o.id) renderPanel(o);
+  } catch(e){
+    alert('gagal menyimpan: '+e.message);
+    btn.disabled=false; btn.textContent='konfirmasi & simpan →';
   }
 }
 
 // ── inline edit customer ──
-function startInlineEdit(orderId, field) {
-  const o = orders.find(x => x.id === orderId); if(!o) return;
-  const valMap = { nama: o.name, hp: o.phone, alamat: o.address };
-  const dbMap  = { nama: 'customer_name', hp: 'customer_phone', alamat: 'address' };
-  const cur = valMap[field];
-  const row = document.getElementById('dp-row-' + field); if(!row) return;
-
-  const isTextarea = field === 'alamat';
-  const inputHtml = isTextarea
-    ? `<textarea class="dp-inline-input" id="dp-inline-input" rows="2" style="resize:none;line-height:1.5">${cur}</textarea>`
-    : `<input class="dp-inline-input" id="dp-inline-input" type="${field==='hp'?'tel':'text'}" value="${cur}">`;
-
-  row.innerHTML = `
-    <span class="dp-key">${field}</span>
-    <div style="flex:1">
-      ${inputHtml}
-      <div class="dp-inline-actions">
-        <button class="dp-inline-cancel" onclick="cancelInlineEdit(${orderId},'${field}')">batal</button>
-        <button class="dp-inline-save" onclick="saveInlineEdit(${orderId},'${field}','${dbMap[field]}')">simpan</button>
-      </div>
-    </div>`;
-
-  setTimeout(() => {
-    const inp = document.getElementById('dp-inline-input');
-    if(inp) { inp.focus(); if(inp.select) inp.select(); }
-  }, 50);
+function startInlineEdit(orderId,field){
+  const o=orders.find(x=>x.id===orderId); if(!o) return;
+  const valMap={nama:o.name,hp:o.phone,alamat:o.address};
+  const dbMap={nama:'customer_name',hp:'customer_phone',alamat:'address'};
+  const row=document.getElementById('dp-row-'+field); if(!row) return;
+  const isTA=field==='alamat';
+  const inputHtml=isTA?`<textarea class="dp-inline-input" id="dp-inline-input" rows="2" style="resize:none;line-height:1.5">${valMap[field]}</textarea>`:`<input class="dp-inline-input" id="dp-inline-input" type="${field==='hp'?'tel':'text'}" value="${valMap[field]}">`;
+  row.innerHTML=`<span class="dp-key">${field}</span><div style="flex:1">${inputHtml}<div class="dp-inline-actions"><button class="dp-inline-cancel" onclick="cancelInlineEdit(${orderId},'${field}')">batal</button><button class="dp-inline-save" onclick="saveInlineEdit(${orderId},'${field}','${dbMap[field]}')">simpan</button></div></div>`;
+  setTimeout(()=>{ const inp=document.getElementById('dp-inline-input'); if(inp){ inp.focus(); if(inp.select) inp.select(); } },50);
 }
-
-async function saveInlineEdit(orderId, field, dbCol) {
-  const o = orders.find(x => x.id === orderId); if(!o) return;
-  const inp = document.getElementById('dp-inline-input'); if(!inp) return;
-  const newVal = inp.value.trim();
-  if(!newVal) { cancelInlineEdit(orderId, field); return; }
-
-  const btn = document.querySelector('.dp-inline-save');
-  if(btn) { btn.disabled = true; btn.textContent = '...'; }
-
+async function saveInlineEdit(orderId,field,dbCol){
+  const o=orders.find(x=>x.id===orderId); if(!o) return;
+  const inp=document.getElementById('dp-inline-input'); if(!inp) return;
+  const newVal=inp.value.trim(); if(!newVal){ cancelInlineEdit(orderId,field); return; }
+  const btn=document.querySelector('.dp-inline-save'); if(btn){ btn.disabled=true; btn.textContent='...'; }
   try {
-    await _sb.from('po_orders').update({ [dbCol]: newVal, updated_at: new Date().toISOString() }).eq('id', o.id);
-    if(field === 'nama') o.name = newVal;
-    else if(field === 'hp') o.phone = newVal;
-    else if(field === 'alamat') o.address = newVal;
-    renderPanel(o);
-    renderTable();
-  } catch(e) {
-    alert('gagal menyimpan: ' + e.message);
-    if(btn) { btn.disabled = false; btn.textContent = 'simpan'; }
-  }
+    await _sb.from('po_orders').update({[dbCol]:newVal,updated_at:new Date().toISOString()}).eq('id',o.id);
+    if(field==='nama') o.name=newVal; else if(field==='hp') o.phone=newVal; else if(field==='alamat') o.address=newVal;
+    renderPanel(o); renderTable();
+  } catch(e){ alert('gagal: '+e.message); if(btn){ btn.disabled=false; btn.textContent='simpan'; } }
 }
-
-function cancelInlineEdit(orderId, field) {
-  const o = orders.find(x => x.id === orderId); if(!o) return;
-  renderPanel(o);
-}
-
-function exportCSV(){
-  const cols = ["no. PO","tanggal masuk","nama","hp","alamat","item","estimasi","status","resi","kurir"];
-  const rows = orders.map(o => {
-    const items = o.items.map(i => [i.name, i.color, i.size, i.qty+'pcs'].filter(Boolean).join(' ')).join(' | ');
-    const est = getEstDisplay(o);
-    const tgl = new Date(o.created).toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"});
-    return [o.po_number, tgl, o.name, o.phone, o.address, items, est, o.status, o.resi, o.kurir]
-      .map(v => '"'+(v||'').replace(/"/g,'""')+'"').join(',');
-  });
-  const csv = [cols.join(','), ...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-  a.download = 'jedda-po-'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click();
-}
+function cancelInlineEdit(orderId,field){ const o=orders.find(x=>x.id===orderId); if(o) renderPanel(o); }
 
 // ── settings ──
-let batches = [];
-let allItems = [];
-let editingBatchId = null;
+let batches=[];
+let allItems=[];
+let editingBatchId=null;
+let activeEstChannel=null; // channel yang dipilih di settings estimasi
 
-// Mirror of form.html PRODUCTS — single source of truth for artikel+warna+size
-const PRODUCTS = [
-  { name:"Rhea Jacket",      colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
-  { name:"Phi Jacket",       colors:["Auburn","Breen","Bistre"],  sizes:["S/M","L/XL"] },
-  { name:"The Classic Coat", colors:["Ecru","Bistre"],           sizes:["S/M","L/XL"] },
-  { name:"The Overcape",     colors:["Ecru"],                    sizes:null            },
-  { name:"Semi Blazer",      colors:["Grain"],                   sizes:["S","M","L"]   },
-  { name:"Kiro Cropped Vest",colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
-  { name:"Minji Vest",       colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
-  { name:"Sichi Vest",       colors:["Auburn"],                  sizes:["S","M","L"]   },
-  { name:"Yuwa Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
-  { name:"Riku Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
-  { name:"Kato Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
-  { name:"Miru Pants",       colors:["Bistre","Breen"],          sizes:["S","M","L"]   },
-  { name:"Kae Pants",        colors:["Bistre","Auburn"],         sizes:["S","M","L"]   },
-  { name:"Rho Pants",        colors:["Bistre","Breen"],          sizes:["S","M","L"]   },
-];
-
-function showPage(page) {
-  const poPage = document.getElementById('po-page');
-  const settingsPage = document.getElementById('settings-page');
-  poPage.classList.toggle('hidden', page !== 'po');
-  settingsPage.classList.toggle('active', page === 'settings');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('nav-' + page).classList.add('active');
-  if(page === 'settings') { loadArticleDays(); loadBatches(); }
+function showPage(page){
+  document.getElementById('po-page').classList.toggle('hidden',page!=='po');
+  document.getElementById('settings-page').classList.toggle('active',page==='settings');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('nav-'+page).classList.add('active');
+  if(page==='settings'){ loadChannelList(); loadProductList(); renderEstChannelTabs(); loadBatches(); }
 }
 
-async function loadArticleDays() {
-  const { data } = await _sb.from('po_settings').select('article_est_days').eq('id', 1).single();
-  const map = data?.article_est_days || {};
+// channel settings
+let editingChannelId=null;
+function openChannelModal(chId){
+  editingChannelId=chId;
+  document.getElementById('channel-modal-title').textContent=chId?'edit channel':'tambah event';
+  if(chId){
+    const ch=channels.find(c=>c.id===chId);
+    document.getElementById('ch-name').value=ch?ch.name:'';
+    document.getElementById('ch-pin').value=ch?ch.pin:'';
+    document.getElementById('ch-pretext').value=ch?ch.wa_pretext:'';
+  } else {
+    document.getElementById('ch-name').value='';
+    document.getElementById('ch-pin').value='';
+    document.getElementById('ch-pretext').value='';
+  }
+  document.getElementById('channel-modal').classList.add('open');
+}
+function closeChannelModal(){ document.getElementById('channel-modal').classList.remove('open'); editingChannelId=null; }
+async function saveChannel(){
+  const name=document.getElementById('ch-name').value.trim();
+  const pin=document.getElementById('ch-pin').value.trim();
+  const pretext=document.getElementById('ch-pretext').value.trim();
+  if(!name||!pin){ alert('nama dan PIN wajib diisi.'); return; }
+  if(pin.length!==4||!/^\d{4}$/.test(pin)){ alert('PIN harus 4 digit angka.'); return; }
+  if(editingChannelId){
+    await _sb.from('po_channels').update({name,pin,wa_pretext:pretext}).eq('id',editingChannelId);
+  } else {
+    const id=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    await _sb.from('po_channels').insert({id,name,pin,wa_pretext:pretext,type:'event',is_active:true});
+  }
+  await loadChannels();
+  closeChannelModal();
+  loadChannelList();
+  renderEstChannelTabs();
+}
+async function toggleChannelActive(chId){
+  const ch=channels.find(c=>c.id===chId); if(!ch) return;
+  await _sb.from('po_channels').update({is_active:!ch.is_active}).eq('id',chId);
+  await loadChannels();
+  loadChannelList();
+}
+function loadChannelList(){
+  const el=document.getElementById('channel-list'); if(!el) return;
+  el.innerHTML=channels.map(ch=>`
+    <div class="channel-card">
+      <div class="channel-card-left">
+        <div class="ch-name">${ch.name}</div>
+        <div class="ch-meta">${ch.type} · PIN: ${ch.pin} · pretext: "${ch.wa_pretext}"</div>
+      </div>
+      <div class="channel-card-right">
+        <span class="ch-status ${ch.is_active?'ch-active':'ch-inactive'}">${ch.is_active?'aktif':'nonaktif'}</span>
+        ${ch.type!=='toko'?`<button class="ch-action-btn" onclick="toggleChannelActive('${ch.id}')">${ch.is_active?'nonaktifkan':'aktifkan'}</button>`:''}
+        <button class="ch-action-btn" onclick="openChannelModal('${ch.id}')">edit</button>
+      </div>
+    </div>`).join('');
+}
 
-  // Render per artikel → per warna (bukan per artikel)
-  const html = PRODUCTS.map(p => {
-    const colorRows = p.colors.map(color => {
-      const key = p.name + ' · ' + color;
-      const artKey = key.replace(/[^a-zA-Z0-9]/g,'_');
-      const days = map[key] || 0;
-      const active = days > 0;
+// product settings
+let editingProductId=null;
+let pmColors=[];
+let pmSizes=[];
+let pmSizeMode='preset'; // 'S/M · L/XL' | 'S · M · L' | 'one size' | 'custom'
+
+function openProductModal(prodId){
+  editingProductId=prodId;
+  pmColors=[]; pmSizes=[];
+  document.getElementById('product-modal-title').textContent=prodId?'edit artikel':'tambah artikel';
+  if(prodId){
+    const p=products.find(x=>x.id===prodId);
+    if(p){
+      document.getElementById('pm-name').value=p.name;
+      document.getElementById('pm-cat').value=p.cat||'lainnya';
+      pmColors=[...p.colors];
+      pmSizes=p.sizes?[...p.sizes]:[];
+    }
+  } else {
+    document.getElementById('pm-name').value='';
+    document.getElementById('pm-cat').value='outerwear';
+  }
+  // reset size presets
+  document.querySelectorAll('.pm-size-option').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('pm-size-custom-wrap').style.display='none';
+  pmSizeMode='preset';
+  renderPmColors(); renderPmSizes();
+  document.getElementById('product-modal').classList.add('open');
+}
+function closeProductModal(){ document.getElementById('product-modal').classList.remove('open'); editingProductId=null; }
+
+function renderPmColors(){
+  document.getElementById('pm-colors-chips').innerHTML=pmColors.map((c,i)=>
+    `<div class="pm-chip">${c}<button class="pm-chip-del" onclick="removePmColor(${i})">×</button></div>`).join('');
+}
+function addPmColor(){
+  const inp=document.getElementById('pm-color-input'); const v=inp.value.trim(); if(!v) return;
+  if(!pmColors.includes(v)){ pmColors.push(v); renderPmColors(); }
+  inp.value=''; inp.focus();
+}
+function removePmColor(i){ pmColors.splice(i,1); renderPmColors(); }
+
+function selectSizePreset(mode){
+  document.querySelectorAll('.pm-size-option').forEach(el=>el.classList.toggle('selected',el.textContent===mode));
+  pmSizeMode=mode;
+  if(mode==='one size'){ pmSizes=null; document.getElementById('pm-size-custom-wrap').style.display='none'; }
+  else if(mode==='S/M · L/XL'){ pmSizes=['S/M','L/XL']; document.getElementById('pm-size-custom-wrap').style.display='none'; }
+  else if(mode==='S · M · L'){ pmSizes=['S','M','L']; document.getElementById('pm-size-custom-wrap').style.display='none'; }
+  else { pmSizes=[]; document.getElementById('pm-size-custom-wrap').style.display='block'; renderPmSizes(); }
+}
+function renderPmSizes(){
+  const el=document.getElementById('pm-sizes-chips'); if(!el) return;
+  el.innerHTML=(pmSizes||[]).map((s,i)=>
+    `<div class="pm-chip">${s}<button class="pm-chip-del" onclick="removePmSize(${i})">×</button></div>`).join('');
+}
+function addPmSize(){ const inp=document.getElementById('pm-size-input'); const v=inp.value.trim(); if(!v) return; if(!pmSizes) pmSizes=[]; if(!pmSizes.includes(v)){ pmSizes.push(v); renderPmSizes(); } inp.value=''; inp.focus(); }
+function removePmSize(i){ if(pmSizes) pmSizes.splice(i,1); renderPmSizes(); }
+
+async function saveProduct(){
+  const name=document.getElementById('pm-name').value.trim();
+  const cat=document.getElementById('pm-cat').value;
+  if(!name){ alert('nama artikel wajib diisi.'); return; }
+  if(!pmColors.length){ alert('tambah minimal 1 warna.'); return; }
+  const sizes=pmSizeMode==='one size'?null:(pmSizes&&pmSizes.length?pmSizes:null);
+  const payload={name,cat,colors:pmColors,sizes,is_active:true};
+  if(editingProductId){
+    await _sb.from('po_products').update(payload).eq('id',editingProductId);
+  } else {
+    const maxSort=products.length?Math.max(...products.map(p=>p.sort_order||0)):0;
+    await _sb.from('po_products').insert({...payload,sort_order:maxSort+1});
+  }
+  await loadProducts();
+  closeProductModal();
+  loadProductList();
+}
+async function toggleProductActive(id){
+  const p=products.find(x=>x.id===id); if(!p) return;
+  await _sb.from('po_products').update({is_active:!p.is_active}).eq('id',id);
+  await loadProducts(); loadProductList();
+}
+async function deleteProduct(id){
+  if(!confirm('hapus artikel ini? data order yang sudah masuk tidak terpengaruh.')) return;
+  await _sb.from('po_products').delete().eq('id',id);
+  await loadProducts(); loadProductList();
+}
+
+function loadProductList(){
+  const el=document.getElementById('product-list'); if(!el) return;
+  el.innerHTML=products.map(p=>`
+    <div class="product-card">
+      <div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-meta">${p.colors.join(' · ')} · ${p.sizes?p.sizes.join('/'):' one size'}</div>
+      </div>
+      <div class="prod-actions">
+        <button class="prod-btn" onclick="openProductModal(${p.id})">edit</button>
+        <button class="prod-btn" onclick="toggleProductActive(${p.id})">${p.is_active?'nonaktifkan':'aktifkan'}</button>
+        <button class="prod-btn prod-btn-del" onclick="deleteProduct(${p.id})">hapus</button>
+      </div>
+    </div>`).join('');
+}
+
+// estimasi per channel
+function renderEstChannelTabs(){
+  const el=document.getElementById('est-channel-tabs'); if(!el) return;
+  if(!activeEstChannel&&channels.length) activeEstChannel=channels[0].id;
+  el.innerHTML=channels.map(ch=>
+    `<button class="sort-btn ${activeEstChannel===ch.id?'active':''}" onclick="setEstChannel('${ch.id}')">${ch.name}</button>`
+  ).join('');
+  loadArticleDays();
+}
+function setEstChannel(chId){ activeEstChannel=chId; renderEstChannelTabs(); }
+
+async function loadArticleDays(){
+  if(!activeEstChannel) return;
+  const {data}=await _sb.from('po_settings').select('channel_est_days').eq('id',1).single();
+  const allChannelDays=data?.channel_est_days||{};
+  const map=allChannelDays[activeEstChannel]||{};
+  const activeProds=products.filter(p=>p.is_active);
+  const html=activeProds.map(p=>{
+    return p.colors.map(color=>{
+      const key=p.name+' · '+color;
+      const artKey=key.replace(/[^a-zA-Z0-9]/g,'_');
+      const days=map[key]||0;
+      const active=days>0;
       return `<div class="artday-card ${active?'artday-active':''}" id="artday-card-${artKey}">
         <div class="artday-name" style="font-size:12px">${p.name} <span style="color:#aaa;font-weight:300">· ${color}</span></div>
         <div class="artday-view" id="artday-view-${artKey}">
-          <div class="artday-val" id="artday-val-${artKey}">${active ? days+' hari' : '—'}</div>
+          <div class="artday-val" id="artday-val-${artKey}">${active?days+' hari':'—'}</div>
           <button class="artday-edit-btn" onclick="artdayStartEdit('${artKey}')">edit</button>
         </div>
         <div class="artday-edit" id="artday-edit-${artKey}" style="display:none">
           <div class="artday-input-row">
-            <input type="number" min="0" max="99" class="artday-input" placeholder="0"
-              value="${days||''}"
-              id="artdays-${artKey}">
+            <input type="number" min="0" max="99" class="artday-input" placeholder="0" value="${days||''}" id="artdays-${artKey}">
             <span class="artday-unit">hari</span>
           </div>
           <div style="display:flex;gap:8px;margin-top:10px">
@@ -1473,224 +1420,99 @@ async function loadArticleDays() {
         </div>
       </div>`;
     }).join('');
-    return colorRows;
   }).join('');
-
-  document.getElementById('article-days-list').innerHTML = html;
+  document.getElementById('article-days-list').innerHTML=html||'<div style="font-size:10px;color:#bbb;font-family:IBM Plex Mono,monospace;padding:16px 0">belum ada produk aktif.</div>';
 }
 
-function artdayStartEdit(artKey) {
-  document.getElementById('artday-view-'+artKey).style.display = 'none';
-  document.getElementById('artday-edit-'+artKey).style.display = 'block';
-  document.getElementById('artdays-'+artKey).focus();
-}
-
-function artdayCancel(artKey) {
-  document.getElementById('artday-view-'+artKey).style.display = 'flex';
-  document.getElementById('artday-edit-'+artKey).style.display = 'none';
-}
-
-async function artdaySave(artKey, colorKey) {
-  const input = document.getElementById('artdays-'+artKey);
-  const val = parseInt(input.value) || 0;
-
-  // Load current map, update just this artikel · warna
-  const { data } = await _sb.from('po_settings').select('article_est_days').eq('id', 1).single();
-  const map = data?.article_est_days || {};
-  if(val > 0) map[colorKey] = val;
-  else delete map[colorKey];
-  await _sb.from('po_settings').update({ article_est_days: map, updated_at: new Date().toISOString() }).eq('id', 1);
-
-  // Update UI
-  const active = val > 0;
-  const card = document.getElementById('artday-card-'+artKey);
-  card.classList.toggle('artday-active', active);
-  document.getElementById('artday-val-'+artKey).textContent = active ? val+' hari' : '—';
+function artdayStartEdit(k){ document.getElementById('artday-view-'+k).style.display='none'; document.getElementById('artday-edit-'+k).style.display='block'; document.getElementById('artdays-'+k).focus(); }
+function artdayCancel(k){ document.getElementById('artday-view-'+k).style.display='flex'; document.getElementById('artday-edit-'+k).style.display='none'; }
+async function artdaySave(artKey,colorKey){
+  const val=parseInt(document.getElementById('artdays-'+artKey).value)||0;
+  const {data}=await _sb.from('po_settings').select('channel_est_days').eq('id',1).single();
+  const allDays=data?.channel_est_days||{};
+  if(!allDays[activeEstChannel]) allDays[activeEstChannel]={};
+  if(val>0) allDays[activeEstChannel][colorKey]=val;
+  else delete allDays[activeEstChannel][colorKey];
+  await _sb.from('po_settings').update({channel_est_days:allDays,updated_at:new Date().toISOString()}).eq('id',1);
+  const active=val>0;
+  document.getElementById('artday-card-'+artKey).classList.toggle('artday-active',active);
+  document.getElementById('artday-val-'+artKey).textContent=active?val+' hari':'—';
   artdayCancel(artKey);
 }
 
-async function saveArticleDays() {
-  // kept for compatibility, not used anymore
-}
-
-async function loadBatches() {
-  const { data: batchData } = await _sb.from('po_batches').select('*').order('starts_at');
-  const { data: items } = await _sb.from('po_items').select('article, color, size, qty, order_id');
-  const { data: activeOrders } = await _sb.from('po_orders').select('id, status').in('status', ['baru','tunggu_ongkir','diproses']);
-  const activeIds = new Set((activeOrders||[]).map(o => o.id));
-
-  allItems = items || [];
-
-  // Hitung usage per slot key "Artikel · Warna · Size"
-  const usedMap = {};
-  allItems.filter(i => activeIds.has(i.order_id)).forEach(i => {
-    const sz = i.size || 'OS';
-    const key = i.article + ' · ' + i.color + ' · ' + sz;
-    usedMap[key] = (usedMap[key] || 0) + i.qty;
-  });
-
-  batches = (batchData||[]).map(b => {
-    const slots = b.slots || {};
-    const used = {};
-    Object.keys(slots).forEach(key => {
-      used[key] = usedMap[key] || 0;
-    });
-    return { ...b, used };
-  });
-
+// batch
+async function loadBatches(){
+  const chFilter=document.getElementById('batch-channel-filter');
+  if(chFilter){
+    chFilter.innerHTML=channels.map(ch=>`<option value="${ch.id}">${ch.name}</option>`).join('');
+  }
+  const selCh=chFilter?chFilter.value:(channels[0]?.id||'');
+  const {data:batchData}=await _sb.from('po_batches').select('*').eq('channel',selCh).order('starts_at');
+  const {data:items}=await _sb.from('po_items').select('article,color,size,qty,order_id');
+  const {data:activeOrders}=await _sb.from('po_orders').select('id,status').in('status',['baru','tunggu_ongkir','diproses']).eq('channel',selCh);
+  const activeIds=new Set((activeOrders||[]).map(o=>o.id));
+  allItems=items||[];
+  const usedMap={};
+  allItems.filter(i=>activeIds.has(i.order_id)).forEach(i=>{ const sz=i.size||'OS'; const k=i.article+' · '+i.color+' · '+sz; usedMap[k]=(usedMap[k]||0)+i.qty; });
+  batches=(batchData||[]).map(b=>{ const slots=b.slots||{}; const used={}; Object.keys(slots).forEach(k=>{ used[k]=usedMap[k]||0; }); return {...b,used}; });
   renderBatchList();
 }
 
-function renderBatchList() {
-  const el = document.getElementById('batch-list-rows');
-  if(!batches.length) {
-    el.innerHTML = '<div style="padding:24px 0;font-size:11px;color:#bbb;font-family:IBM Plex Mono,monospace;letter-spacing:1px">belum ada batch.</div>';
-    return;
-  }
-  el.innerHTML = batches.map((b, idx) => {
-    const start = new Date(b.starts_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-    const end   = new Date(b.ends_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-    const slots = b.slots || {};
-    const used  = b.used  || {};
-    const totalSlots = Object.values(slots).reduce((s,v)=>s+v,0);
-    const totalUsed  = Object.values(used).reduce((s,v)=>s+v,0);
-    const arts = b.articles || [];
-
-    const artSummary = arts.length
-      ? arts.join(', ')
-      : '<span style="color:#ccc">belum ada artikel</span>';
-
-    return '<div class="batch-card">'
-      + '<div class="batch-card-header">'
-      + '<div>'
-      + '<div class="batch-card-num">batch '+(idx+1)+'</div>'
-      + '<div class="batch-card-dates">'+start+' &rarr; '+end+'</div>'
-      + '<div style="font-size:10px;color:#aaa;font-family:IBM Plex Mono,monospace;margin-top:4px">'+artSummary+'</div>'
-      + '</div>'
-      + '<div class="batch-card-actions">'
-      + '<span style="font-size:10px;font-family:IBM Plex Mono,monospace;color:#888;margin-right:12px">'+totalUsed+'/'+totalSlots+' slot</span>'
-      + '<button class="batch-edit-btn" onclick="openBatchModal('+b.id+')">edit</button>'
-      + '<button class="batch-del-btn" onclick="deleteBatch('+b.id+')">hapus</button>'
-      + '</div></div>'
-      // slot rows per artikel per warna
-      + '<div class="batch-slots">'
-      + Object.keys(slots).map(key => {
-          const total = slots[key] || 0;
-          const u = used[key] || 0;
-          const pct = total > 0 ? Math.min(100, Math.round(u/total*100)) : 0;
-          const fc = pct >= 100 ? 'full' : pct >= 75 ? 'almost' : '';
-          return '<div class="slot-row">'
-            + '<span class="slot-color">'+key+'</span>'
-            + '<div class="slot-bar-wrap"><div class="slot-bar-fill '+fc+'" style="width:'+pct+'%"></div></div>'
-            + '<span class="slot-numbers"><strong>'+u+'</strong>/'+total+' pcs</span>'
-            + '</div>';
-        }).join('')
-      + '</div>'
-      + '</div>';
+function renderBatchList(){
+  const el=document.getElementById('batch-list-rows');
+  if(!batches.length){ el.innerHTML='<div style="padding:24px 0;font-size:11px;color:#bbb;font-family:IBM Plex Mono,monospace">belum ada batch.</div>'; return; }
+  el.innerHTML=batches.map((b,idx)=>{
+    const start=new Date(b.starts_at+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    const end=new Date(b.ends_at+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    const slots=b.slots||{},used=b.used||{};
+    const totalSlots=Object.values(slots).reduce((s,v)=>s+v,0);
+    const totalUsed=Object.values(used).reduce((s,v)=>s+v,0);
+    return '<div class="batch-card"><div class="batch-card-header"><div><div class="batch-card-num">batch '+(idx+1)+'</div><div class="batch-card-dates">'+start+' → '+end+'</div><div style="font-size:10px;color:#aaa;font-family:IBM Plex Mono,monospace;margin-top:4px">'+(b.articles||[]).join(', ')+'</div></div><div class="batch-card-actions"><span style="font-size:10px;font-family:IBM Plex Mono,monospace;color:#888;margin-right:12px">'+totalUsed+'/'+totalSlots+' slot</span><button class="batch-edit-btn" onclick="openBatchModal('+b.id+')">edit</button><button class="batch-del-btn" onclick="deleteBatch('+b.id+')">hapus</button></div></div><div class="batch-slots">'+Object.keys(slots).map(key=>{ const total=slots[key]||0,u=used[key]||0,pct=total>0?Math.min(100,Math.round(u/total*100)):0,fc=pct>=100?'full':pct>=75?'almost':''; return '<div class="slot-row"><span class="slot-color">'+key+'</span><div class="slot-bar-wrap"><div class="slot-bar-fill '+fc+'" style="width:'+pct+'%"></div></div><span class="slot-numbers"><strong>'+u+'</strong>/'+total+' pcs</span></div>'; }).join('')+'</div></div>';
   }).join('');
 }
 
-function backToBatchList() {
-  document.getElementById('batch-list-view').style.display = 'block';
-  document.getElementById('batch-detail-view').style.display = 'none';
-}
-
-function openBatchModal(batchId) {
-  editingBatchId = batchId;
-  const batch = batchId ? batches.find(b => b.id === batchId) : null;
-  document.getElementById('bm-start').value = batch ? batch.starts_at.slice(0,10) : '';
-  document.getElementById('bm-end').value   = batch ? batch.ends_at.slice(0,10)   : '';
-
-  const slots = batch ? (batch.slots || {}) : {};
-  const checkedArts = batch ? (batch.articles || []) : [];
-
-  const html = PRODUCTS.map(p => {
-    const artKey = p.name.replace(/[^a-zA-Z0-9]/g,'_');
-    const isChecked = checkedArts.includes(p.name);
-    const sizes = p.sizes || ['OS'];
-
-    const colorRows = p.colors.map(color => {
-      const colorSections = sizes.map(sz => {
-        const key = p.name + ' · ' + color + ' · ' + sz;
-        const val = slots[key] || '';
-        const inputId = 'bm-slot-' + key.replace(/[^a-zA-Z0-9]/g,'_');
-        const sizeLabel = p.sizes ? sz : 'one size';
-        return '<div class="bm-slot-row">'
-          + '<span class="bm-slot-color" style="color:#888;padding-left:24px">'+color+' · '+sizeLabel+'</span>'
-          + '<input class="bm-slot-input" type="number" min="0" placeholder="0" value="'+val+'" id="'+inputId+'">'
-          + '<span class="bm-slot-unit">pcs</span></div>';
-      }).join('');
-      return colorSections;
-    }).join('');
-
-    return '<div style="margin-bottom:16px">'
-      + '<div class="dp-checkbox-wrap" style="border-bottom:1px solid #d8d4ce;padding:10px 0">'
-      + '<input type="checkbox" class="dp-checkbox" id="bm-art-'+artKey+'"'+(isChecked?' checked':'')+' onchange="toggleBmArt(this,\''+artKey+'\')">'
-      + '<label style="font-size:13px;font-weight:300;font-family:IBM Plex Sans,sans-serif;color:#111;cursor:pointer" for="bm-art-'+artKey+'">'+p.name+'</label>'
-      + '</div>'
-      + '<div id="bm-colors-'+artKey+'" style="display:'+(isChecked?'block':'none')+'">'+colorRows+'</div>'
-      + '</div>';
+function openBatchModal(batchId){
+  editingBatchId=batchId;
+  const batch=batchId?batches.find(b=>b.id===batchId):null;
+  // populate channel select
+  const chSel=document.getElementById('bm-channel');
+  chSel.innerHTML=channels.map(ch=>`<option value="${ch.id}">${ch.name}</option>`).join('');
+  if(batch) chSel.value=batch.channel||(channels[0]?.id||'');
+  else{ const cur=document.getElementById('batch-channel-filter')?.value; if(cur) chSel.value=cur; }
+  document.getElementById('bm-start').value=batch?batch.starts_at.slice(0,10):'';
+  document.getElementById('bm-end').value=batch?batch.ends_at.slice(0,10):'';
+  const slots=batch?(batch.slots||{}):{};
+  const checkedArts=batch?(batch.articles||[]):[];
+  const html=products.filter(p=>p.is_active).map(p=>{
+    const artKey=p.name.replace(/[^a-zA-Z0-9]/g,'_');
+    const isChecked=checkedArts.includes(p.name);
+    const sizes=p.sizes||['OS'];
+    const colorRows=p.colors.map(color=>sizes.map(sz=>{ const key=p.name+' · '+color+' · '+sz; const val=slots[key]||''; const inputId='bm-slot-'+key.replace(/[^a-zA-Z0-9]/g,'_'); const sizeLabel=p.sizes?sz:'one size'; return '<div class="bm-slot-row"><span class="bm-slot-color" style="color:#888;padding-left:24px">'+color+' · '+sizeLabel+'</span><input class="bm-slot-input" type="number" min="0" placeholder="0" value="'+val+'" id="'+inputId+'"><span class="bm-slot-unit">pcs</span></div>'; }).join('')).join('');
+    return '<div style="margin-bottom:16px"><div style="border-bottom:1px solid #d8d4ce;padding:10px 0;display:flex;align-items:center;gap:10px"><input type="checkbox" class="dp-checkbox" id="bm-art-'+artKey+'"'+(isChecked?' checked':'')+' onchange="toggleBmArt(this,\''+artKey+'\')"><label style="font-size:13px;font-weight:300;font-family:IBM Plex Sans,sans-serif;color:#111;cursor:pointer" for="bm-art-'+artKey+'">'+p.name+'</label></div><div id="bm-colors-'+artKey+'" style="display:'+(isChecked?'block':'none')+'">'+colorRows+'</div></div>';
   }).join('');
-
-  document.getElementById('bm-article-slots').innerHTML = html;
+  document.getElementById('bm-article-slots').innerHTML=html;
   document.getElementById('batch-modal').classList.add('open');
 }
-
-function toggleBmArt(cb, artKey) {
-  document.getElementById('bm-colors-'+artKey).style.display = cb.checked ? 'block' : 'none';
-}
-
-function closeBatchModal() {
-  document.getElementById('batch-modal').classList.remove('open');
-  editingBatchId = null;
-}
-function handleBatchModalOverlay(e) {
-  if(e.target === document.getElementById('batch-modal')) closeBatchModal();
-}
-
-async function saveBatch() {
-  const start = document.getElementById('bm-start').value;
-  const end   = document.getElementById('bm-end').value;
-  if(!start || !end) { alert('isi tanggal dulu.'); return; }
-
-  const checkedArts = [];
-  const slots = {};
-
-  PRODUCTS.forEach(p => {
-    const artKey = p.name.replace(/[^a-zA-Z0-9]/g,'_');
-    const cb = document.getElementById('bm-art-' + artKey);
-    if(cb && cb.checked) {
-      checkedArts.push(p.name);
-      const sizes = p.sizes || ['OS'];
-      p.colors.forEach(color => {
-        sizes.forEach(sz => {
-          const key = p.name + ' · ' + color + ' · ' + sz;
-          const inputId = 'bm-slot-' + key.replace(/[^a-zA-Z0-9]/g,'_');
-          const el = document.getElementById(inputId);
-          slots[key] = parseInt(el ? el.value : 0) || 0;
-        });
-      });
-    }
+function toggleBmArt(cb,artKey){ document.getElementById('bm-colors-'+artKey).style.display=cb.checked?'block':'none'; }
+function closeBatchModal(){ document.getElementById('batch-modal').classList.remove('open'); editingBatchId=null; }
+async function saveBatch(){
+  const start=document.getElementById('bm-start').value;
+  const end=document.getElementById('bm-end').value;
+  const channel=document.getElementById('bm-channel').value;
+  if(!start||!end){ alert('isi tanggal dulu.'); return; }
+  const checkedArts=[];const slots={};
+  products.filter(p=>p.is_active).forEach(p=>{
+    const artKey=p.name.replace(/[^a-zA-Z0-9]/g,'_');
+    const cb=document.getElementById('bm-art-'+artKey);
+    if(cb&&cb.checked){ checkedArts.push(p.name); const sizes=p.sizes||['OS']; p.colors.forEach(color=>{ sizes.forEach(sz=>{ const key=p.name+' · '+color+' · '+sz; const inputId='bm-slot-'+key.replace(/[^a-zA-Z0-9]/g,'_'); const el=document.getElementById(inputId); slots[key]=parseInt(el?el.value:0)||0; }); }); }
   });
-
-  if(!checkedArts.length) { alert('pilih minimal 1 artikel.'); return; }
-
-  const payload = { starts_at: start, ends_at: end, slots, articles: checkedArts };
-  if(editingBatchId) {
-    await _sb.from('po_batches').update(payload).eq('id', editingBatchId);
-  } else {
-    await _sb.from('po_batches').insert(payload);
-  }
-  closeBatchModal();
-  await loadBatches();
+  if(!checkedArts.length){ alert('pilih minimal 1 artikel.'); return; }
+  const payload={starts_at:start,ends_at:end,slots,articles:checkedArts,channel};
+  if(editingBatchId) await _sb.from('po_batches').update(payload).eq('id',editingBatchId);
+  else await _sb.from('po_batches').insert(payload);
+  closeBatchModal(); await loadBatches();
 }
-
-async function deleteBatch(batchId) {
-  if(!confirm('hapus batch ini?')) return;
-  await _sb.from('po_batches').delete().eq('id', batchId);
-  await loadBatches();
-}
-
+async function deleteBatch(id){ if(!confirm('hapus batch ini?')) return; await _sb.from('po_batches').delete().eq('id',id); await loadBatches(); }
 </script>
 </body>
 </html>

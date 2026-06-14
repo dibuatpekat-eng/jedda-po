@@ -10,72 +10,26 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialiased; color: #111; }
-
 .main { max-width: 480px; margin: 0 auto; padding-bottom: 80px; }
-
-/* ── header ── */
 .header { display: flex; justify-content: space-between; align-items: flex-start; padding: 32px 24px 0; }
 .header-brand { font-size: 10px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; }
 .header-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
 .header-meta { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #888; line-height: 1.9; font-weight: 300; }
 .header-rule { margin: 20px 0 0; border: none; border-top: 1px solid #ccc; }
 
-/* ── summary bar ── */
+/* channel toggle */
+.channel-toggle { display: flex; gap: 0; padding: 0 24px; margin-top: 16px; border-bottom: 1px solid #d8d4ce; }
+.ch-tab { padding: 9px 14px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.ch-tab.active { color: #111; border-bottom-color: #111; font-weight: 400; }
+
 .summary-bar { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #d8d4ce; }
 .sum-card { padding: 16px 20px; border-right: 1px solid #d8d4ce; }
 .sum-card:last-child { border-right: none; }
 .sum-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 6px; }
 .sum-val { font-size: 26px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -0.5px; line-height: 1; }
-
-/* ── updated bar ── */
 .updated-bar { padding: 9px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d8d4ce; }
 .updated-text { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #bbb; font-weight: 300; }
 .refresh-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; padding: 0; }
-
-/* ── article blocks ── */
-.article-list { }
-.article-block { border-bottom: 1px solid #d8d4ce; }
-.article-block:last-child { border-bottom: none; }
-.article-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; cursor: pointer; user-select: none; gap: 12px; }
-.article-header:active { opacity: 0.6; }
-.article-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
-.article-name { font-size: 14px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.article-chevron { font-size: 10px; color: #bbb; flex-shrink: 0; transition: transform 0.2s; }
-.article-block.open .article-chevron { transform: rotate(180deg); }
-
-/* chips per warna — summary di header artikel */
-.art-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-.art-chip { font-size: 8px; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 2px 7px; border: 1px solid; white-space: nowrap; }
-.chip-ok     { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
-.chip-low    { border-color: #c8a04a; color: #7a5a1a; background: #f5edda; }
-.chip-zero   { border-color: #c0392b; color: #c0392b; background: #fdf0ee; }
-.chip-nobatch { border-color: #d8d4ce; color: #bbb; background: transparent; }
-
-/* ── collapsible rows ── */
-.color-rows { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
-.article-block.open .color-rows { max-height: 2000px; }
-
-/* warna section header */
-.color-section { border-top: 1px solid #eae6e0; }
-.color-section-header { padding: 10px 0 6px; display: flex; align-items: center; gap: 8px; }
-.cs-name { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #333; }
-.cs-est { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; margin-left: auto; }
-
-/* size rows inside warna */
-.size-row { display: grid; grid-template-columns: 56px 1fr 64px 64px; align-items: center; gap: 10px; padding: 7px 0 7px 12px; border-top: 1px solid #f0ede8; }
-.sr-size { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; color: #777; }
-.cr-bar-wrap { height: 3px; background: #e8e4df; }
-.cr-bar-fill { height: 100%; transition: width 0.4s ease; }
-.cr-bar-fill.bar-ok   { background: #6aaa7a; }
-.cr-bar-fill.bar-low  { background: #c8a04a; }
-.cr-bar-fill.bar-zero { background: #c0392b; }
-.cr-bar-fill.bar-none { background: transparent; }
-.cr-sisa { font-size: 10px; font-weight: 400; font-family: 'IBM Plex Mono', monospace; text-align: right; white-space: nowrap; color: #111; }
-.cr-sisa.zero { color: #c0392b; }
-.cr-sisa.low  { color: #c8a04a; }
-.cr-est { font-size: 9px; font-weight: 300; font-family: 'IBM Plex Mono', monospace; text-align: right; white-space: nowrap; color: #aaa; }
-
-/* ── 2-col article grid ── */
 .sa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #d8d4ce; margin-top: 1px; }
 .sa-card { background: #f0ede8; padding: 14px 16px; display: flex; flex-direction: column; gap: 0; }
 .sa-art-name { font-size: 12px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; line-height: 1.3; margin-bottom: 8px; }
@@ -88,9 +42,6 @@ html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webk
 </style>
 </head>
 <body>
-
-<!-- Main content -->
-<div id="main-content">
 <div class="main">
   <div class="header">
     <div class="header-brand">jedda</div>
@@ -99,60 +50,53 @@ html, body { background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webk
     </div>
   </div>
   <hr class="header-rule">
-
+  <div class="channel-toggle" id="channel-toggle"></div>
   <div class="summary-bar">
-    <div class="sum-card">
-      <div class="sum-label">dibuka</div>
-      <div class="sum-val" id="sum-artikel">—</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">sisa slot</div>
-      <div class="sum-val" id="sum-sisa">—</div>
-    </div>
-    <div class="sum-card">
-      <div class="sum-label">habis</div>
-      <div class="sum-val" id="sum-habis">—</div>
-    </div>
+    <div class="sum-card"><div class="sum-label">dibuka</div><div class="sum-val" id="sum-artikel">—</div></div>
+    <div class="sum-card"><div class="sum-label">sisa slot</div><div class="sum-val" id="sum-sisa">—</div></div>
+    <div class="sum-card"><div class="sum-label">habis</div><div class="sum-val" id="sum-habis">—</div></div>
   </div>
-
   <div class="updated-bar">
     <span class="updated-text" id="updated-text">memuat...</span>
     <button class="refresh-btn" onclick="loadData()">refresh ↺</button>
   </div>
-
-  <div class="article-list" id="article-list"></div>
-</div>
+  <div id="article-list"></div>
 </div>
 
 <script>
-// ── init ──
-document.addEventListener('DOMContentLoaded', () => { loadData(); });
-
 const _sb = supabase.createClient(
   "https://okgcujdlwkcwvsdybkza.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
 );
 
-const PRODUCTS = [
-  { name:"Rhea Jacket",      colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
-  { name:"Phi Jacket",       colors:["Auburn","Breen","Bistre"],  sizes:["S/M","L/XL"] },
-  { name:"The Classic Coat", colors:["Ecru","Bistre"],           sizes:["S/M","L/XL"] },
-  { name:"The Overcape",     colors:["Ecru"],                    sizes:null            },
-  { name:"Semi Blazer",      colors:["Grain"],                   sizes:["S","M","L"]   },
-  { name:"Kiro Cropped Vest",colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
-  { name:"Minji Vest",       colors:["Breen","Bistre","Auburn"], sizes:["S/M","L/XL"] },
-  { name:"Sichi Vest",       colors:["Auburn"],                  sizes:["S","M","L"]   },
-  { name:"Yuwa Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
-  { name:"Riku Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
-  { name:"Kato Shirt",       colors:["Pebble","Shell"],          sizes:["S/M","L/XL"] },
-  { name:"Miru Pants",       colors:["Bistre","Breen"],          sizes:["S","M","L"]   },
-  { name:"Kae Pants",        colors:["Bistre","Auburn"],         sizes:["S","M","L"]   },
-  { name:"Rho Pants",        colors:["Bistre","Breen"],          sizes:["S","M","L"]   },
-];
+let channels = [];
+let activeChannel = null;
+let PRODUCTS = [];
+let slotData = {};
+let articleEstDays = {};
 
-// ── data ──
-let slotData = {}; // "Artikel · Warna · Size" → { total, used, remaining, endsAt }
-let articleEstDays = {}; // { "Rhea Jacket": 7, ... }
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: chs } = await _sb.from('po_channels').select('*').order('type').order('created_at');
+  channels = chs || [];
+  if(channels.length) activeChannel = channels[0].id;
+  const { data: prods } = await _sb.from('po_products').select('*').eq('is_active', true).order('sort_order');
+  PRODUCTS = prods || [];
+  renderChannelTabs();
+  await loadData();
+});
+
+function renderChannelTabs() {
+  const el = document.getElementById('channel-toggle');
+  el.innerHTML = channels.map(ch =>
+    `<div class="ch-tab ${ch.id===activeChannel?'active':''}" onclick="switchChannel('${ch.id}')">${ch.name}</div>`
+  ).join('');
+}
+
+async function switchChannel(chId) {
+  activeChannel = chId;
+  renderChannelTabs();
+  await loadData();
+}
 
 async function loadData() {
   document.getElementById('updated-text').textContent = 'memuat...';
@@ -164,13 +108,14 @@ async function loadData() {
       { data: items },
       { data: settings }
     ] = await Promise.all([
-      _sb.from('po_batches').select('*').gte('ends_at', today).order('ends_at', { ascending: true }),
-      _sb.from('po_orders').select('id').in('status', ['baru','tunggu_ongkir','diproses']),
+      _sb.from('po_batches').select('*').eq('channel', activeChannel).gte('ends_at', today).order('ends_at', {ascending:true}),
+      _sb.from('po_orders').select('id').eq('channel', activeChannel).in('status', ['baru','tunggu_ongkir','diproses']),
       _sb.from('po_items').select('article, color, size, qty, order_id'),
-      _sb.from('po_settings').select('article_est_days').eq('id', 1).single()
+      _sb.from('po_settings').select('channel_est_days').eq('id', 1).single()
     ]);
 
-    articleEstDays = settings?.article_est_days || {};
+    const allDays = settings?.channel_est_days || {};
+    articleEstDays = allDays[activeChannel] || {};
 
     const activeIds = new Set((activeOrders||[]).map(o => o.id));
     const usedMap = {};
@@ -187,8 +132,7 @@ async function loadData() {
         if(slotData[key] && slotData[key].remaining > 0) return;
         const total = slots[key] || 0;
         const used = usedMap[key] || 0;
-        const remaining = total - used;
-        slotData[key] = { total, used, remaining, endsAt: b.ends_at };
+        slotData[key] = { total, used, remaining: total - used, endsAt: b.ends_at };
       });
     });
 
@@ -202,95 +146,53 @@ async function loadData() {
   }
 }
 
-function getSlot(article, color, size) {
-  return slotData[article + ' · ' + color + ' · ' + (size||'OS')] || null;
-}
-
-function daysUntil(dateStr) {
-  if(!dateStr) return null;
-  const diff = new Date(dateStr) - new Date(new Date().toDateString());
-  return Math.ceil(diff / 86400000);
-}
-
-function slotState(total, used) {
-  const remaining = total - used;
-  const pct = total > 0 ? remaining / total : -1;
-  if(total === 0)      return { remaining: null, pct: 0,   barCls: "bar-none", sisaCls: "",     sisaLabel: "—",                soldout: false, nobatch: true };
-  if(remaining <= 0)   return { remaining: 0,    pct: 0,   barCls: "bar-zero", sisaCls: "zero", sisaLabel: "habis",             soldout: true,  nobatch: false };
-  if(pct < 0.20)       return { remaining,        pct,     barCls: "bar-zero", sisaCls: "zero", sisaLabel: remaining + " sisa", soldout: false, nobatch: false };
-  if(pct < 0.50)       return { remaining,        pct,     barCls: "bar-low",  sisaCls: "low",  sisaLabel: remaining + " sisa", soldout: false, nobatch: false };
-  return               { remaining,               pct,     barCls: "bar-ok",   sisaCls: "",     sisaLabel: remaining + " sisa", soldout: false, nobatch: false };
-}
-
-function chipClass(total, used) {
-  const remaining = total - used;
-  const pct = total > 0 ? remaining / total : -1;
-  if(total === 0)    return "chip-nobatch";
-  if(remaining <= 0) return "chip-zero";
-  if(pct < 0.20)     return "chip-zero";
-  if(pct < 0.50)     return "chip-low";
-  return "chip-ok";
-}
+function getSlot(a, c, s) { return slotData[a + ' · ' + c + ' · ' + (s||'OS')] || null; }
+function daysUntil(ds) { if(!ds) return null; const diff = new Date(ds+'T00:00:00') - new Date(new Date().toDateString()); return Math.ceil(diff/86400000); }
 
 function render() {
-  // Summary: hanya artikel yang ada batch atau est days (minimal 1 warna aktif)
-  const activeArts = PRODUCTS.filter(p => {
+  const activeProds = PRODUCTS.filter(p => {
     const sizes = p.sizes || ['OS'];
     const hasBatch = p.colors.some(c => sizes.some(s => getSlot(p.name, c, s)));
-    const hasEstDays = p.colors.some(c => (articleEstDays[p.name + ' · ' + c] || 0) > 0);
+    const hasEstDays = p.colors.some(c => (articleEstDays[p.name+' · '+c]||0)>0);
     return hasBatch || hasEstDays;
   });
 
   let totalSisa = 0, totalHabis = 0;
-  activeArts.forEach(p => {
+  activeProds.forEach(p => {
     const sizes = p.sizes || ['OS'];
     p.colors.forEach(c => sizes.forEach(s => {
-      const slot = getSlot(p.name, c, s);
-      if(!slot) return;
-      if(slot.remaining <= 0) totalHabis++;
-      else totalSisa += slot.remaining;
+      const sl = getSlot(p.name, c, s);
+      if(!sl) return;
+      if(sl.remaining <= 0) totalHabis++;
+      else totalSisa += sl.remaining;
     }));
   });
-  document.getElementById('sum-artikel').textContent = activeArts.length || '—';
+  document.getElementById('sum-artikel').textContent = activeProds.length || '—';
   document.getElementById('sum-sisa').textContent = totalSisa || '—';
   document.getElementById('sum-habis').textContent = totalHabis || '—';
 
-  // Render semua artikel — tiap card punya baris per warna
   const html = PRODUCTS.map(p => {
     const sizes = p.sizes || ['OS'];
-
     const colorRows = p.colors.map(c => {
       const colorHasBatch = sizes.some(s => getSlot(p.name, c, s));
-      const estDays = articleEstDays[p.name + ' · ' + c] || 0;
-
+      const estDays = articleEstDays[p.name+' · '+c] || 0;
       let estText, estCls;
       if(colorHasBatch) {
         let latestEndsAt = null;
-        sizes.forEach(s => {
-          const slot = getSlot(p.name, c, s);
-          if(slot && slot.endsAt) { if(!latestEndsAt || slot.endsAt > latestEndsAt) latestEndsAt = slot.endsAt; }
-        });
+        sizes.forEach(s => { const sl = getSlot(p.name, c, s); if(sl&&sl.endsAt){if(!latestEndsAt||sl.endsAt>latestEndsAt)latestEndsAt=sl.endsAt;} });
         const d = latestEndsAt ? daysUntil(latestEndsAt) : null;
-        estText = d !== null ? '±' + d + ' hari' : '—';
+        estText = d !== null ? '±'+d+' hari' : '—';
         estCls = 'sa-est-active';
       } else if(estDays > 0) {
-        estText = '±' + estDays + ' hari';
+        estText = '±'+estDays+' hari';
         estCls = 'sa-est-temp';
       } else {
         estText = 'blm dibuka';
         estCls = 'sa-est-closed';
       }
-
-      return `<div class="sa-color-row">
-        <span class="sa-color-name">${c}</span>
-        <span class="sa-est ${estCls}">${estText}</span>
-      </div>`;
+      return `<div class="sa-color-row"><span class="sa-color-name">${c}</span><span class="sa-est ${estCls}">${estText}</span></div>`;
     }).join('');
-
-    return `<div class="sa-card">
-      <span class="sa-art-name">${p.name}</span>
-      ${colorRows}
-    </div>`;
+    return `<div class="sa-card"><span class="sa-art-name">${p.name}</span>${colorRows}</div>`;
   }).join('');
 
   document.getElementById('article-list').innerHTML = '<div class="sa-grid">' + html + '</div>';
