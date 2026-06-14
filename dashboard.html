@@ -29,9 +29,9 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 
 /* channel tabs */
 .channel-tabs { display: flex; gap: 0; border-bottom: 1px solid #d8d4ce; padding: 0 36px; background: #ebe8e2; }
-.channel-tab { padding: 10px 18px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
-.channel-tab:hover { color: #555; }
-.channel-tab.active { color: #111; border-bottom-color: #111; font-weight: 400; }
+.channel-tab { padding: 10px 18px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: #999; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.channel-tab:hover { color: #444; }
+.channel-tab.active { color: #111; border-bottom-color: #111; font-weight: 500; letter-spacing: 1.5px; }
 
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-bottom: 1px solid #d8d4ce; }
 .stat-card { padding: 22px 28px; cursor: pointer; transition: background 0.15s; border-right: 1px solid #d8d4ce; position: relative; }
@@ -219,7 +219,14 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .edit-item-modal-confirm { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #7a5a1a; background: #f5edda; border: 1px solid #c8a04a; padding: 12px 14px; margin-top: 16px; white-space: pre-line; line-height: 1.7; display: none; }
 .edit-item-modal-confirm.show { display: block; }
 
-/* channel settings */
+/* ongkir confirm toggle */
+.ongkir-confirm-wrap { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid #d8d4ce; cursor: pointer; margin-bottom: 0; transition: border-color 0.15s, background 0.15s; }
+.ongkir-confirm-wrap.checked { border-color: #9aab9a; background: #edf2ed; }
+.ongkir-confirm-box { width: 18px; height: 18px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+.ongkir-confirm-wrap.checked .ongkir-confirm-box { border-color: #3a5a3a; background: #3a5a3a; }
+.ongkir-confirm-check { font-size: 11px; color: #fff; display: none; line-height: 1; }
+.ongkir-confirm-wrap.checked .ongkir-confirm-check { display: block; }
+.ongkir-confirm-label { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
 .channel-card { border: 1px solid #d8d4ce; padding: 18px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 .channel-card-left .ch-name { font-size: 14px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
 .channel-card-left .ch-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; margin-top: 4px; letter-spacing: 0.5px; }
@@ -412,7 +419,7 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
       <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
         <div class="settings-section-label" style="border:none;padding:0">batch produksi</div>
         <div style="display:flex;gap:8px;align-items:center">
-          <select id="batch-channel-filter" style="font-size:8px;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;border:1px solid #ccc;background:transparent;padding:5px 10px;color:#888;outline:none" onchange="loadBatches()"></select>
+          <div style="display:flex;gap:0;border:1px solid #ccc" id="batch-channel-tabs"></div>
           <button class="add-article-btn" style="margin:0" onclick="openBatchModal(null)">+ tambah batch</button>
         </div>
       </div>
@@ -666,8 +673,15 @@ function parseLocalDate(dateStr) {
   if(!dateStr) return null;
   return new Date(dateStr + 'T00:00:00');
 }
+function toLocalMidnight(d) {
+  // Normalize any Date to local midnight (strips time component)
+  const r = new Date(d);
+  r.setHours(0,0,0,0);
+  return r;
+}
 function addWorkdays(fromDate, days) {
-  const d = new Date(fromDate);
+  // Always start from midnight of the created date (local)
+  const d = toLocalMidnight(new Date(fromDate));
   let added = 0;
   while(added < days) {
     d.setDate(d.getDate() + 1);
@@ -686,10 +700,10 @@ function fmtEntry(d) {
     time: dt.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})
   };
 }
-// Hitung tanggal estimasi — KONSISTEN: selalu pakai parseLocalDate untuk est_date
+// Hitung tanggal estimasi — KONSISTEN: selalu pakai parseLocalDate / toLocalMidnight
 function getEstDate(o) {
-  if(o.est_date) return parseLocalDate(o.est_date);
-  return addWorkdays(o.created, o.maxDays || 7);
+  if(o.est_date) return parseLocalDate(o.est_date); // already midnight via 'T00:00:00'
+  return addWorkdays(o.created, o.maxDays || 7);    // normalized to midnight in addWorkdays
 }
 function getEstDisplay(o) {
   return fmtTanggal(getEstDate(o));
@@ -697,10 +711,9 @@ function getEstDisplay(o) {
 function getEstDaysLeft(o) {
   const est = getEstDate(o);
   if(!est) return 0;
-  // Bandingkan dengan awal hari ini (local midnight)
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  return Math.ceil((est - today) / 86400000);
+  const today = toLocalMidnight(new Date()); // local midnight today
+  // Both est and today are midnight → integer diff
+  return Math.round((est - today) / 86400000);
 }
 
 // ── channels ──
@@ -712,8 +725,11 @@ async function loadChannels() {
 
 function renderChannelTabs() {
   const el = document.getElementById('channel-tabs');
-  const tabs = [{ id: null, name: 'semua' }, ...channels];
-  el.innerHTML = tabs.map(ch => {
+  // Urutan: event channels dulu, lalu toko, lalu "semua" paling kanan
+  const eventChs = channels.filter(c => c.type === 'event');
+  const tokoChs  = channels.filter(c => c.type === 'toko');
+  const ordered  = [...eventChs, ...tokoChs, { id: null, name: 'semua' }];
+  el.innerHTML = ordered.map(ch => {
     const isActive = activeChannel === ch.id;
     return `<div class="channel-tab ${isActive?'active':''}" onclick="setChannel(${ch.id?`'${ch.id}'`:null})">${ch.name || 'semua'}</div>`;
   }).join('');
@@ -943,7 +959,10 @@ function renderPanel(o) {
   let footerHtml=`<div class="dp-footer-label">aksi</div>`;
   if(o.status==="baru") footerHtml+=`<button class="btn btn-wa" onclick="handleWaKonfirmasi(${o.id})">${WA_SVG} kirim WA konfirmasi</button>`;
   else if(o.status==="tunggu_ongkir") footerHtml+=`
-    <label class="dp-checkbox-wrap" for="cb-ongkir"><input type="checkbox" class="dp-checkbox" id="cb-ongkir"><span class="dp-checkbox-label">ongkos kirim sudah diterima</span></label>
+    <div class="ongkir-confirm-wrap" id="ongkir-confirm-toggle" onclick="toggleOngkirConfirm()">
+      <div class="ongkir-confirm-box"><span class="ongkir-confirm-check">✓</span></div>
+      <span class="ongkir-confirm-label">ongkos kirim sudah diterima</span>
+    </div>
     <button class="btn btn-dark" onclick="handleOngkirDiterima(${o.id})">konfirmasi & proses</button>
     <button class="btn" onclick="handleWaFollowUp(${o.id})">follow-up WA ongkir</button>`;
   else if(o.status==="diproses") footerHtml+=`<button class="btn btn-dark" onclick="openResiModal(${o.id})">input resi & tandai dikirim</button>`;
@@ -1012,9 +1031,14 @@ function submitOngkirModal(){
 
 function handleWaFollowUp(id){ const o=orders.find(x=>x.id===id); if(!o) return; const waNum=o.phone.replace(/^0/,"62").replace(/\D/g,""); window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaFollowUp(o))}`,'_blank'); }
 
+function toggleOngkirConfirm() {
+  const el = document.getElementById('ongkir-confirm-toggle');
+  if(el) el.classList.toggle('checked');
+}
+
 function handleOngkirDiterima(id){
-  const cb=document.getElementById('cb-ongkir');
-  if(!cb?.checked){ alert('centang konfirmasi dulu.'); return; }
+  const el = document.getElementById('ongkir-confirm-toggle');
+  if(!el?.classList.contains('checked')){ alert('centang konfirmasi dulu.'); return; }
   moveStatus(id,'diproses');
 }
 
@@ -1441,12 +1465,24 @@ async function artdaySave(artKey,colorKey){
 }
 
 // batch
+let activeBatchChannel = null;
+
+function renderBatchChannelTabs() {
+  const el = document.getElementById('batch-channel-tabs'); if(!el) return;
+  el.innerHTML = channels.map(ch =>
+    `<div onclick="switchBatchChannel('${ch.id}')" style="padding:6px 14px;font-size:8px;letter-spacing:2px;text-transform:uppercase;font-weight:${activeBatchChannel===ch.id?'500':'300'};color:${activeBatchChannel===ch.id?'#111':'#888'};cursor:pointer;background:${activeBatchChannel===ch.id?'#111':'transparent'};color:${activeBatchChannel===ch.id?'#f0ede8':'#888'};border-right:1px solid #ccc;transition:all 0.15s">${ch.name}</div>`
+  ).join('');
+}
+async function switchBatchChannel(chId) {
+  activeBatchChannel = chId;
+  renderBatchChannelTabs();
+  await loadBatches();
+}
+
 async function loadBatches(){
-  const chFilter=document.getElementById('batch-channel-filter');
-  if(chFilter){
-    chFilter.innerHTML=channels.map(ch=>`<option value="${ch.id}">${ch.name}</option>`).join('');
-  }
-  const selCh=chFilter?chFilter.value:(channels[0]?.id||'');
+  if(!activeBatchChannel && channels.length) activeBatchChannel = channels[0].id;
+  renderBatchChannelTabs();
+  const selCh = activeBatchChannel || '';
   const {data:batchData}=await _sb.from('po_batches').select('*').eq('channel',selCh).order('starts_at');
   const {data:items}=await _sb.from('po_items').select('article,color,size,qty,order_id');
   const {data:activeOrders}=await _sb.from('po_orders').select('id,status').in('status',['baru','tunggu_ongkir','diproses']).eq('channel',selCh);
@@ -1478,7 +1514,7 @@ function openBatchModal(batchId){
   const chSel=document.getElementById('bm-channel');
   chSel.innerHTML=channels.map(ch=>`<option value="${ch.id}">${ch.name}</option>`).join('');
   if(batch) chSel.value=batch.channel||(channels[0]?.id||'');
-  else{ const cur=document.getElementById('batch-channel-filter')?.value; if(cur) chSel.value=cur; }
+  else if(activeBatchChannel) chSel.value=activeBatchChannel;
   document.getElementById('bm-start').value=batch?batch.starts_at.slice(0,10):'';
   document.getElementById('bm-end').value=batch?batch.ends_at.slice(0,10):'';
   const slots=batch?(batch.slots||{}):{};
