@@ -17,7 +17,7 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .nav-item { padding: 11px 24px; font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 300; color: #888; cursor: pointer; transition: color 0.15s; display: flex; align-items: center; gap: 10px; border-left: 1px solid transparent; }
 .nav-item:hover { color: #111; }
 .nav-item.active { color: #111; border-left-color: #111; font-weight: 400; }
-.sidebar-footer { padding: 0 24px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #999; font-weight: 300; }
+.sidebar-footer { padding: 0 24px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 400; }
 
 .main { margin-left: 180px; min-height: 100vh; }
 .topbar { padding: 28px 36px 0; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #d8d4ce; padding-bottom: 20px; }
@@ -152,7 +152,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
 .dp-checkbox-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
 .dp-checkbox { width: 14px; height: 14px; cursor: pointer; accent-color: #111; }
 .dp-checkbox-label { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; }
-.dp-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; transition: color 0.15s; }
+.dp-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 0; transition: color 0.15s; }
 .dp-edit-btn:hover { color: #111; }
 .dp-inline-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 6px 0; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; background: transparent; outline: none; color: #111; transition: border-color 0.15s; margin-bottom: 6px; }
 .dp-inline-input:focus { border-bottom-color: #111; }
@@ -168,6 +168,13 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
 .po-page.hidden { display: none; }
 .settings-topbar { padding: 28px 36px 20px; border-bottom: 1px solid #d8d4ce; }
 .settings-section-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #888; font-weight: 400; padding-bottom: 10px; border-bottom: 1px solid #d8d4ce; }
+.sect-toggle { display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid #d8d4ce; margin-bottom:16px; cursor:pointer; user-select:none; }
+.sect-toggle:hover .sect-title { color: #111; }
+.sect-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:#888; font-weight:400; }
+.sect-arrow { font-size:9px; color:#aaa; transition:transform 0.2s; }
+.sect-arrow.open { transform:rotate(180deg); }
+.sect-body { overflow:hidden; transition:max-height 0.25s ease; }
+.sect-body.collapsed { max-height:0 !important; }
 .settings-body { padding: 36px 36px 80px; }
 
 /* artday — redesign: per artikel, warna di dalam */
@@ -179,11 +186,11 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
 .artday-color-rows { padding: 0 16px; }
 .artday-color-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 12px; }
 .artday-color-row:last-child { border-bottom: none; }
-.artday-color-name { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; font-family: 'IBM Plex Mono', monospace; flex: 1; }
-.artday-color-val { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #bbb; font-weight: 300; min-width: 60px; text-align: right; }
+.artday-color-name { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #555; font-weight: 400; font-family: 'IBM Plex Mono', monospace; flex: 1; }
+.artday-color-val { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #888; font-weight: 400; min-width: 60px; text-align: right; }
 .artday-color-val.active { color: #3a5a3a; font-weight: 400; }
 .artday-color-actions { display: flex; align-items: center; gap: 8px; min-width: 120px; justify-content: flex-end; }
-.artday-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; color: #ccc; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s; }
+.artday-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; color: #888; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s; font-weight: 400; }
 .artday-edit-btn:hover { color: #111; }
 .artday-inline-edit { display: none; align-items: center; gap: 6px; }
 .artday-inline-edit.show { display: flex; }
@@ -219,7 +226,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
 .ongkir-confirm-label { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
 .channel-card { border: 1px solid #d8d4ce; padding: 18px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 .channel-card-left .ch-name { font-size: 14px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.channel-card-left .ch-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #888; margin-top: 4px; letter-spacing: 0.5px; }
+.channel-card-left .ch-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #666; margin-top: 4px; letter-spacing: 0.5px; font-weight: 400; }
 .channel-card-right { display: flex; gap: 12px; align-items: center; }
 .ch-status { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 3px 9px; border: 1px solid; }
 .ch-active { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
@@ -344,33 +351,20 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
   </div>
 
   <div class="toolbar">
-    <button class="sort-btn active" id="sort-oldest" onclick="setSort('oldest',this)">↑ terlama masuk</button>
-    <button class="sort-btn" id="sort-newest" onclick="setSort('newest',this)">↓ terbaru masuk</button>
-    <button class="sort-btn" id="sort-est" onclick="setSort('est',this)">est. kirim</button>
-    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:300">urutkan</span>
+      <select id="sort-select" onchange="setSortFromSelect(this.value)" style="border:1px solid #ccc;background:transparent;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#111;padding:5px 10px;letter-spacing:1px;outline:none;cursor:pointer">
+        <option value="oldest">terlama masuk</option>
+        <option value="newest">terbaru masuk</option>
+        <option value="est">est. kirim</option>
+      </select>
+    </div>
+    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 6px"></div>
     <button class="sort-btn active" id="toggle-dikirim" onclick="toggleHideDikirim(this)">sembunyikan dikirim</button>
-    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
-    <button class="sort-btn" id="btn-filter" onclick="toggleFilterBar(this)">filter lanjutan</button>
-    <button class="sort-btn" id="btn-export" onclick="exportCSV()">↓ export CSV</button>
+    <button class="sort-btn" id="btn-filter" onclick="toggleFilterBar(this)">filter ⌄</button>
+    <button class="sort-btn" id="btn-export" onclick="exportCSV()">↓ CSV</button>
     <div class="toolbar-right">
-      <input class="search-input" id="main-search" placeholder="cari nama, alamat, HP, no. PO..." oninput="setSearch(this.value)">
-      <div class="col-toggle-wrap">
-        <button class="col-toggle-btn" onclick="toggleColDropdown(this)" title="tampilkan / sembunyikan kolom">kolom ⌄</button>
-        <div class="col-dropdown" id="col-dropdown">
-          <div class="col-option" onclick="toggleCol('masuk')">
-            <div class="col-option-check on" id="colcheck-masuk"></div>
-            <span class="col-option-label">tanggal masuk</span>
-          </div>
-          <div class="col-option" onclick="toggleCol('item')">
-            <div class="col-option-check on" id="colcheck-item"></div>
-            <span class="col-option-label">item</span>
-          </div>
-          <div class="col-option" onclick="toggleCol('est')">
-            <div class="col-option-check on" id="colcheck-est"></div>
-            <span class="col-option-label">estimasi kirim</span>
-          </div>
-        </div>
-      </div>
+      <input class="search-input" id="main-search" placeholder="cari nama, HP, no. PO..." oninput="setSearch(this.value)">
     </div>
   </div>
 
@@ -384,7 +378,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
       <div class="filter-label">est. kirim sampai</div>
       <input class="filter-input" type="date" id="filter-est-to" oninput="renderTable()">
     </div>
-    <button class="filter-clear-btn" onclick="clearFilters()">reset filter</button>
+    <button class="filter-clear-btn" onclick="clearFilters()">reset</button>
   </div>
 
   <div class="table-wrap">
@@ -417,31 +411,44 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
   <div class="settings-body">
 
     <!-- channels -->
-    <div style="margin-bottom:48px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:16px">
-        <div class="settings-section-label" style="border:none;padding:0;margin:0">channels</div>
-        <button class="add-article-btn" style="margin:0" onclick="openChannelModal(null)">+ tambah event</button>
+    <div style="margin-bottom:40px">
+      <div class="sect-toggle" onclick="toggleSect('channels')">
+        <span class="sect-title">Channels</span>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="add-article-btn" style="margin:0" onclick="event.stopPropagation();openChannelModal(null)">+ tambah event</button>
+          <span class="sect-arrow open" id="sect-arrow-channels">⌄</span>
+        </div>
       </div>
-      <div id="channel-list"></div>
+      <div class="sect-body" id="sect-body-channels" style="max-height:2000px">
+        <div id="channel-list"></div>
+      </div>
     </div>
 
     <!-- products -->
-    <div style="margin-bottom:48px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:16px">
-        <div class="settings-section-label" style="border:none;padding:0;margin:0">produk & artikel</div>
-        <button class="add-article-btn" style="margin:0" onclick="openProductModal(null)">+ tambah artikel</button>
+    <div style="margin-bottom:40px">
+      <div class="sect-toggle" onclick="toggleSect('artikel')">
+        <span class="sect-title">Artikel</span>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="add-article-btn" style="margin:0" onclick="event.stopPropagation();openProductModal(null)">+ tambah artikel</button>
+          <span class="sect-arrow open" id="sect-arrow-artikel">⌄</span>
+        </div>
       </div>
-      <div id="product-list"></div>
+      <div class="sect-body" id="sect-body-artikel" style="max-height:4000px">
+        <div id="product-list"></div>
+      </div>
     </div>
 
     <!-- estimasi per artikel per channel -->
-    <div style="margin-bottom:48px">
-      <div style="padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
-        <div class="settings-section-label" style="border:none;padding:0">estimasi sementara</div>
-        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap" id="est-channel-tabs"></div>
+    <div style="margin-bottom:40px">
+      <div class="sect-toggle" onclick="toggleSect('waktupo')">
+        <span class="sect-title">Waktu PO</span>
+        <span class="sect-arrow open" id="sect-arrow-waktupo">⌄</span>
       </div>
-      <div id="article-days-list" style="margin-top:16px"></div>
-      <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#aaa;margin-top:12px">isi hari per artikel per warna. 0 = tidak bisa dipilih di form.</div>
+      <div class="sect-body" id="sect-body-waktupo" style="max-height:4000px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="est-channel-tabs"></div>
+        <div id="article-days-list"></div>
+        <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#aaa;margin-top:12px">isi hari per artikel per warna. 0 = tidak bisa dipilih di form.</div>
+      </div>
     </div>
 
   </div>
@@ -646,6 +653,13 @@ function toggleColDropdown(btn) {
 
 // ── filter bar ──
 let filterBarOpen = false;
+function toggleSect(key) {
+  const body = document.getElementById('sect-body-'+key);
+  const arrow = document.getElementById('sect-arrow-'+key);
+  if(!body) return;
+  const collapsed = body.classList.toggle('collapsed');
+  if(arrow) arrow.classList.toggle('open', !collapsed);
+}
 function toggleFilterBar(btn) {
   filterBarOpen = !filterBarOpen;
   document.getElementById('filter-bar').classList.toggle('open', filterBarOpen);
@@ -865,8 +879,9 @@ function setFilter(f,el) {
 function setSort(mode,el) {
   sortMode=mode;
   ["sort-oldest","sort-newest","sort-est"].forEach(id=>document.getElementById(id)?.classList.remove("active"));
-  el.classList.add("active"); renderTable();
+  if(el) el.classList.add("active"); renderTable();
 }
+function setSortFromSelect(val) { sortMode=val; renderTable(); }
 function setSearch(v){ searchQuery=v; renderTable(); }
 function toggleHideDikirim(el){ hideDikirim=!hideDikirim; el.classList.toggle('active',hideDikirim); el.textContent=hideDikirim?'sembunyikan dikirim':'tampilkan dikirim'; renderTable(); }
 
@@ -983,30 +998,30 @@ function doprint(orderId) {
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${o.po_number}</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-@page { size: 15cm 10cm landscape; margin: 5mm; }
+@page { size: 15cm 10cm landscape; margin: 5mm 5mm 5mm 5mm; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: 'IBM Plex Mono', monospace; }
-.lbl { height: calc(10cm - 10mm); display: flex; flex-direction: column; }
-.header { display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:2px solid #111; margin-bottom:14px; }
-.logo { height:13px; width:auto; display:block; }
-.po-num { font-size:8pt; letter-spacing:2px; color:#111; }
-.body { display:grid; grid-template-columns:3fr 1.2fr; gap:18px; flex:1; margin-bottom:14px; }
-.to-lbl { font-size:7pt; letter-spacing:2px; color:#111; margin-bottom:5px; }
-.to-name { font-size:13pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; margin-bottom:3px; }
-.to-phone { font-size:10pt; color:#111; margin-bottom:3px; }
-.to-addr { font-size:9pt; color:#333; font-family:'IBM Plex Sans',sans-serif; line-height:1.5; }
+body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: 'IBM Plex Mono', monospace; padding-top: 2mm; }
+.lbl { height: calc(10cm - 12mm); display: flex; flex-direction: column; }
+.header { display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:2px solid #111; margin-bottom:12px; }
+.logo { height:11px; width:auto; display:block; }
+.po-num { font-size:7pt; letter-spacing:2px; color:#111; }
+.body { display:grid; grid-template-columns:3fr 1.2fr; gap:18px; flex:1; margin-bottom:12px; }
+.to-lbl { font-size:6pt; letter-spacing:2px; color:#111; margin-bottom:4px; }
+.to-name { font-size:11pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; margin-bottom:3px; }
+.to-phone { font-size:9pt; color:#111; margin-bottom:2px; }
+.to-addr { font-size:8pt; color:#333; font-family:'IBM Plex Sans',sans-serif; line-height:1.5; }
 .from { text-align:right; }
-.from-lbl { font-size:7pt; letter-spacing:2px; color:#111; margin-bottom:5px; }
-.from-name { font-size:11pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; margin-bottom:3px; }
-.from-phone { font-size:9pt; color:#333; }
-.contents { border-top:2px solid #111; padding-top:10px; }
-.contents-lbl { font-size:7pt; letter-spacing:2px; color:#111; margin-bottom:7px; }
-.item-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+.from-lbl { font-size:6pt; letter-spacing:2px; color:#111; margin-bottom:4px; }
+.from-name { font-size:9.5pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; margin-bottom:3px; }
+.from-phone { font-size:8pt; color:#333; }
+.contents { border-top:2px solid #111; padding-top:9px; }
+.contents-lbl { font-size:6pt; letter-spacing:2px; color:#111; margin-bottom:6px; }
+.item-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:3px; }
 .item-left { display:flex; align-items:baseline; flex:1; min-width:0; }
-.item-name { font-size:9.5pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; white-space:nowrap; }
-.item-sep { font-size:8pt; color:#333; margin:0 3px; }
-.item-meta { font-size:8pt; color:#333; font-family:'IBM Plex Mono',monospace; white-space:nowrap; }
-.item-qty { font-size:9.5pt; font-weight:500; color:#111; padding-left:10px; flex-shrink:0; }
+.item-name { font-size:8.5pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; white-space:nowrap; }
+.item-sep { font-size:7pt; color:#333; margin:0 3px; }
+.item-meta { font-size:7pt; color:#333; font-family:'IBM Plex Mono',monospace; white-space:nowrap; }
+.item-qty { font-size:8.5pt; font-weight:500; color:#111; padding-left:10px; flex-shrink:0; }
 </style></head><body>
 <div class="lbl">
   <div class="header">
