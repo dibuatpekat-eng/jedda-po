@@ -12,9 +12,9 @@
 html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialiased; color: #111; }
 
 .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 180px; background: #e0ddd8; display: flex; flex-direction: column; padding: 32px 0 28px; z-index: 10; }
-.sidebar-brand { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; padding: 0 24px; margin-bottom: 48px; }
+.sidebar-brand { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; font-weight: 500; color: #111; padding: 0 24px; margin-bottom: 48px; }
 .sidebar-nav { display: flex; flex-direction: column; gap: 0; padding: 0; flex: 1; }
-.nav-item { padding: 11px 24px; font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 400; color: #777; cursor: pointer; transition: color 0.15s; display: flex; align-items: center; gap: 10px; border-left: 1px solid transparent; }
+.nav-item { padding: 11px 24px; font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 400; color: #555; cursor: pointer; transition: color 0.15s; display: flex; align-items: center; gap: 10px; border-left: 1px solid transparent; }
 .nav-item:hover { color: #111; }
 .nav-item.active { color: #111; border-left-color: #111; font-weight: 400; }
 .sidebar-footer { padding: 0 24px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 400; }
@@ -133,7 +133,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
 .dp-close:hover { color: #111; }
 .dp-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
 .dp-section { margin-bottom: 24px; }
-.dp-section-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; display: flex; justify-content: space-between; align-items: center; }
+.dp-section-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #777; font-weight: 400; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; display: flex; justify-content: space-between; align-items: center; }
 .dp-row { display: flex; align-items: baseline; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 16px; }
 .dp-key { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #aaa; font-weight: 300; flex-shrink: 0; }
 .dp-val { font-size: 12px; color: #333; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; text-align: right; line-height: 1.5; }
@@ -141,8 +141,8 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
 .dp-item-name { font-size: 12px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; }
 .dp-item-meta { font-size: 9px; color: #aaa; font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
 .dp-footer { padding: 16px 24px 24px; border-top: 1px solid #d8d4ce; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
-.dp-footer-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 300; margin-bottom: 4px; }
-.btn { width: 100%; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; text-align: left; }
+.dp-footer-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #777; font-weight: 400; margin-bottom: 4px; }
+.btn { width: 100%; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #666; cursor: pointer; transition: all 0.15s; text-align: left; }
 .btn:hover { border-color: #888; color: #555; }
 .btn-dark { background: #111; color: #f0ede8; border-color: #111; }
 .btn-dark:hover { opacity: 0.85; }
@@ -223,12 +223,12 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
 .ongkir-confirm-wrap.checked .ongkir-confirm-box { border-color: #3a5a3a; background: #3a5a3a; }
 .ongkir-confirm-check { font-size: 11px; color: #fff; display: none; line-height: 1; }
 .ongkir-confirm-wrap.checked .ongkir-confirm-check { display: block; }
-.ongkir-confirm-label { font-size: 11px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
+.ongkir-confirm-label { font-size: 11px; font-weight: 400; color: #444; font-family: 'IBM Plex Sans', sans-serif; }
 .channel-card { border: 1px solid #d8d4ce; padding: 18px 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 .channel-card-left .ch-name { font-size: 14px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
 .channel-card-left .ch-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #666; margin-top: 4px; letter-spacing: 0.5px; font-weight: 400; }
 .channel-card-right { display: flex; gap: 12px; align-items: center; }
-.ch-status { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 3px 9px; border: 1px solid; }
+.ch-status { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 3px 9px; border: 1px solid; }
 .ch-active { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
 .ch-inactive { border-color: #ccc; color: #aaa; }
 .ch-action-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; transition: color 0.15s; }
@@ -308,7 +308,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
   </nav>
   <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:10px">
     <span>admin</span>
-    <button onclick="lock()" style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#ccc;background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:300;padding:0;text-align:left" onmouseover="this.style.color='#888'" onmouseout="this.style.color='#ccc'">kunci ↑</button>
+    <button onclick="lock()" style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#888;background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:400;padding:0;text-align:left" onmouseover="this.style.color='#888'" onmouseout="this.style.color='#ccc'">kunci ↑</button>
   </div>
 </div>
 
@@ -386,7 +386,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
           <th class="col-item" id="th-item">item</th>
           <th class="col-est" id="th-est">estimasi kirim</th>
           <th class="col-status">status</th>
-          <th class="col-aksi">aksi</th>
+          <th class="col-aksi">action</th>
         </tr>
       </thead>
       <tbody id="table-body"></tbody>
@@ -912,17 +912,17 @@ function renderPanel(o) {
   const notesHtml=o.notes?`<div class="dp-row"><span class="dp-key">notes</span><span class="dp-val">${o.notes}</span></div>`:'';
   document.getElementById('dp-body').innerHTML=`
     <div class="dp-section">
-      <div class="dp-section-label">pesanan <button class="dp-edit-btn" onclick="openEditItemModal(${o.id})">ubah</button></div>
+      <div class="dp-section-label">Pesanan <button class="dp-edit-btn" onclick="openEditItemModal(${o.id})">ubah</button></div>
       ${itemsHtml}
     </div>
     <div class="dp-section">
-      <div class="dp-section-label">estimasi kirim</div>
+      <div class="dp-section-label">Estimasi kirim</div>
       <div style="font-size:16px;font-weight:300;font-family:'IBM Plex Sans',sans-serif;color:${overdue?'#c0392b':'#111'}">${estStr}</div>
       <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:${overdue?'#c0392b':'#aaa'};margin-top:4px">${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':'—'}</div>
       ${o.est_edited_at?`<div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#7b8fc7;margin-top:4px">diperbarui · ${fmtEntry(new Date(o.est_edited_at)).date}</div>`:''}
     </div>
     <div class="dp-section">
-      <div class="dp-section-label">customer</div>
+      <div class="dp-section-label">Customer</div>
       <div class="dp-row" id="dp-row-nama">
         <span class="dp-key">nama</span>
         <div style="display:flex;align-items:center;gap:8px">
@@ -950,12 +950,12 @@ function renderPanel(o) {
       ${o.resi?`<div class="dp-row"><span class="dp-key">resi</span><span class="dp-val" style="font-family:'IBM Plex Mono',monospace;font-size:11px">${o.kurir?o.kurir+' · ':''}${o.resi}</span></div>`:''}
     </div>`;
 
-  let footerHtml=`<div class="dp-footer-label">aksi</div>`;
+  let footerHtml=`<div class="dp-footer-label">Action</div>`;
   if(o.status==="baru") footerHtml+=`<button class="btn btn-wa" onclick="handleWaKonfirmasi(${o.id})">${WA_SVG} kirim WA konfirmasi</button>`;
   else if(o.status==="tunggu_ongkir") footerHtml+=`
     <div class="ongkir-confirm-wrap" id="ongkir-confirm-toggle" onclick="toggleOngkirConfirm()">
       <div class="ongkir-confirm-box"><span class="ongkir-confirm-check">✓</span></div>
-      <span class="ongkir-confirm-label">ongkos kirim sudah diterima</span>
+      <span class="ongkir-confirm-label">Ongkos kirim sudah diterima</span>
     </div>
     <button class="btn btn-dark" onclick="handleOngkirDiterima(${o.id})">konfirmasi & proses</button>
     <button class="btn" onclick="handleWaFollowUp(${o.id})">follow-up WA ongkir</button>`;
@@ -1005,7 +1005,7 @@ function doprint(orderId) {
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: 'IBM Plex Mono', monospace; }
 .lbl { height: calc(10cm - 10mm); display: flex; flex-direction: column; }
-.header { display:flex; justify-content:space-between; align-items:center; padding:4mm 0 6px; border-bottom:2px solid #111; margin-bottom:10px; }
+.header { display:flex; justify-content:space-between; align-items:center; padding:3mm 0 8px; border-bottom:2px solid #111; margin-bottom:10px; margin-top:2mm; }
 .logo { height:10px; width:auto; display:block; }
 .po-num { font-size:6.5pt; letter-spacing:2px; color:#111; }
 .body { display:grid; grid-template-columns:2.2fr 1fr; gap:14px; flex:1; margin-bottom:10px; }
@@ -1025,7 +1025,7 @@ body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-c
 .item-sep { font-size:6.5pt; color:#333; margin:0 3px; }
 .item-meta { font-size:6.5pt; color:#333; font-family:'IBM Plex Mono',monospace; white-space:nowrap; }
 .item-qty { font-size:8pt; font-weight:500; color:#111; padding-left:8px; flex-shrink:0; }
-.footer-note { margin-top:8px; font-size:5pt; color:#111; font-style:italic; letter-spacing:0.5px; }
+.footer-note { margin-top:14px; font-size:5pt; color:#111; font-style:italic; letter-spacing:0.3px; }
 </style></head><body>
 <div class="lbl">
   <div class="header">
@@ -1048,7 +1048,7 @@ body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-c
   <div class="contents">
     <div class="contents-lbl">CONTENTS</div>
     ${itemRows}
-    <div class="footer-note">all pre-order items are final sale — no exchange or refund</div>
+    <div class="footer-note">Please note that preorder items are not eligible for exchange or refund.</div>
   </div>
 </div>
 <script>window.onload=()=>setTimeout(()=>window.print(),600);<\/script>
@@ -1317,11 +1317,11 @@ function loadChannelList(){
     <div class="channel-card">
       <div class="channel-card-left">
         <div class="ch-name">${ch.name}</div>
-        <div class="ch-meta">${ch.type} · PIN: ${ch.pin} · pretext: "${ch.wa_pretext}"</div>
+        <div class="ch-meta">${ch.type==="toko"?"Toko":"Event"} · PIN: ${ch.pin} · WA pretext: "${ch.wa_pretext}"</div>
       </div>
       <div class="channel-card-right">
         <span class="ch-status ${ch.is_active?'ch-active':'ch-inactive'}">${ch.is_active?'aktif':'nonaktif'}</span>
-        ${ch.type!=='toko'?`<button class="ch-action-btn" onclick="toggleChannelActive('${ch.id}')">${ch.is_active?'nonaktifkan':'aktifkan'}</button>`:''}
+        ${ch.type!=='toko'?`<button class="ch-action-btn" onclick="toggleChannelActive('${ch.id}')">${ch.is_active?'Nonaktifkan':'Aktifkan'}</button>`:''}
         <button class="ch-action-btn" onclick="openChannelModal('${ch.id}')">edit</button>
       </div>
     </div>`).join('');
@@ -1388,7 +1388,7 @@ function loadProductList(){
       <div><div class="prod-name">${p.name}</div><div class="prod-meta">${p.colors.join(' · ')} · ${sizesLabel}</div></div>
       <div class="prod-actions">
         <button class="prod-btn" onclick="openProductModal(${p.id})">edit</button>
-        <button class="prod-btn" onclick="toggleProductActive(${p.id})">${p.is_active?'nonaktifkan':'aktifkan'}</button>
+        <button class="prod-btn" onclick="toggleProductActive(${p.id})">${p.is_active?'Nonaktifkan':'Aktifkan'}</button>
         <button class="prod-btn prod-btn-del" onclick="deleteProduct(${p.id})">hapus</button>
       </div>
     </div>`;
@@ -1436,7 +1436,7 @@ async function loadArticleDays(){
     return `<div class="artday-article-card ${anyActive?'has-active':''}">
       <div class="artday-article-header">
         <span class="artday-article-name">${p.name}</span>
-        <span class="artday-article-summary">${p.colors.filter(c=>map[p.name+' · '+c]>0).length}/${p.colors.length} warna aktif</span>
+        <span class="artday-article-summary">${p.colors.filter(c=>map[p.name+' · '+c]>0).length}/${p.colors.length} Warna aktif</span>
       </div>
       <div class="artday-color-rows">${colorRows}</div>
     </div>`;
