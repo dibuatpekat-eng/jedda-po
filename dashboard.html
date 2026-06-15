@@ -27,7 +27,6 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .topbar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
 .topbar-date { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; }
 
-/* channel tabs */
 .channel-tabs { display: flex; gap: 0; border-bottom: 1px solid #d8d4ce; padding: 0 36px; background: #ebe8e2; }
 .channel-tab { padding: 10px 18px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: #999; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
 .channel-tab:hover { color: #444; }
@@ -43,14 +42,38 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .stat-num { font-size: 36px; font-weight: 300; color: #111; line-height: 1; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -1px; }
 .stat-sub { font-size: 10px; color: #888; margin-top: 8px; font-weight: 300; letter-spacing: 0.3px; }
 
-.toolbar { padding: 14px 36px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d8d4ce; }
+.toolbar { padding: 14px 36px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d8d4ce; flex-wrap: wrap; }
 .sort-btn { padding: 6px 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; border: 1px solid #ccc; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', monospace; color: #999; transition: all 0.15s; }
 .sort-btn:hover { border-color: #888; color: #555; }
 .sort-btn.active { border-color: #111; color: #111; background: transparent; }
-.toolbar-right { margin-left: auto; }
-.search-input { padding: 6px 14px; font-size: 11px; font-weight: 300; border: 1px solid #ccc; background: transparent; font-family: 'IBM Plex Mono', monospace; color: #111; outline: none; width: 220px; transition: border-color 0.15s; }
+.toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.search-input { padding: 6px 14px; font-size: 11px; font-weight: 300; border: 1px solid #ccc; background: transparent; font-family: 'IBM Plex Mono', monospace; color: #111; outline: none; width: 240px; transition: border-color 0.15s; }
 .search-input:focus { border-color: #111; }
 .search-input::placeholder { color: #999; font-size: 10px; }
+
+/* advanced filter bar */
+.filter-bar { padding: 10px 36px; border-bottom: 1px solid #d8d4ce; background: #ebe8e2; display: none; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.filter-bar.open { display: flex; }
+.filter-group { display: flex; flex-direction: column; gap: 5px; }
+.filter-label { font-size: 7px; letter-spacing: 2.5px; text-transform: uppercase; color: #aaa; font-weight: 300; }
+.filter-input { padding: 5px 10px; font-size: 11px; font-weight: 300; border: 1px solid #ccc; background: #f0ede8; font-family: 'IBM Plex Mono', monospace; color: #111; outline: none; transition: border-color 0.15s; }
+.filter-input:focus { border-color: #111; }
+.filter-clear-btn { padding: 5px 12px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', monospace; color: #888; transition: all 0.15s; align-self: flex-end; }
+.filter-clear-btn:hover { border-color: #111; color: #111; }
+
+/* column toggle */
+.col-toggle-wrap { position: relative; }
+.col-toggle-btn { padding: 6px 10px; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', monospace; color: #999; transition: all 0.15s; }
+.col-toggle-btn:hover { border-color: #888; color: #555; }
+.col-toggle-btn.active { border-color: #111; color: #111; }
+.col-dropdown { position: absolute; right: 0; top: calc(100% + 4px); background: #f0ede8; border: 1px solid #d8d4ce; z-index: 30; min-width: 160px; padding: 8px 0; display: none; }
+.col-dropdown.open { display: block; }
+.col-option { display: flex; align-items: center; gap: 10px; padding: 8px 14px; cursor: pointer; transition: background 0.1s; }
+.col-option:hover { background: #ebe8e2; }
+.col-option-check { width: 12px; height: 12px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.col-option-check.on { background: #111; border-color: #111; }
+.col-option-check.on::after { content: ''; display: block; width: 6px; height: 6px; background: #f0ede8; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
+.col-option-label { font-size: 10px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
 
 .table-wrap { overflow-x: auto; }
 table { width: 100%; table-layout: fixed; border-collapse: collapse; }
@@ -62,13 +85,15 @@ tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: #ebe8e2; }
 tbody tr.selected { background: #e8e4de; }
 td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertical-align: middle; font-family: 'IBM Plex Sans', sans-serif; overflow: hidden; }
-thead th:nth-child(1), td:nth-child(1) { width: 110px; }
-thead th:nth-child(2), td:nth-child(2) { width: 120px; }
-thead th:nth-child(3), td:nth-child(3) { width: 150px; }
-thead th:nth-child(4), td:nth-child(4) { width: 20%; }
-thead th:nth-child(5), td:nth-child(5) { width: 170px; }
-thead th:nth-child(6), td:nth-child(6) { width: 170px; }
-thead th:nth-child(7), td:nth-child(7) { width: 140px; }
+.col-po    { width: 110px; }
+.col-masuk { width: 120px; }
+.col-nama  { width: 150px; }
+.col-item  { width: 20%; }
+.col-est   { width: 170px; }
+.col-status{ width: 150px; }
+.col-aksi  { width: 140px; }
+.col-hidden { display: none; }
+
 .td-mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #666; letter-spacing: 0.5px; }
 .urgent-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #c0392b; margin-right: 7px; vertical-align: middle; }
 .status-badge { display: inline-block; padding: 3px 9px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; border: 1px solid; }
@@ -90,7 +115,6 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .empty-state { padding: 60px 36px; text-align: center; }
 .empty-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #bbb; font-weight: 300; }
 
-/* action buttons in table */
 .tbl-action { padding: 5px 12px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; border: 1px solid; cursor: pointer; font-family: 'IBM Plex Mono', monospace; background: transparent; transition: all 0.15s; white-space: nowrap; }
 .tbl-action-wa { border-color: #25D366; color: #1a9e4a; }
 .tbl-action-wa:hover { background: #25D366; color: #fff; }
@@ -146,61 +170,27 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .settings-section-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #888; font-weight: 400; padding-bottom: 10px; border-bottom: 1px solid #d8d4ce; }
 .settings-body { padding: 36px 36px 80px; }
 
-/* artday grid */
-.artday-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 16px; }
-.artday-card { border: 1px solid #d8d4ce; padding: 14px 16px; transition: border-color 0.15s; }
-.artday-card.artday-active { border-color: #9aab9a; }
-.artday-name { font-size: 12px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 12px; line-height: 1.3; }
-.artday-view { display: flex; align-items: center; justify-content: space-between; }
-.artday-val { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #bbb; font-weight: 300; }
-.artday-card.artday-active .artday-val { color: #3a5a3a; font-weight: 400; }
+/* artday — redesign: per artikel, warna di dalam */
+.artday-article-card { border: 1px solid #d8d4ce; margin-bottom: 8px; }
+.artday-article-card.has-active { border-color: #9aab9a; }
+.artday-article-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e4df; }
+.artday-article-name { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
+.artday-article-summary { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; font-weight: 300; }
+.artday-color-rows { padding: 0 16px; }
+.artday-color-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 12px; }
+.artday-color-row:last-child { border-bottom: none; }
+.artday-color-name { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; font-family: 'IBM Plex Mono', monospace; flex: 1; }
+.artday-color-val { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #bbb; font-weight: 300; min-width: 60px; text-align: right; }
+.artday-color-val.active { color: #3a5a3a; font-weight: 400; }
+.artday-color-actions { display: flex; align-items: center; gap: 8px; min-width: 120px; justify-content: flex-end; }
 .artday-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; color: #ccc; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s; }
 .artday-edit-btn:hover { color: #111; }
-.artday-input-row { display: flex; align-items: center; gap: 8px; }
-.artday-input { width: 52px; border: none; border-bottom: 1px solid #ccc; padding: 4px 0; font-family: 'IBM Plex Mono', monospace; font-size: 14px; background: transparent; outline: none; color: #111; text-align: center; }
-.artday-unit { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; letter-spacing: 1px; }
-.artday-save-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: #111; color: #f0ede8; border: none; cursor: pointer; padding: 5px 10px; }
-.artday-cancel-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: none; color: #aaa; border: none; cursor: pointer; padding: 5px 0; }
-
-/* batch */
-.batch-card { border: 1px solid #d8d4ce; margin-bottom: 12px; }
-.batch-card-header { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e4df; cursor: pointer; }
-.batch-card-num { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 400; margin-bottom: 4px; }
-.batch-card-dates { font-size: 13px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.batch-card-actions { display: flex; gap: 8px; align-items: center; }
-.batch-edit-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; transition: color 0.15s; padding: 0; }
-.batch-edit-btn:hover { color: #111; }
-.batch-del-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #c0392b; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; }
-.batch-slots { padding: 12px 18px; }
-.slot-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eae6e0; }
-.slot-row:last-child { border-bottom: none; }
-.slot-color { font-size: 11px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #333; flex: 1; }
-.slot-bar-wrap { flex: 2; margin: 0 16px; height: 3px; background: #e8e4df; }
-.slot-bar-fill { height: 100%; background: #111; }
-.slot-bar-fill.almost { background: #c8a04a; }
-.slot-bar-fill.full { background: #c0392b; }
-.slot-numbers { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #888; white-space: nowrap; }
-.slot-numbers strong { color: #111; }
-
-/* batch modal */
-.batch-modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 40; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-.batch-modal-overlay.open { opacity: 1; pointer-events: all; }
-.batch-modal-box { background: #f0ede8; width: 420px; max-height: 80vh; overflow-y: auto; padding: 32px 28px 24px; border: 1px solid #d8d4ce; }
-.batch-modal-title { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; }
-.bm-field { margin-bottom: 20px; }
-.bm-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
-.bm-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; }
-.bm-input:focus { border-bottom-color: #111; }
-.bm-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-.bm-slots-label { font-size: 7px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; font-weight: 300; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #d8d4ce; }
-.bm-slot-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #eae6e0; }
-.bm-slot-row:last-child { border-bottom: none; }
-.bm-slot-color { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; color: #111; flex: 1; }
-.bm-slot-input { width: 72px; border: none; border-bottom: 1px solid #ccc; padding: 6px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; text-align: right; }
-.bm-slot-unit { font-size: 9px; color: #bbb; font-family: 'IBM Plex Mono', monospace; }
-.bm-actions { display: flex; gap: 8px; margin-top: 28px; }
-.bm-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; text-align: left; }
-.bm-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
+.artday-inline-edit { display: none; align-items: center; gap: 6px; }
+.artday-inline-edit.show { display: flex; }
+.artday-input { width: 44px; border: none; border-bottom: 1px solid #ccc; padding: 3px 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: transparent; outline: none; color: #111; text-align: center; }
+.artday-unit { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; }
+.artday-save-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: #111; color: #f0ede8; border: none; cursor: pointer; padding: 4px 8px; }
+.artday-cancel-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; background: none; color: #aaa; border: none; cursor: pointer; padding: 4px 0; }
 
 /* modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(17,17,17,0.4); z-index: 40; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
@@ -237,7 +227,6 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .ch-action-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 0; transition: color 0.15s; }
 .ch-action-btn:hover { color: #111; }
 
-/* product settings */
 .product-card { border: 1px solid #d8d4ce; padding: 14px 18px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; }
 .prod-name { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; margin-bottom: 4px; }
 .prod-meta { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #888; letter-spacing: 0.5px; }
@@ -246,7 +235,6 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 .prod-btn:hover { color: #111; }
 .prod-btn-del { color: #c0392b; }
 
-/* product modal */
 .pm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .pm-chip { font-size: 10px; font-family: 'IBM Plex Mono', monospace; font-weight: 300; padding: 4px 10px; border: 1px solid #d8d4ce; color: #555; display: flex; align-items: center; gap: 6px; }
 .pm-chip-del { color: #ccc; cursor: pointer; font-size: 12px; line-height: 1; background: none; border: none; padding: 0; transition: color 0.15s; }
@@ -275,6 +263,13 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 
 .add-article-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; transition: all 0.15s; }
 .add-article-btn:hover { border-color: #111; color: #111; }
+
+/* print label */
+@media print {
+  body * { visibility: hidden; }
+  #print-label-frame, #print-label-frame * { visibility: visible; }
+  #print-label-frame { position: fixed; inset: 0; }
+}
 </style>
 </head>
 <body>
@@ -323,7 +318,6 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
     </div>
   </div>
 
-  <!-- channel tabs -->
   <div class="channel-tabs" id="channel-tabs"></div>
 
   <div class="stats-row">
@@ -356,18 +350,54 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
     <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
     <button class="sort-btn active" id="toggle-dikirim" onclick="toggleHideDikirim(this)">sembunyikan dikirim</button>
     <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
+    <button class="sort-btn" id="btn-filter" onclick="toggleFilterBar(this)">filter lanjutan</button>
     <button class="sort-btn" id="btn-export" onclick="exportCSV()">↓ export CSV</button>
     <div class="toolbar-right">
-      <input class="search-input" placeholder="cari nama / no. PO..." oninput="setSearch(this.value)">
+      <input class="search-input" id="main-search" placeholder="cari nama, alamat, HP, no. PO..." oninput="setSearch(this.value)">
+      <div class="col-toggle-wrap">
+        <button class="col-toggle-btn" onclick="toggleColDropdown(this)" title="tampilkan / sembunyikan kolom">kolom ⌄</button>
+        <div class="col-dropdown" id="col-dropdown">
+          <div class="col-option" onclick="toggleCol('masuk')">
+            <div class="col-option-check on" id="colcheck-masuk"></div>
+            <span class="col-option-label">tanggal masuk</span>
+          </div>
+          <div class="col-option" onclick="toggleCol('item')">
+            <div class="col-option-check on" id="colcheck-item"></div>
+            <span class="col-option-label">item</span>
+          </div>
+          <div class="col-option" onclick="toggleCol('est')">
+            <div class="col-option-check on" id="colcheck-est"></div>
+            <span class="col-option-label">estimasi kirim</span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- advanced filter bar -->
+  <div class="filter-bar" id="filter-bar">
+    <div class="filter-group">
+      <div class="filter-label">est. kirim dari</div>
+      <input class="filter-input" type="date" id="filter-est-from" oninput="renderTable()">
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">est. kirim sampai</div>
+      <input class="filter-input" type="date" id="filter-est-to" oninput="renderTable()">
+    </div>
+    <button class="filter-clear-btn" onclick="clearFilters()">reset filter</button>
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>no. PO</th><th>masuk</th><th>nama</th><th>item</th>
-          <th>estimasi kirim</th><th>status</th><th>aksi</th>
+          <th class="col-po">no. PO</th>
+          <th class="col-masuk" id="th-masuk">masuk</th>
+          <th class="col-nama">nama</th>
+          <th class="col-item" id="th-item">item</th>
+          <th class="col-est" id="th-est">estimasi kirim</th>
+          <th class="col-status">status</th>
+          <th class="col-aksi">aksi</th>
         </tr>
       </thead>
       <tbody id="table-body"></tbody>
@@ -410,24 +440,12 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
         <div class="settings-section-label" style="border:none;padding:0">estimasi sementara</div>
         <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap" id="est-channel-tabs"></div>
       </div>
-      <div id="article-days-list" class="artday-grid" style="margin-top:16px"></div>
+      <div id="article-days-list" style="margin-top:16px"></div>
       <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:#aaa;margin-top:12px">isi hari per artikel per warna. 0 = tidak bisa dipilih di form.</div>
     </div>
 
-    <!-- batch list -->
-    <div id="batch-list-view">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #d8d4ce;margin-bottom:0">
-        <div class="settings-section-label" style="border:none;padding:0">batch produksi</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <div style="display:flex;gap:0;border:1px solid #ccc" id="batch-channel-tabs"></div>
-          <button class="add-article-btn" style="margin:0" onclick="openBatchModal(null)">+ tambah batch</button>
-        </div>
-      </div>
-      <div id="batch-list-rows"></div>
-    </div>
-
   </div>
-</div>
+</div><!-- end settings -->
 </div><!-- end main -->
 
 <!-- modals -->
@@ -565,37 +583,14 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
   </div>
 </div>
 
-<!-- batch modal -->
-<div class="batch-modal-overlay" id="batch-modal" onclick="if(event.target===this)closeBatchModal()">
-  <div class="batch-modal-box">
-    <div class="batch-modal-title">batch produksi</div>
-    <div class="bm-field">
-      <div class="bm-label">channel</div>
-      <select class="bm-input" id="bm-channel"></select>
-    </div>
-    <div class="bm-dates">
-      <div class="bm-field">
-        <div class="bm-label">mulai produksi</div>
-        <input class="bm-input" type="date" id="bm-start">
-      </div>
-      <div class="bm-field">
-        <div class="bm-label">selesai / siap kirim</div>
-        <input class="bm-input" type="date" id="bm-end">
-      </div>
-    </div>
-    <div class="bm-slots-label">artikel & slot</div>
-    <div id="bm-article-slots"></div>
-    <div class="bm-actions">
-      <button class="bm-btn" onclick="closeBatchModal()">batal</button>
-      <button class="bm-btn bm-btn-dark" onclick="saveBatch()">simpan batch</button>
-    </div>
-  </div>
-</div>
-
+<!-- panel overlay + detail panel -->
 <div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
 <div class="detail-panel" id="detail-panel">
   <div class="dp-header">
-    <div><div class="dp-po" id="dp-po"></div><div class="dp-name" id="dp-name"></div></div>
+    <div>
+      <div class="dp-po" id="dp-po">—</div>
+      <div class="dp-name" id="dp-name">—</div>
+    </div>
     <button class="dp-close" onclick="closePanel()">×</button>
   </div>
   <div class="dp-body" id="dp-body"></div>
@@ -603,107 +598,135 @@ thead th:nth-child(7), td:nth-child(7) { width: 140px; }
 </div>
 
 <script>
-const PIN = "2020";
-const SB_URL = "https://okgcujdlwkcwvsdybkza.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM";
-const _sb = supabase.createClient(SB_URL, SB_KEY);
+const _sb = supabase.createClient(
+  "https://okgcujdlwkcwvsdybkza.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rZ2N1amRsd2tjd3ZzZHlia3phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MzU2MzcsImV4cCI6MjA5NTIxMTYzN30.Zu6MzG4cXl9MUMcbAWV3U6wJ1SwM3Vzis4pu0UKFziM"
+);
+
+const CORRECT_PIN = "2020";
+let pinBuffer = "";
+
+const STATUS_LABEL = { baru:"baru",tunggu_ongkir:"tunggu ongkir",diproses:"diproses",dikirim:"dikirim" };
+const STATUS_CLASS  = { baru:"s-baru",tunggu_ongkir:"s-tunggu_ongkir",diproses:"s-diproses",dikirim:"s-dikirim" };
+const WA_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:5px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.856L.057 23.743a.5.5 0 0 0 .621.621l5.908-1.474A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.887 0-3.653-.518-5.167-1.418l-.371-.22-3.849.961.977-3.819-.242-.394A9.962 9.962 0 0 1 2 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z"/></svg>`;
+
+// ── column visibility ──
+const COL_KEYS = ['masuk','item','est'];
+let colVisible = { masuk: true, item: true, est: true };
+function loadColPrefs() {
+  try { const s = localStorage.getItem('jedda_col_prefs'); if(s) colVisible = {...colVisible,...JSON.parse(s)}; } catch(e) {}
+}
+function saveColPrefs() {
+  try { localStorage.setItem('jedda_col_prefs', JSON.stringify(colVisible)); } catch(e) {}
+}
+function applyColVisibility() {
+  COL_KEYS.forEach(k => {
+    const th = document.getElementById('th-'+k);
+    const cells = document.querySelectorAll('.td-col-'+k);
+    if(th) th.classList.toggle('col-hidden', !colVisible[k]);
+    cells.forEach(c => c.classList.toggle('col-hidden', !colVisible[k]));
+    const chk = document.getElementById('colcheck-'+k);
+    if(chk) chk.classList.toggle('on', colVisible[k]);
+  });
+}
+function toggleCol(k) {
+  colVisible[k] = !colVisible[k];
+  saveColPrefs();
+  applyColVisibility();
+}
+function toggleColDropdown(btn) {
+  const dd = document.getElementById('col-dropdown');
+  const open = dd.classList.toggle('open');
+  btn.classList.toggle('active', open);
+  if(open) {
+    const close = (e) => { if(!btn.closest('.col-toggle-wrap').contains(e.target)) { dd.classList.remove('open'); btn.classList.remove('active'); document.removeEventListener('click',close); } };
+    setTimeout(()=>document.addEventListener('click',close),0);
+  }
+}
+
+// ── filter bar ──
+let filterBarOpen = false;
+function toggleFilterBar(btn) {
+  filterBarOpen = !filterBarOpen;
+  document.getElementById('filter-bar').classList.toggle('open', filterBarOpen);
+  btn.classList.toggle('active', filterBarOpen);
+}
+function clearFilters() {
+  document.getElementById('filter-est-from').value = '';
+  document.getElementById('filter-est-to').value = '';
+  renderTable();
+}
+
+// ── state ──
+let orders = [], channels = [], products = [];
+let filterStatus = "semua", sortMode = "oldest", searchQuery = "", selectedId = null, hideDikirim = true;
+let activeChannel = null;
+let resiTargetId = null;
+let activeEstChannel = null;
+
+// ── date utils ──
+function toLocalMidnight(d) { const r = new Date(d); r.setHours(0,0,0,0); return r; }
+function parseLocalDate(s) { return s ? new Date(s + 'T00:00:00') : null; }
+function addWorkdays(fromDate, days) {
+  const d = toLocalMidnight(new Date(fromDate));
+  let added = 0;
+  while(added < days) { d.setDate(d.getDate()+1); if(d.getDay()!==0) added++; }
+  return d;
+}
+function fmtTanggal(d) {
+  if(!d) return '—';
+  return d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+}
+function fmtEntry(d) {
+  const dt = new Date(d);
+  return {
+    date: dt.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}),
+    time: dt.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})
+  };
+}
+function getEstDate(o) {
+  if(o.est_date) return parseLocalDate(o.est_date);
+  const from = toLocalMidnight(o.created);
+  return addWorkdays(from, o.maxDays || 7);
+}
+function getEstDisplay(o) { return fmtTanggal(getEstDate(o)); }
+function getEstDaysLeft(o) {
+  const est = getEstDate(o); if(!est) return 0;
+  const today = toLocalMidnight(new Date());
+  return Math.round((est - today) / 86400000);
+}
 
 // ── PIN ──
-let pinBuffer = '';
-function pinPress(d){ if(pinBuffer.length>=4)return; pinBuffer+=d; updatePinDots(); syncPin(); if(pinBuffer.length===4)setTimeout(checkPin,100); }
-function pinDel(){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); syncPin(); }
-function syncPin(){ const el=document.getElementById('pin-hidden'); if(el) el.value=pinBuffer; }
-function updatePinDots(){ for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length); }
-function checkPin(){
-  if(pinBuffer===PIN){
+function updatePinDots() { for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length); }
+function syncPin() { const h=document.getElementById('pin-hidden'); h.value=pinBuffer; }
+function pinPress(d) { if(pinBuffer.length>=4) return; pinBuffer+=d; updatePinDots(); syncPin(); if(pinBuffer.length===4) setTimeout(checkPin,100); }
+function pinDel() { if(pinBuffer.length>0){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); syncPin(); } }
+function checkPin() {
+  if(pinBuffer===CORRECT_PIN) {
     document.getElementById('pin-screen').style.display='none';
-    init();
+    loadColPrefs(); init();
   } else {
     document.getElementById('pin-error').classList.add('show');
     pinBuffer=''; updatePinDots(); syncPin();
     setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),1500);
   }
 }
-function lock(){ document.getElementById('pin-screen').style.display='flex'; pinBuffer=''; updatePinDots(); syncPin(); setTimeout(()=>document.getElementById('pin-hidden')?.focus(),100); }
-document.addEventListener('DOMContentLoaded',()=>{
-  const h=document.getElementById('pin-hidden'); if(!h) return;
-  h.addEventListener('input',()=>{ const v=h.value.replace(/\D/g,'').slice(0,4); h.value=v; pinBuffer=v; updatePinDots(); if(pinBuffer.length===4)setTimeout(checkPin,100); });
-  h.addEventListener('keydown',e=>{ if(e.key==='Backspace'&&pinBuffer.length>0){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); } });
-  setTimeout(()=>h.focus(),100);
+function lock() { pinBuffer=''; updatePinDots(); document.getElementById('pin-screen').style.display='flex'; }
+document.getElementById('pin-hidden').addEventListener('input',e=>{
+  const v=e.target.value.replace(/\D/g,'').slice(0,4);
+  pinBuffer=v; updatePinDots();
+  if(v.length===4) setTimeout(checkPin,100);
+});
+document.getElementById('pin-hidden').addEventListener('keydown',e=>{
+  if(e.key==='Backspace'&&pinBuffer.length>0){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); }
 });
 
-// ── globals ──
-let orders = [];
-let channels = [];
-let products = [];
-let filterStatus = "semua";
-let sortMode = "oldest";
-let searchQuery = "";
-let selectedId = null;
-let resiTargetId = null;
-let hideDikirim = true;
-let activeChannel = null; // null = semua
-
-const STATUS_LABEL = { baru:"baru", tunggu_ongkir:"tunggu ongkir", diproses:"sedang diproses", dikirim:"sudah dikirim" };
-const STATUS_CLASS  = { baru:"s-baru", tunggu_ongkir:"s-tunggu_ongkir", diproses:"s-diproses", dikirim:"s-dikirim" };
-const WA_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.845L0 24l6.335-1.508A11.93 11.93 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.782 9.782 0 01-4.988-1.362l-.358-.213-3.761.896.952-3.656-.233-.376A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/></svg>`;
-
-// ── init ──
 async function init() {
-  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const now = new Date();
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   await loadChannels();
   await loadProducts();
   await loadOrders();
-}
-
-// ── date utils — FIX timezone ──
-// est_date disimpan sebagai "YYYY-MM-DD" string (local date, bukan UTC)
-// Selalu parse dengan T00:00:00 supaya JS treat sebagai local time
-function parseLocalDate(dateStr) {
-  if(!dateStr) return null;
-  return new Date(dateStr + 'T00:00:00');
-}
-function toLocalMidnight(d) {
-  // Normalize any Date to local midnight (strips time component)
-  const r = new Date(d);
-  r.setHours(0,0,0,0);
-  return r;
-}
-function addWorkdays(fromDate, days) {
-  // Always start from midnight of the created date (local)
-  const d = toLocalMidnight(new Date(fromDate));
-  let added = 0;
-  while(added < days) {
-    d.setDate(d.getDate() + 1);
-    if(d.getDay() !== 0) added++; // skip Minggu
-  }
-  return d;
-}
-function fmtTanggal(d) {
-  if(!d) return '—';
-  return new Date(d).toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"});
-}
-function fmtEntry(d) {
-  const dt = new Date(d);
-  return {
-    date: dt.toLocaleDateString("id-ID",{day:"numeric",month:"short"}),
-    time: dt.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})
-  };
-}
-// Hitung tanggal estimasi — KONSISTEN: selalu pakai parseLocalDate / toLocalMidnight
-function getEstDate(o) {
-  if(o.est_date) return parseLocalDate(o.est_date); // already midnight via 'T00:00:00'
-  return addWorkdays(o.created, o.maxDays || 7);    // normalized to midnight in addWorkdays
-}
-function getEstDisplay(o) {
-  return fmtTanggal(getEstDate(o));
-}
-function getEstDaysLeft(o) {
-  const est = getEstDate(o);
-  if(!est) return 0;
-  const today = toLocalMidnight(new Date()); // local midnight today
-  // Both est and today are midnight → integer diff
-  return Math.round((est - today) / 86400000);
 }
 
 // ── channels ──
@@ -712,25 +735,17 @@ async function loadChannels() {
   channels = data || [];
   renderChannelTabs();
 }
-
 function renderChannelTabs() {
   const el = document.getElementById('channel-tabs');
-  // Urutan: event channels dulu, lalu toko, lalu "semua" paling kanan
-  const eventChs = channels.filter(c => c.type === 'event');
-  const tokoChs  = channels.filter(c => c.type === 'toko');
-  const ordered  = [...eventChs, ...tokoChs, { id: null, name: 'semua' }];
+  const eventChs = channels.filter(c=>c.type==='event');
+  const tokoChs  = channels.filter(c=>c.type==='toko');
+  const ordered  = [...eventChs,...tokoChs,{id:null,name:'semua'}];
   el.innerHTML = ordered.map(ch => {
     const isActive = activeChannel === ch.id;
-    return `<div class="channel-tab ${isActive?'active':''}" onclick="setChannel(${ch.id?`'${ch.id}'`:null})">${ch.name || 'semua'}</div>`;
+    return `<div class="channel-tab ${isActive?'active':''}" onclick="setChannel(${ch.id?`'${ch.id}'`:null})">${ch.name||'semua'}</div>`;
   }).join('');
 }
-
-function setChannel(chId) {
-  activeChannel = chId;
-  renderChannelTabs();
-  renderTable();
-  updateStats();
-}
+function setChannel(chId) { activeChannel=chId; renderChannelTabs(); renderTable(); updateStats(); }
 
 // ── products ──
 async function loadProducts() {
@@ -742,79 +757,62 @@ async function loadProducts() {
 async function loadOrders() {
   document.getElementById("table-body").innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#aaa;font-family:'IBM Plex Mono',monospace;letter-spacing:1px">memuat data...</td></tr>`;
   try {
-    const [{ data: od, error: oe }, { data: id_, error: ie }] = await Promise.all([
-      _sb.from("po_orders").select("*").order("created_at", {ascending:true}),
+    const [{data:od,error:oe},{data:id_,error:ie}] = await Promise.all([
+      _sb.from("po_orders").select("*").order("created_at",{ascending:true}),
       _sb.from("po_items").select("*")
     ]);
-    if(oe) { showError(JSON.stringify(oe)); return; }
-    if(ie) { showError("error items: " + JSON.stringify(ie)); return; }
-
+    if(oe){ showError(JSON.stringify(oe)); return; }
+    if(ie){ showError("error items: "+JSON.stringify(ie)); return; }
     orders = od.map(o => {
-      const items = id_.filter(i => i.order_id === o.id);
-      const maxDays = items.length
-        ? Math.max(...items.map(i => i.estimated_days || o.estimated_days || 7))
-        : (o.estimated_days || 7);
+      const items = id_.filter(i=>i.order_id===o.id);
+      const maxDays = items.length ? Math.max(...items.map(i=>i.estimated_days||o.estimated_days||7)) : (o.estimated_days||7);
       return {
-        id:            o.id,
-        po_number:     o.po_number,
-        name:          o.customer_name,
-        phone:         o.customer_phone,
-        address:       o.address || "",
-        notes:         o.notes || "",
-        resi:          o.resi || "",
-        kurir:         o.kurir || "",
-        status:        o.status || "baru",
-        channel:       o.channel || "brightspot-city-2026",
-        created:       new Date(o.created_at),
-        est_date:      o.est_date || null,    // "YYYY-MM-DD" string or null
-        maxDays:       maxDays,
-        est_edited_at: o.est_edited_at || null,
-        items:         items.map(i => ({name:i.article,color:i.color,size:i.size||null,qty:i.qty}))
+        id:o.id, po_number:o.po_number, name:o.customer_name, phone:o.customer_phone,
+        address:o.address||"", notes:o.notes||"", resi:o.resi||"", kurir:o.kurir||"",
+        status:o.status||"baru", channel:o.channel||"brightspot-city-2026",
+        created:new Date(o.created_at), est_date:o.est_date||null, maxDays,
+        est_edited_at:o.est_edited_at||null,
+        items:items.map(i=>({name:i.article,color:i.color,size:i.size||null,qty:i.qty}))
       };
     });
-    updateStats();
-    renderTable();
-  } catch(e) { showError(e.message); }
+    updateStats(); renderTable();
+  } catch(e){ showError(e.message); }
 }
-
 function showError(msg) {
-  document.getElementById("table-body").innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#c0392b;font-family:'IBM Plex Mono',monospace">${msg}</td></tr>`;
+  document.getElementById("table-body").innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;font-size:11px;color:#c0392b;font-family:'IBM Plex Mono',monospace">${msg}</td></tr>`;
 }
 
-// ── channel name helper ──
-function getChannelName(chId) {
-  const ch = channels.find(c => c.id === chId);
-  return ch ? ch.name : chId;
-}
-function getChannelPretext(chId) {
-  const ch = channels.find(c => c.id === chId);
-  return ch ? ch.wa_pretext : 'Jedda';
-}
+function getChannelName(chId) { const ch=channels.find(c=>c.id===chId); return ch?ch.name:chId; }
+function getChannelPretext(chId) { const ch=channels.find(c=>c.id===chId); return ch?ch.wa_pretext:'Jedda'; }
 
 // ── filter + sort ──
 function filteredOrders() {
+  const estFrom = document.getElementById('filter-est-from')?.value;
+  const estTo   = document.getElementById('filter-est-to')?.value;
   let list = orders.filter(o => {
-    if(activeChannel && o.channel !== activeChannel) return false;
-    if(hideDikirim && o.status === 'dikirim') return false;
-    if(filterStatus !== "semua" && o.status !== filterStatus) return false;
+    if(activeChannel && o.channel!==activeChannel) return false;
+    if(hideDikirim && o.status==='dikirim') return false;
+    if(filterStatus!=="semua" && o.status!==filterStatus) return false;
     if(searchQuery) {
       const q = searchQuery.toLowerCase();
-      if(!o.name.toLowerCase().includes(q) && !o.po_number.toLowerCase().includes(q)) return false;
+      const searchIn = [o.name,o.po_number,o.phone,o.address,o.notes].join(' ').toLowerCase();
+      if(!searchIn.includes(q)) return false;
+    }
+    if(estFrom || estTo) {
+      const est = getEstDate(o);
+      if(estFrom && est < parseLocalDate(estFrom)) return false;
+      if(estTo   && est > parseLocalDate(estTo))   return false;
     }
     return true;
   });
-  if(sortMode === "est") {
-    list = list.slice().sort((a,b) => getEstDate(a) - getEstDate(b));
-  } else if(sortMode === "newest") {
-    list = list.slice().sort((a,b) => b.created - a.created);
-  } else {
-    list = list.slice().sort((a,b) => a.created - b.created);
-  }
+  if(sortMode==="est") list=list.slice().sort((a,b)=>getEstDate(a)-getEstDate(b));
+  else if(sortMode==="newest") list=list.slice().sort((a,b)=>b.created-a.created);
+  else list=list.slice().sort((a,b)=>a.created-b.created);
   return list;
 }
 
 function updateStats() {
-  const base = activeChannel ? orders.filter(o => o.channel === activeChannel) : orders;
+  const base = activeChannel ? orders.filter(o=>o.channel===activeChannel) : orders;
   document.getElementById("stat-total").textContent         = base.length;
   document.getElementById("stat-baru").textContent          = base.filter(o=>o.status==="baru").length;
   document.getElementById("stat-tunggu_ongkir").textContent = base.filter(o=>o.status==="tunggu_ongkir").length;
@@ -843,16 +841,16 @@ function renderTable() {
     else if(o.status==="diproses") aksiHtml=`<button class="tbl-action tbl-action-resi" onclick="event.stopPropagation();openResiModal(${o.id})">input resi</button>`;
     else if(o.status==="dikirim") aksiHtml=o.resi?`<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#aaa">${o.kurir?o.kurir+' · ':''}${o.resi}</span>`:`<span style="font-size:9px;color:#ccc;font-family:'IBM Plex Mono',monospace">—</span>`;
     return `<tr onclick="openPanel(${o.id})" class="${selectedId===o.id?'selected':''}">
-      <td class="td-mono">${o.po_number}</td>
-      <td style="white-space:nowrap"><div class="entry-date">${entry.date}</div><div class="entry-time">${entry.time}</div></td>
-      <td>${(overdue||urgent)?'<span class="urgent-dot"></span>':''}${o.name}</td>
-      <td>${itemList}</td>
-      <td style="white-space:nowrap">
+      <td class="col-po td-mono">${o.po_number}</td>
+      <td class="col-masuk td-col-masuk${colVisible.masuk?'':' col-hidden'}" style="white-space:nowrap"><div class="entry-date">${entry.date}</div><div class="entry-time">${entry.time}</div></td>
+      <td class="col-nama">${(overdue||urgent)?'<span class="urgent-dot"></span>':''}${o.name}</td>
+      <td class="col-item td-col-item${colVisible.item?'':' col-hidden'}">${itemList}</td>
+      <td class="col-est td-col-est${colVisible.est?'':' col-hidden'}" style="white-space:nowrap">
         <div class="est-date ${overdue||urgent?'est-urgent':''}">${estDisp}${o.est_edited_at?'<span class="est-edited-dot"></span>':''}</div>
         <div class="est-days ${overdue||urgent?'est-urgent':''}">${overdue?'terlambat kirim':daysLeft===0?'hari ini':daysLeft>0?daysLeft+' hari lagi':''}</div>
       </td>
-      <td><span class="status-badge ${STATUS_CLASS[o.status]||'s-baru'}">${STATUS_LABEL[o.status]||o.status}</span></td>
-      <td>${aksiHtml}</td>
+      <td class="col-status"><span class="status-badge ${STATUS_CLASS[o.status]||'s-baru'}">${STATUS_LABEL[o.status]||o.status}</span></td>
+      <td class="col-aksi">${aksiHtml}</td>
     </tr>`;
   }).join("");
 }
@@ -866,16 +864,14 @@ function setFilter(f,el) {
 function setSort(mode,el) {
   sortMode=mode;
   ["sort-oldest","sort-newest","sort-est"].forEach(id=>document.getElementById(id)?.classList.remove("active"));
-  el.classList.add("active");
-  renderTable();
+  el.classList.add("active"); renderTable();
 }
 function setSearch(v){ searchQuery=v; renderTable(); }
-function toggleHideDikirim(el) { hideDikirim=!hideDikirim; el.classList.toggle('active',hideDikirim); el.textContent=hideDikirim?'sembunyikan dikirim':'tampilkan dikirim'; renderTable(); }
+function toggleHideDikirim(el){ hideDikirim=!hideDikirim; el.classList.toggle('active',hideDikirim); el.textContent=hideDikirim?'sembunyikan dikirim':'tampilkan dikirim'; renderTable(); }
 
 // ── panel ──
 function openPanel(id) {
-  selectedId=id;
-  const o=orders.find(x=>x.id===id); if(!o) return;
+  selectedId=id; const o=orders.find(x=>x.id===id); if(!o) return;
   document.getElementById('dp-po').textContent=o.po_number;
   document.getElementById('dp-name').textContent=o.name;
   renderPanel(o);
@@ -896,15 +892,12 @@ function renderPanel(o) {
   const overdue=daysLeft<0&&o.status!=='dikirim';
   const estStr=fmtTanggal(estDate);
   const chName=getChannelName(o.channel);
-
   document.getElementById('dp-po').textContent=o.po_number;
   document.getElementById('dp-name').textContent=o.name;
-
   const itemsHtml=o.items.map(i=>{
     const meta=[i.color,i.size].filter(Boolean).join(' · ');
     return `<div class="dp-item-row"><div class="dp-item-name">${i.name}</div><div class="dp-item-meta">${meta} · ${i.qty} pcs</div></div>`;
   }).join('');
-
   const notesHtml=o.notes?`<div class="dp-row"><span class="dp-key">notes</span><span class="dp-val">${o.notes}</span></div>`:'';
   document.getElementById('dp-body').innerHTML=`
     <div class="dp-section">
@@ -957,29 +950,129 @@ function renderPanel(o) {
     <button class="btn" onclick="handleWaFollowUp(${o.id})">follow-up WA ongkir</button>`;
   else if(o.status==="diproses") footerHtml+=`<button class="btn btn-dark" onclick="openResiModal(${o.id})">input resi & tandai dikirim</button>`;
   else footerHtml+=`<div class="btn-done-label">sudah dikirim${o.kurir?' · '+o.kurir:''}${o.resi?' · '+o.resi:''}</div>`;
+
+  footerHtml += `<button class="btn" onclick="printLabel(${o.id})" style="margin-top:4px;border-color:#d8d4ce;color:#888">cetak label pengiriman →</button>`;
   document.getElementById('dp-footer').innerHTML=footerHtml;
 }
 
 // ── WA ──
 function buildWaKonfirmasi(o, ongkir) {
   const lines=o.items.map(i=>{ const m=[i.color,i.size].filter(Boolean).join(' · '); return `• ${i.name} — ${m} (${i.qty} pcs)`; }).join("\n");
-  // FIX: pakai parseLocalDate supaya est_date konsisten
-  const estDate = getEstDate(o);
-  const estStr = fmtTanggal(estDate);
-  const pretext = getChannelPretext(o.channel);
+  const estDate=getEstDate(o); const estStr=fmtTanggal(estDate);
+  const pretext=getChannelPretext(o.channel);
   return `Halo, *Kak ${o.name.split(" ")[0]}*\nIni konfirmasi pesanan kamu di ${pretext}:\n\n${lines}\n\n*Alamat pengiriman:* ${o.address||'-'}\n\nEstimasi pengiriman: *${estStr}*\nBiaya Ongkir: *Rp ${ongkir}*\n\nMohon untuk transfer ongkir ke:\n*BRI*\n*013701333555563*\n*a.n Priska Talitha Fatimah*\n\n• _Kirim bukti transfer sebelum tanggal kirim agar pesanan tidak tertunda._\n• _Jika ada perubahan data, mohon infokan sebelum pengiriman._\n• _Barang pre-order tidak dapat ditukar maupun direfund._\n\nPantau status pesanan kamu di: po.jeddawear.com/track?id=${o.po_number}\n\nSilakan konfirmasi jika sudah sesuai. Terima kasih!`;
 }
 function buildWaFollowUp(o) {
   return `Halo, *Kak ${o.name.split(" ")[0]}* — ongkos kirim pesanan ${o.po_number} belum kami terima. Mohon segera ditransfer agar pesanan bisa diproses. Terima kasih!`;
 }
 
+// ── print label ──
+function printLabel(orderId) {
+  const o = orders.find(x=>x.id===orderId); if(!o) return;
+  const estStr = fmtTanggal(getEstDate(o));
+  const itemLines = o.items.map(i=>{
+    const m = [i.color,i.size].filter(Boolean).join(' · ');
+    return `<div style="margin-bottom:3px">${i.name} <span style="color:#888">${m} · ${i.qty}pc</span></div>`;
+  }).join('');
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Label — ${o.po_number}</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  @page { size: 10cm 15cm; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 10cm; height: 15cm;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9pt;
+    color: #111;
+    padding: 0;
+    background: #fff;
+  }
+  .label-wrap {
+    width: 10cm; height: 15cm;
+    padding: 0.7cm 0.8cm;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .brand {
+    font-size: 7pt;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 0.5cm;
+  }
+  .section-label {
+    font-size: 6.5pt;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #888;
+    font-weight: 300;
+    margin-bottom: 4px;
+  }
+  .divider { border: none; border-top: 1px solid #ddd; margin: 0.35cm 0; }
+  .sender-block { margin-bottom: 0; }
+  .sender-name { font-size: 10pt; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; }
+  .sender-phone { font-size: 8.5pt; font-weight: 300; color: #666; margin-top: 2px; }
+  .recipient-block { flex: 1; }
+  .recipient-name { font-size: 13pt; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; margin-bottom: 5px; line-height: 1.2; }
+  .recipient-phone { font-size: 10pt; font-weight: 300; color: #111; margin-bottom: 6px; }
+  .recipient-address { font-size: 8.5pt; font-weight: 300; font-family: 'IBM Plex Sans', sans-serif; line-height: 1.5; color: #333; }
+  .items-block { margin-top: auto; }
+  .items-list { font-size: 7.5pt; font-family: 'IBM Plex Sans', sans-serif; font-weight: 300; color: #333; line-height: 1.6; }
+  .po-footer {
+    margin-top: 0.3cm;
+    padding-top: 0.3cm;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .po-num { font-size: 7pt; letter-spacing: 2px; color: #999; font-weight: 300; }
+  .est-str { font-size: 7pt; color: #999; font-weight: 300; }
+</style>
+</head>
+<body>
+<div class="label-wrap">
+  <div class="brand">jedda</div>
+  <div class="sender-block">
+    <div class="section-label">dari</div>
+    <div class="sender-name">Jedda</div>
+    <div class="sender-phone">+62 811-2285-2555</div>
+  </div>
+  <hr class="divider">
+  <div class="recipient-block">
+    <div class="section-label">kepada</div>
+    <div class="recipient-name">${o.name}</div>
+    <div class="recipient-phone">${o.phone}</div>
+    <div class="recipient-address">${o.address}</div>
+  </div>
+  <div class="items-block">
+    <hr class="divider">
+    <div class="section-label">isi paket</div>
+    <div class="items-list">${itemLines}</div>
+    <div class="po-footer">
+      <span class="po-num">${o.po_number}</span>
+      <span class="est-str">est. kirim ${estStr}</span>
+    </div>
+  </div>
+</div>
+<script>window.onload=()=>window.print();<\/script>
+</body>
+</html>`;
+  const w = window.open('','_blank','width=400,height=620');
+  w.document.write(html);
+  w.document.close();
+}
+
 // ── actions ──
 async function updateOrderStatus(id,s){ await _sb.from("po_orders").update({status:s,updated_at:new Date().toISOString()}).eq("id",id); }
 async function saveResiToDb(id,resi,kurir){ await _sb.from("po_orders").update({resi,kurir,status:"dikirim",updated_at:new Date().toISOString()}).eq("id",id); }
-
 function moveStatus(id,s){ const o=orders.find(x=>x.id===id); if(!o) return; o.status=s; updateOrderStatus(id,s); updateStats(); renderTable(); if(selectedId===id) renderPanel(o); }
 
-// resi modal
 function openResiModal(id){
   resiTargetId=id; const o=orders.find(x=>x.id===id); if(!o) return;
   document.getElementById('modal-name').textContent=o.name+' · '+o.po_number;
@@ -1002,7 +1095,6 @@ async function submitResi(){
   if(selectedId===o.id) renderPanel(o);
 }
 
-// ongkir modal
 let ongkirTargetId=null;
 function handleWaKonfirmasi(id){ const o=orders.find(x=>x.id===id); if(!o) return; ongkirTargetId=id; document.getElementById('ongkir-modal-name').textContent=o.name+' · '+o.po_number; document.getElementById('ongkir-modal-address').textContent=o.address||'—'; document.getElementById('ongkir-input').value=''; document.getElementById('ongkir-modal').classList.add('open'); setTimeout(()=>document.getElementById('ongkir-input').focus(),100); }
 function closeOngkirModal(){ document.getElementById('ongkir-modal').classList.remove('open'); ongkirTargetId=null; }
@@ -1018,21 +1110,10 @@ function submitOngkirModal(){
   moveStatus(o.id,'tunggu_ongkir');
   closeOngkirModal();
 }
-
 function handleWaFollowUp(id){ const o=orders.find(x=>x.id===id); if(!o) return; const waNum=o.phone.replace(/^0/,"62").replace(/\D/g,""); window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(buildWaFollowUp(o))}`,'_blank'); }
+function toggleOngkirConfirm(){ const el=document.getElementById('ongkir-confirm-toggle'); if(el) el.classList.toggle('checked'); }
+function handleOngkirDiterima(id){ const el=document.getElementById('ongkir-confirm-toggle'); if(!el?.classList.contains('checked')){ alert('centang konfirmasi dulu.'); return; } moveStatus(id,'diproses'); }
 
-function toggleOngkirConfirm() {
-  const el = document.getElementById('ongkir-confirm-toggle');
-  if(el) el.classList.toggle('checked');
-}
-
-function handleOngkirDiterima(id){
-  const el = document.getElementById('ongkir-confirm-toggle');
-  if(!el?.classList.contains('checked')){ alert('centang konfirmasi dulu.'); return; }
-  moveStatus(id,'diproses');
-}
-
-// export CSV
 function exportCSV(){
   const cols=["no. PO","channel","tanggal masuk","nama","hp","alamat","item","estimasi","status","resi","kurir"];
   const rows=orders.map(o=>{
@@ -1040,8 +1121,7 @@ function exportCSV(){
     const est=getEstDisplay(o);
     const tgl=new Date(o.created).toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"});
     const chName=getChannelName(o.channel);
-    return [o.po_number,chName,tgl,o.name,o.phone,o.address,items,est,o.status,o.resi,o.kurir]
-      .map(v=>'"'+(v||'').replace(/"/g,'""')+'"').join(',');
+    return [o.po_number,chName,tgl,o.name,o.phone,o.address,items,est,o.status,o.resi,o.kurir].map(v=>'"'+(v||'').replace(/"/g,'""')+'"').join(',');
   });
   const csv=[cols.join(','),...rows].join('\n');
   const a=document.createElement('a');
@@ -1050,13 +1130,10 @@ function exportCSV(){
   a.click();
 }
 
-// ── edit item modal — FIX: reset state properly ──
-let editItemTargetOrderId=null;
-let editItemConfirmed=false;
-
+// ── edit item modal ──
+let editItemTargetOrderId=null, editItemConfirmed=false;
 function openEditItemModal(orderId){
-  editItemTargetOrderId=orderId;
-  editItemConfirmed=false;
+  editItemTargetOrderId=orderId; editItemConfirmed=false;
   const o=orders.find(x=>x.id===orderId); if(!o) return;
   document.getElementById('edit-item-order-label').textContent=o.po_number+' · '+o.name;
   document.getElementById('edit-item-confirm-box').classList.remove('show');
@@ -1084,7 +1161,6 @@ function openEditItemModal(orderId){
   }).join('');
   document.getElementById('edit-item-modal').classList.add('open');
 }
-
 function onEditItemArticleChange(idx){
   const art=document.getElementById(`ei-art-${idx}`).value;
   const p=products.find(x=>x.name===art);
@@ -1095,7 +1171,6 @@ function onEditItemArticleChange(idx){
   else if(sizeSel){ sizeSel.value=''; }
   resetEditConfirm();
 }
-
 function onEditDateChange(){
   const v=document.getElementById('edit-item-date').value;
   const prev=document.getElementById('edit-item-date-preview');
@@ -1105,7 +1180,6 @@ function onEditDateChange(){
   prev.textContent='→ est. '+fmtTanggal(parseLocalDate(v));
   resetEditConfirm();
 }
-
 function onEditDaysChange(){
   const o=orders.find(x=>x.id===editItemTargetOrderId); if(!o) return;
   const days=parseInt(document.getElementById('edit-item-days').value);
@@ -1117,23 +1191,18 @@ function onEditDaysChange(){
   prev.textContent='→ est. '+fmtTanggal(addWorkdays(currentEst,days));
   resetEditConfirm();
 }
-
 function resetEditConfirm(){
   editItemConfirmed=false;
   document.getElementById('edit-item-confirm-box').classList.remove('show');
   const btn=document.getElementById('edit-item-submit-btn');
   if(btn){ btn.disabled=false; btn.textContent='simpan perubahan'; }
 }
-
 function closeEditItemModal(){
   document.getElementById('edit-item-modal').classList.remove('open');
-  // FIX: reset state saat modal ditutup
-  editItemTargetOrderId=null;
-  editItemConfirmed=false;
+  editItemTargetOrderId=null; editItemConfirmed=false;
   const btn=document.getElementById('edit-item-submit-btn');
   if(btn){ btn.disabled=false; btn.textContent='simpan perubahan'; }
 }
-
 async function submitEditItem(){
   const o=orders.find(x=>x.id===editItemTargetOrderId); if(!o) return;
   const newItems=o.items.map((item,idx)=>{
@@ -1149,11 +1218,9 @@ async function submitEditItem(){
   const itemsChanged=o.items.some((item,idx)=>{ const n=newItems[idx]; return n.name!==item.name||n.color!==item.color||n.size!==item.size||n.qty!==item.qty; });
   const estChanged=!!(newDays||newDateVal);
   if(!itemsChanged&&!estChanged){ closeEditItemModal(); return; }
-
   let newEstDate=null;
   if(newDateVal) newEstDate=parseLocalDate(newDateVal);
   else if(newDays&&newDays>0) newEstDate=addWorkdays(getEstDate(o),newDays);
-
   if(!editItemConfirmed){
     const lines=[];
     o.items.forEach((item,idx)=>{ const n=newItems[idx]; const changed=n.name!==item.name||n.color!==item.color||n.size!==item.size||n.qty!==item.qty; if(!changed) return; if(n.name!==item.name||n.color!==item.color||n.size!==item.size) lines.push(`item ${idx+1}: ${item.name} · ${[item.color,item.size].filter(Boolean).join(' · ')} → ${n.name} · ${[n.color,n.size].filter(Boolean).join(' · ')}`); if(n.qty!==item.qty) lines.push(`item ${idx+1} qty: ${item.qty} → ${n.qty} pcs`); });
@@ -1166,7 +1233,6 @@ async function submitEditItem(){
     btn.textContent='konfirmasi & simpan →';
     return;
   }
-
   const btn=document.getElementById('edit-item-submit-btn');
   btn.disabled=true; btn.textContent='menyimpan...';
   try {
@@ -1175,20 +1241,12 @@ async function submitEditItem(){
       if(dbItems){ for(let idx=0;idx<newItems.length;idx++){ const item=o.items[idx],n=newItems[idx]; const changed=n.name!==item.name||n.color!==item.color||n.size!==item.size||n.qty!==item.qty; if(changed&&dbItems[idx]) await _sb.from('po_items').update({article:n.name,color:n.color,size:n.size||null,qty:n.qty}).eq('id',dbItems[idx].id); } }
     }
     if(newEstDate){
-      await _sb.from('po_orders').update({
-        estimated_days:newDays?Math.abs(newDays):null,
-        est_date:newEstDate.toISOString().slice(0,10),
-        est_edited_at:new Date().toISOString(),
-        updated_at:new Date().toISOString()
-      }).eq('id',o.id);
+      await _sb.from('po_orders').update({estimated_days:newDays?Math.abs(newDays):null,est_date:newEstDate.toISOString().slice(0,10),est_edited_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',o.id);
     }
     newItems.forEach((n,idx)=>{ o.items[idx]=n; });
     if(newEstDate){ o.maxDays=newDays?Math.abs(newDays):o.maxDays; o.est_date=newEstDate.toISOString().slice(0,10); o.est_edited_at=new Date().toISOString(); }
-    // FIX: reset state sebelum close
-    editItemTargetOrderId=null;
-    editItemConfirmed=false;
-    closeEditItemModal();
-    renderTable();
+    editItemTargetOrderId=null; editItemConfirmed=false;
+    closeEditItemModal(); renderTable();
     if(selectedId===o.id) renderPanel(o);
   } catch(e){
     alert('gagal menyimpan: '+e.message);
@@ -1221,17 +1279,12 @@ async function saveInlineEdit(orderId,field,dbCol){
 function cancelInlineEdit(orderId,field){ const o=orders.find(x=>x.id===orderId); if(o) renderPanel(o); }
 
 // ── settings ──
-let batches=[];
-let allItems=[];
-let editingBatchId=null;
-let activeEstChannel=null; // channel yang dipilih di settings estimasi
-
 function showPage(page){
   document.getElementById('po-page').classList.toggle('hidden',page!=='po');
   document.getElementById('settings-page').classList.toggle('active',page==='settings');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('nav-'+page).classList.add('active');
-  if(page==='settings'){ loadChannelList(); loadProductList(); renderEstChannelTabs(); loadBatches(); }
+  if(page==='settings'){ loadChannelList(); loadProductList(); renderEstChannelTabs(); }
 }
 
 // channel settings
@@ -1264,16 +1317,12 @@ async function saveChannel(){
     const id=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     await _sb.from('po_channels').insert({id,name,pin,wa_pretext:pretext,type:'event',is_active:true});
   }
-  await loadChannels();
-  closeChannelModal();
-  loadChannelList();
-  renderEstChannelTabs();
+  await loadChannels(); closeChannelModal(); loadChannelList(); renderEstChannelTabs();
 }
 async function toggleChannelActive(chId){
   const ch=channels.find(c=>c.id===chId); if(!ch) return;
   await _sb.from('po_channels').update({is_active:!ch.is_active}).eq('id',chId);
-  await loadChannels();
-  loadChannelList();
+  await loadChannels(); loadChannelList();
 }
 function loadChannelList(){
   const el=document.getElementById('channel-list'); if(!el) return;
@@ -1292,62 +1341,32 @@ function loadChannelList(){
 }
 
 // product settings
-let editingProductId=null;
-let pmColors=[];
-let pmSizes=[];
-let pmSizeMode='preset'; // 'S/M · L/XL' | 'S · M · L' | 'one size' | 'custom'
-
+let editingProductId=null, pmColors=[], pmSizes=[], pmSizeMode='preset';
 function openProductModal(prodId){
-  editingProductId=prodId;
-  pmColors=[]; pmSizes=[];
+  editingProductId=prodId; pmColors=[]; pmSizes=[];
   document.getElementById('product-modal-title').textContent=prodId?'edit artikel':'tambah artikel';
-  // reset preset buttons
   document.querySelectorAll('.pm-size-option').forEach(el=>el.classList.remove('selected'));
   document.getElementById('pm-size-custom-wrap').style.display='none';
   pmSizeMode='preset';
-
   if(prodId){
     const p=products.find(x=>x.id===prodId);
     if(p){
       document.getElementById('pm-name').value=p.name;
       pmColors=[...p.colors];
-      // Detect which preset matches existing sizes, auto-select it
-      if(!p.sizes || p.sizes===null){
-        pmSizes=null; pmSizeMode='onesize';
-        document.querySelector('[data-preset="onesize"]')?.classList.add('selected');
-      } else if(JSON.stringify(p.sizes)===JSON.stringify(['S/M','L/XL'])){
-        pmSizes=[...p.sizes]; pmSizeMode='S/M-LXL';
-        document.querySelector('[data-preset="S/M-LXL"]')?.classList.add('selected');
-      } else if(JSON.stringify(p.sizes)===JSON.stringify(['S','M','L'])){
-        pmSizes=[...p.sizes]; pmSizeMode='SML';
-        document.querySelector('[data-preset="SML"]')?.classList.add('selected');
-      } else {
-        // custom
-        pmSizes=[...p.sizes]; pmSizeMode='custom';
-        document.querySelector('[data-preset="custom"]')?.classList.add('selected');
-        document.getElementById('pm-size-custom-wrap').style.display='block';
-      }
+      if(!p.sizes||p.sizes===null){ pmSizes=null; pmSizeMode='onesize'; document.querySelector('[data-preset="onesize"]')?.classList.add('selected'); }
+      else if(JSON.stringify(p.sizes)===JSON.stringify(['S/M','L/XL'])){ pmSizes=[...p.sizes]; pmSizeMode='S/M-LXL'; document.querySelector('[data-preset="S/M-LXL"]')?.classList.add('selected'); }
+      else if(JSON.stringify(p.sizes)===JSON.stringify(['S','M','L'])){ pmSizes=[...p.sizes]; pmSizeMode='SML'; document.querySelector('[data-preset="SML"]')?.classList.add('selected'); }
+      else { pmSizes=[...p.sizes]; pmSizeMode='custom'; document.querySelector('[data-preset="custom"]')?.classList.add('selected'); document.getElementById('pm-size-custom-wrap').style.display='block'; }
     }
-  } else {
-    document.getElementById('pm-name').value='';
-  }
+  } else { document.getElementById('pm-name').value=''; }
   renderPmColors(); renderPmSizes();
   document.getElementById('product-modal').classList.add('open');
   setTimeout(()=>document.getElementById('pm-name').focus(),100);
 }
 function closeProductModal(){ document.getElementById('product-modal').classList.remove('open'); editingProductId=null; }
-
-function renderPmColors(){
-  document.getElementById('pm-colors-chips').innerHTML=pmColors.map((c,i)=>
-    `<div class="pm-chip">${c}<button class="pm-chip-del" onclick="removePmColor(${i})">×</button></div>`).join('');
-}
-function addPmColor(){
-  const inp=document.getElementById('pm-color-input'); const v=inp.value.trim(); if(!v) return;
-  if(!pmColors.includes(v)){ pmColors.push(v); renderPmColors(); }
-  inp.value=''; inp.focus();
-}
+function renderPmColors(){ document.getElementById('pm-colors-chips').innerHTML=pmColors.map((c,i)=>`<div class="pm-chip">${c}<button class="pm-chip-del" onclick="removePmColor(${i})">×</button></div>`).join(''); }
+function addPmColor(){ const inp=document.getElementById('pm-color-input'); const v=inp.value.trim(); if(!v) return; if(!pmColors.includes(v)){ pmColors.push(v); renderPmColors(); } inp.value=''; inp.focus(); }
 function removePmColor(i){ pmColors.splice(i,1); renderPmColors(); }
-
 function selectSizePreset(mode){
   document.querySelectorAll('.pm-size-option').forEach(el=>el.classList.toggle('selected',el.dataset.preset===mode));
   pmSizeMode=mode;
@@ -1356,57 +1375,30 @@ function selectSizePreset(mode){
   else if(mode==='SML'){ pmSizes=['S','M','L']; document.getElementById('pm-size-custom-wrap').style.display='none'; }
   else { if(!pmSizes||pmSizes===null) pmSizes=[]; document.getElementById('pm-size-custom-wrap').style.display='block'; renderPmSizes(); }
 }
-function renderPmSizes(){
-  const el=document.getElementById('pm-sizes-chips'); if(!el) return;
-  el.innerHTML=(pmSizes||[]).map((s,i)=>
-    `<div class="pm-chip">${s}<button class="pm-chip-del" onclick="removePmSize(${i})">×</button></div>`).join('');
-}
+function renderPmSizes(){ const el=document.getElementById('pm-sizes-chips'); if(!el) return; el.innerHTML=(pmSizes||[]).map((s,i)=>`<div class="pm-chip">${s}<button class="pm-chip-del" onclick="removePmSize(${i})">×</button></div>`).join(''); }
 function addPmSize(){ const inp=document.getElementById('pm-size-input'); const v=inp.value.trim(); if(!v) return; if(!pmSizes) pmSizes=[]; if(!pmSizes.includes(v)){ pmSizes.push(v); renderPmSizes(); } inp.value=''; inp.focus(); }
 function removePmSize(i){ if(pmSizes) pmSizes.splice(i,1); renderPmSizes(); }
-
 async function saveProduct(){
   const name=document.getElementById('pm-name').value.trim();
   if(!name){ alert('nama artikel wajib diisi.'); return; }
   if(!pmColors.length){ alert('tambah minimal 1 warna.'); return; }
   const sizes=pmSizeMode==='onesize'?null:(pmSizes&&pmSizes.length?pmSizes:null);
-  if(sizes===null && pmSizeMode!=='onesize'){ alert('pilih atau isi ukuran dulu.'); return; }
-  const payload={name, colors:pmColors, sizes, is_active:true};
+  if(sizes===null&&pmSizeMode!=='onesize'){ alert('pilih atau isi ukuran dulu.'); return; }
+  const payload={name,colors:pmColors,sizes,is_active:true};
   try {
-    if(editingProductId){
-      const {error}=await _sb.from('po_products').update(payload).eq('id',editingProductId);
-      if(error) throw error;
-    } else {
-      const maxSort=products.length?Math.max(...products.map(p=>p.sort_order||0)):0;
-      const {error}=await _sb.from('po_products').insert({...payload,sort_order:maxSort+1});
-      if(error) throw error;
-    }
-    await loadProducts();
-    closeProductModal();
-    loadProductList();
-  } catch(e){
-    alert('gagal simpan: '+(e.message||JSON.stringify(e)));
-  }
+    if(editingProductId){ const{error}=await _sb.from('po_products').update(payload).eq('id',editingProductId); if(error) throw error; }
+    else { const maxSort=products.length?Math.max(...products.map(p=>p.sort_order||0)):0; const{error}=await _sb.from('po_products').insert({...payload,sort_order:maxSort+1}); if(error) throw error; }
+    await loadProducts(); closeProductModal(); loadProductList();
+  } catch(e){ alert('gagal simpan: '+(e.message||JSON.stringify(e))); }
 }
-async function toggleProductActive(id){
-  const p=products.find(x=>x.id===id); if(!p) return;
-  await _sb.from('po_products').update({is_active:!p.is_active}).eq('id',id);
-  await loadProducts(); loadProductList();
-}
-async function deleteProduct(id){
-  if(!confirm('hapus artikel ini? data order yang sudah masuk tidak terpengaruh.')) return;
-  await _sb.from('po_products').delete().eq('id',id);
-  await loadProducts(); loadProductList();
-}
-
+async function toggleProductActive(id){ const p=products.find(x=>x.id===id); if(!p) return; await _sb.from('po_products').update({is_active:!p.is_active}).eq('id',id); await loadProducts(); loadProductList(); }
+async function deleteProduct(id){ if(!confirm('hapus artikel ini? data order yang sudah masuk tidak terpengaruh.')) return; await _sb.from('po_products').delete().eq('id',id); await loadProducts(); loadProductList(); }
 function loadProductList(){
   const el=document.getElementById('product-list'); if(!el) return;
   el.innerHTML=products.map(p=>{
-    const sizesLabel = !p.sizes ? 'One Size' : p.sizes.join(' / ');
+    const sizesLabel=!p.sizes?'One Size':p.sizes.join(' / ');
     return `<div class="product-card">
-      <div>
-        <div class="prod-name">${p.name}</div>
-        <div class="prod-meta">${p.colors.join(' · ')} · ${sizesLabel}</div>
-      </div>
+      <div><div class="prod-name">${p.name}</div><div class="prod-meta">${p.colors.join(' · ')} · ${sizesLabel}</div></div>
       <div class="prod-actions">
         <button class="prod-btn" onclick="openProductModal(${p.id})">edit</button>
         <button class="prod-btn" onclick="toggleProductActive(${p.id})">${p.is_active?'nonaktifkan':'aktifkan'}</button>
@@ -1416,7 +1408,7 @@ function loadProductList(){
   }).join('');
 }
 
-// estimasi per channel
+// estimasi sementara — per artikel, warna di dalam
 function renderEstChannelTabs(){
   const el=document.getElementById('est-channel-tabs'); if(!el) return;
   if(!activeEstChannel&&channels.length) activeEstChannel=channels[0].id;
@@ -1434,134 +1426,67 @@ async function loadArticleDays(){
   const map=allChannelDays[activeEstChannel]||{};
   const activeProds=products.filter(p=>p.is_active);
   const html=activeProds.map(p=>{
-    return p.colors.map(color=>{
+    const colorRows=p.colors.map(color=>{
       const key=p.name+' · '+color;
       const artKey=key.replace(/[^a-zA-Z0-9]/g,'_');
       const days=map[key]||0;
       const active=days>0;
-      return `<div class="artday-card ${active?'artday-active':''}" id="artday-card-${artKey}">
-        <div class="artday-name" style="font-size:12px">${p.name} <span style="color:#aaa;font-weight:300">· ${color}</span></div>
-        <div class="artday-view" id="artday-view-${artKey}">
-          <div class="artday-val" id="artday-val-${artKey}">${active?days+' hari':'—'}</div>
-          <button class="artday-edit-btn" onclick="artdayStartEdit('${artKey}')">edit</button>
-        </div>
-        <div class="artday-edit" id="artday-edit-${artKey}" style="display:none">
-          <div class="artday-input-row">
+      return `<div class="artday-color-row">
+        <span class="artday-color-name">${color}</span>
+        <span class="artday-color-val ${active?'active':''}" id="artday-val-${artKey}">${active?days+' hari':'—'}</span>
+        <div class="artday-color-actions">
+          <span class="artday-edit-btn" id="artday-editbtn-${artKey}" onclick="artdayStartEdit('${artKey}')">edit</span>
+          <div class="artday-inline-edit" id="artday-edit-${artKey}">
             <input type="number" min="0" max="99" class="artday-input" placeholder="0" value="${days||''}" id="artdays-${artKey}">
-            <span class="artday-unit">hari</span>
-          </div>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <button class="artday-save-btn" onclick="artdaySave('${artKey}','${key}')">simpan</button>
-            <button class="artday-cancel-btn" onclick="artdayCancel('${artKey}')">batal</button>
+            <span class="artday-unit">hr</span>
+            <button class="artday-save-btn" onclick="artdaySave('${artKey}','${key}')">ok</button>
+            <button class="artday-cancel-btn" onclick="artdayCancel('${artKey}')">✕</button>
           </div>
         </div>
       </div>`;
     }).join('');
+    const anyActive=p.colors.some(c=>map[p.name+' · '+c]>0);
+    return `<div class="artday-article-card ${anyActive?'has-active':''}">
+      <div class="artday-article-header">
+        <span class="artday-article-name">${p.name}</span>
+        <span class="artday-article-summary">${p.colors.filter(c=>map[p.name+' · '+c]>0).length}/${p.colors.length} warna aktif</span>
+      </div>
+      <div class="artday-color-rows">${colorRows}</div>
+    </div>`;
   }).join('');
   document.getElementById('article-days-list').innerHTML=html||'<div style="font-size:10px;color:#bbb;font-family:IBM Plex Mono,monospace;padding:16px 0">belum ada produk aktif.</div>';
 }
 
-function artdayStartEdit(k){ document.getElementById('artday-view-'+k).style.display='none'; document.getElementById('artday-edit-'+k).style.display='block'; document.getElementById('artdays-'+k).focus(); }
-function artdayCancel(k){ document.getElementById('artday-view-'+k).style.display='flex'; document.getElementById('artday-edit-'+k).style.display='none'; }
+function artdayStartEdit(k){
+  document.getElementById('artday-editbtn-'+k).style.display='none';
+  document.getElementById('artday-edit-'+k).classList.add('show');
+  document.getElementById('artdays-'+k).focus();
+}
+function artdayCancel(k){
+  document.getElementById('artday-editbtn-'+k).style.display='';
+  document.getElementById('artday-edit-'+k).classList.remove('show');
+}
 async function artdaySave(artKey,colorKey){
   const val=parseInt(document.getElementById('artdays-'+artKey).value)||0;
   const {data}=await _sb.from('po_settings').select('channel_est_days').eq('id',1).single();
   const allDays=data?.channel_est_days||{};
   if(!allDays[activeEstChannel]) allDays[activeEstChannel]={};
-  if(val>0) allDays[activeEstChannel][colorKey]=val;
-  else delete allDays[activeEstChannel][colorKey];
+  allDays[activeEstChannel][colorKey]=val;
   await _sb.from('po_settings').update({channel_est_days:allDays,updated_at:new Date().toISOString()}).eq('id',1);
   const active=val>0;
-  document.getElementById('artday-card-'+artKey).classList.toggle('artday-active',active);
   document.getElementById('artday-val-'+artKey).textContent=active?val+' hari':'—';
+  document.getElementById('artday-val-'+artKey).classList.toggle('active',active);
   artdayCancel(artKey);
+  // update card border
+  const card=document.getElementById('artday-editbtn-'+artKey)?.closest('.artday-article-card');
+  if(card){
+    const rows=card.querySelectorAll('.artday-color-val');
+    const anyActive=[...rows].some(r=>r.classList.contains('active'));
+    card.classList.toggle('has-active',anyActive);
+    const summary=card.querySelector('.artday-article-summary');
+    if(summary){ const total=rows.length; const act=[...rows].filter(r=>r.classList.contains('active')).length; summary.textContent=`${act}/${total} warna aktif`; }
+  }
 }
-
-// batch
-let activeBatchChannel = null;
-
-function renderBatchChannelTabs() {
-  const el = document.getElementById('batch-channel-tabs'); if(!el) return;
-  el.innerHTML = channels.map(ch =>
-    `<div onclick="switchBatchChannel('${ch.id}')" style="padding:6px 14px;font-size:8px;letter-spacing:2px;text-transform:uppercase;font-weight:${activeBatchChannel===ch.id?'500':'300'};color:${activeBatchChannel===ch.id?'#111':'#888'};cursor:pointer;background:${activeBatchChannel===ch.id?'#111':'transparent'};color:${activeBatchChannel===ch.id?'#f0ede8':'#888'};border-right:1px solid #ccc;transition:all 0.15s">${ch.name}</div>`
-  ).join('');
-}
-async function switchBatchChannel(chId) {
-  activeBatchChannel = chId;
-  renderBatchChannelTabs();
-  await loadBatches();
-}
-
-async function loadBatches(){
-  if(!activeBatchChannel && channels.length) activeBatchChannel = channels[0].id;
-  renderBatchChannelTabs();
-  const selCh = activeBatchChannel || '';
-  const {data:batchData}=await _sb.from('po_batches').select('*').eq('channel',selCh).order('starts_at');
-  const {data:items}=await _sb.from('po_items').select('article,color,size,qty,order_id');
-  const {data:activeOrders}=await _sb.from('po_orders').select('id,status').in('status',['baru','tunggu_ongkir','diproses']).eq('channel',selCh);
-  const activeIds=new Set((activeOrders||[]).map(o=>o.id));
-  allItems=items||[];
-  const usedMap={};
-  allItems.filter(i=>activeIds.has(i.order_id)).forEach(i=>{ const sz=i.size||'OS'; const k=i.article+' · '+i.color+' · '+sz; usedMap[k]=(usedMap[k]||0)+i.qty; });
-  batches=(batchData||[]).map(b=>{ const slots=b.slots||{}; const used={}; Object.keys(slots).forEach(k=>{ used[k]=usedMap[k]||0; }); return {...b,used}; });
-  renderBatchList();
-}
-
-function renderBatchList(){
-  const el=document.getElementById('batch-list-rows');
-  if(!batches.length){ el.innerHTML='<div style="padding:24px 0;font-size:11px;color:#bbb;font-family:IBM Plex Mono,monospace">belum ada batch.</div>'; return; }
-  el.innerHTML=batches.map((b,idx)=>{
-    const start=new Date(b.starts_at+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-    const end=new Date(b.ends_at+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-    const slots=b.slots||{},used=b.used||{};
-    const totalSlots=Object.values(slots).reduce((s,v)=>s+v,0);
-    const totalUsed=Object.values(used).reduce((s,v)=>s+v,0);
-    return '<div class="batch-card"><div class="batch-card-header"><div><div class="batch-card-num">batch '+(idx+1)+'</div><div class="batch-card-dates">'+start+' → '+end+'</div><div style="font-size:10px;color:#aaa;font-family:IBM Plex Mono,monospace;margin-top:4px">'+(b.articles||[]).join(', ')+'</div></div><div class="batch-card-actions"><span style="font-size:10px;font-family:IBM Plex Mono,monospace;color:#888;margin-right:12px">'+totalUsed+'/'+totalSlots+' slot</span><button class="batch-edit-btn" onclick="openBatchModal('+b.id+')">edit</button><button class="batch-del-btn" onclick="deleteBatch('+b.id+')">hapus</button></div></div><div class="batch-slots">'+Object.keys(slots).map(key=>{ const total=slots[key]||0,u=used[key]||0,pct=total>0?Math.min(100,Math.round(u/total*100)):0,fc=pct>=100?'full':pct>=75?'almost':''; return '<div class="slot-row"><span class="slot-color">'+key+'</span><div class="slot-bar-wrap"><div class="slot-bar-fill '+fc+'" style="width:'+pct+'%"></div></div><span class="slot-numbers"><strong>'+u+'</strong>/'+total+' pcs</span></div>'; }).join('')+'</div></div>';
-  }).join('');
-}
-
-function openBatchModal(batchId){
-  editingBatchId=batchId;
-  const batch=batchId?batches.find(b=>b.id===batchId):null;
-  // populate channel select
-  const chSel=document.getElementById('bm-channel');
-  chSel.innerHTML=channels.map(ch=>`<option value="${ch.id}">${ch.name}</option>`).join('');
-  if(batch) chSel.value=batch.channel||(channels[0]?.id||'');
-  else if(activeBatchChannel) chSel.value=activeBatchChannel;
-  document.getElementById('bm-start').value=batch?batch.starts_at.slice(0,10):'';
-  document.getElementById('bm-end').value=batch?batch.ends_at.slice(0,10):'';
-  const slots=batch?(batch.slots||{}):{};
-  const checkedArts=batch?(batch.articles||[]):[];
-  const html=products.filter(p=>p.is_active).map(p=>{
-    const artKey=p.name.replace(/[^a-zA-Z0-9]/g,'_');
-    const isChecked=checkedArts.includes(p.name);
-    const sizes=p.sizes||['OS'];
-    const colorRows=p.colors.map(color=>sizes.map(sz=>{ const key=p.name+' · '+color+' · '+sz; const val=slots[key]||''; const inputId='bm-slot-'+key.replace(/[^a-zA-Z0-9]/g,'_'); const sizeLabel=p.sizes?sz:'one size'; return '<div class="bm-slot-row"><span class="bm-slot-color" style="color:#888;padding-left:24px">'+color+' · '+sizeLabel+'</span><input class="bm-slot-input" type="number" min="0" placeholder="0" value="'+val+'" id="'+inputId+'"><span class="bm-slot-unit">pcs</span></div>'; }).join('')).join('');
-    return '<div style="margin-bottom:16px"><div style="border-bottom:1px solid #d8d4ce;padding:10px 0;display:flex;align-items:center;gap:10px"><input type="checkbox" class="dp-checkbox" id="bm-art-'+artKey+'"'+(isChecked?' checked':'')+' onchange="toggleBmArt(this,\''+artKey+'\')"><label style="font-size:13px;font-weight:300;font-family:IBM Plex Sans,sans-serif;color:#111;cursor:pointer" for="bm-art-'+artKey+'">'+p.name+'</label></div><div id="bm-colors-'+artKey+'" style="display:'+(isChecked?'block':'none')+'">'+colorRows+'</div></div>';
-  }).join('');
-  document.getElementById('bm-article-slots').innerHTML=html;
-  document.getElementById('batch-modal').classList.add('open');
-}
-function toggleBmArt(cb,artKey){ document.getElementById('bm-colors-'+artKey).style.display=cb.checked?'block':'none'; }
-function closeBatchModal(){ document.getElementById('batch-modal').classList.remove('open'); editingBatchId=null; }
-async function saveBatch(){
-  const start=document.getElementById('bm-start').value;
-  const end=document.getElementById('bm-end').value;
-  const channel=document.getElementById('bm-channel').value;
-  if(!start||!end){ alert('isi tanggal dulu.'); return; }
-  const checkedArts=[];const slots={};
-  products.filter(p=>p.is_active).forEach(p=>{
-    const artKey=p.name.replace(/[^a-zA-Z0-9]/g,'_');
-    const cb=document.getElementById('bm-art-'+artKey);
-    if(cb&&cb.checked){ checkedArts.push(p.name); const sizes=p.sizes||['OS']; p.colors.forEach(color=>{ sizes.forEach(sz=>{ const key=p.name+' · '+color+' · '+sz; const inputId='bm-slot-'+key.replace(/[^a-zA-Z0-9]/g,'_'); const el=document.getElementById(inputId); slots[key]=parseInt(el?el.value:0)||0; }); }); }
-  });
-  if(!checkedArts.length){ alert('pilih minimal 1 artikel.'); return; }
-  const payload={starts_at:start,ends_at:end,slots,articles:checkedArts,channel};
-  if(editingBatchId) await _sb.from('po_batches').update(payload).eq('id',editingBatchId);
-  else await _sb.from('po_batches').insert(payload);
-  closeBatchModal(); await loadBatches();
-}
-async function deleteBatch(id){ if(!confirm('hapus batch ini?')) return; await _sb.from('po_batches').delete().eq('id',id); await loadBatches(); }
 </script>
 </body>
 </html>
