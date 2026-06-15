@@ -994,7 +994,7 @@ function doprint(orderId, style) {
 
   const itemRowsD = o.items.map(i => {
     const meta = [i.color, i.size].filter(Boolean).join(' · ');
-    return `<div class="d-item"><span class="d-item-name">${i.name}<span class="d-item-meta">${meta?' — '+meta:''}</span></span><span class="d-item-qty">×${i.qty}</span></div>`;
+    return `<div class="d-item"><div class="d-item-left"><span class="d-item-name">${i.name}</span>${meta?`<span class="d-item-sep">—</span><span class="d-item-meta">${meta}</span>`:''}</div><span class="d-item-qty">×${i.qty}</span></div>`;
   }).join('');
 
   const itemRowsE = o.items.map(i => {
@@ -1013,31 +1013,36 @@ function doprint(orderId, style) {
   const htmlD = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${o.po_number}</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-${baseStyle}
-.d-head { display:flex; align-items:center; justify-content:space-between; padding:4.5mm 6mm; border-bottom:2px solid #111; flex-shrink:0; }
-.d-head-left { display:flex; align-items:center; gap:10px; }
-.d-logo { font-size:11pt; font-weight:500; font-family:'IBM Plex Mono',monospace; letter-spacing:3px; text-transform:uppercase; color:#111; }
-.d-vline { width:1px; height:16px; background:#999; }
-.d-sub { font-size:7pt; letter-spacing:3px; text-transform:uppercase; color:#777; font-weight:400; }
-.d-po { font-size:8pt; letter-spacing:2px; color:#888; font-weight:400; }
-.d-body { display:grid; grid-template-columns:1fr 2fr; flex:1; border-bottom:1px solid #ccc; min-height:0; }
-.d-from { padding:5mm 6mm; border-right:1px solid #ccc; }
-.d-to { padding:5mm 6mm; }
-.d-col-lbl { font-size:6.5pt; letter-spacing:3px; text-transform:uppercase; color:#888; font-weight:400; margin-bottom:3.5mm; }
-.d-from-name { font-size:11pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; margin-bottom:2mm; }
-.d-from-ph { font-size:8.5pt; color:#555; font-weight:400; }
-.d-to-name { font-size:19pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; margin-bottom:2mm; line-height:1.1; }
-.d-to-ph { font-size:9.5pt; color:#333; margin-bottom:2mm; font-weight:400; }
-.d-to-addr { font-size:8pt; color:#666; line-height:1.6; font-family:'IBM Plex Sans',sans-serif; font-weight:400; }
-.d-items { padding:3.5mm 6mm; flex-shrink:0; }
-.d-items-lbl { font-size:6.5pt; letter-spacing:3px; text-transform:uppercase; color:#888; font-weight:400; margin-bottom:3mm; }
-.d-item { display:flex; justify-content:space-between; align-items:baseline; padding:2mm 0; border-bottom:1px solid #e8e8e8; }
-.d-item:last-child { border:none; }
-.d-item-name { font-size:9pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; }
-.d-item-meta { font-size:7.5pt; color:#999; font-family:'IBM Plex Mono',monospace; font-weight:400; margin-left:4px; }
-.d-item-qty { font-size:9pt; font-weight:500; color:#111; white-space:nowrap; padding-left:8mm; }
-.d-footer { padding:2.5mm 6mm; border-top:1px solid #e0e0e0; flex-shrink:0; }
-.d-footer-txt { font-size:6.5pt; letter-spacing:3px; text-transform:uppercase; color:#bbb; font-weight:400; }
+@page { size: 15cm 10cm landscape; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { width: 15cm; height: 10cm; background: #fff; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: 'IBM Plex Mono', monospace; }
+.lbl { width: 15cm; height: 10cm; display: flex; flex-direction: column; border: 2px solid #111; overflow: hidden; }
+.d-head { display:flex; align-items:center; justify-content:space-between; padding:3.5mm 5mm; border-bottom:2px solid #111; flex-shrink:0; }
+.d-head-left { display:flex; align-items:center; gap:8px; }
+.d-logo { font-size:10pt; font-weight:500; letter-spacing:4px; text-transform:uppercase; color:#111; }
+.d-vline { width:1.5px; height:14px; background:#555; margin:0 2px; }
+.d-sub { font-size:6.5pt; letter-spacing:3px; text-transform:uppercase; color:#555; font-weight:400; }
+.d-po { font-size:7.5pt; letter-spacing:2px; color:#555; font-weight:400; }
+.d-body { display:grid; grid-template-columns:1fr 2fr; flex:1; min-height:0; border-bottom:2px solid #111; }
+.d-from { padding:4mm 5mm; border-right:2px solid #111; }
+.d-to { padding:4mm 5mm; }
+.d-col-lbl { font-size:6pt; letter-spacing:3px; text-transform:uppercase; color:#555; font-weight:400; margin-bottom:3mm; }
+.d-from-name { font-size:10pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; margin-bottom:1.5mm; }
+.d-from-ph { font-size:8pt; color:#333; font-weight:400; font-family:'IBM Plex Mono',monospace; }
+.d-to-name { font-size:17pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; margin-bottom:2mm; line-height:1.1; }
+.d-to-ph { font-size:9pt; color:#222; margin-bottom:1.5mm; font-weight:400; font-family:'IBM Plex Mono',monospace; }
+.d-to-addr { font-size:7.5pt; color:#333; line-height:1.6; font-family:'IBM Plex Sans',sans-serif; font-weight:400; }
+.d-items { padding:3mm 5mm; flex-shrink:0; }
+.d-items-lbl { font-size:6pt; letter-spacing:3px; text-transform:uppercase; color:#555; font-weight:400; margin-bottom:2.5mm; }
+.d-item { display:flex; justify-content:space-between; align-items:baseline; padding:1.5mm 0; border-bottom:1px solid #bbb; }
+.d-item:last-child { border-bottom:none; }
+.d-item-left { display:flex; align-items:baseline; gap:0; flex:1; min-width:0; }
+.d-item-name { font-size:8.5pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; white-space:nowrap; }
+.d-item-sep { font-size:7pt; color:#888; font-family:'IBM Plex Mono',monospace; font-weight:400; margin:0 3px; }
+.d-item-meta { font-size:7pt; color:#777; font-family:'IBM Plex Mono',monospace; font-weight:400; white-space:nowrap; }
+.d-item-qty { font-size:8.5pt; font-weight:500; color:#111; white-space:nowrap; padding-left:6mm; flex-shrink:0; }
+.d-footer { padding:2mm 5mm; border-top:1.5px solid #bbb; flex-shrink:0; }
+.d-footer-txt { font-size:6pt; letter-spacing:3px; text-transform:uppercase; color:#888; font-weight:400; }
 </style></head><body>
 <div class="lbl">
   <div class="d-head">
