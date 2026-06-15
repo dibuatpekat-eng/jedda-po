@@ -14,7 +14,7 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 180px; background: #e0ddd8; display: flex; flex-direction: column; padding: 32px 0 28px; z-index: 10; }
 .sidebar-brand { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; font-weight: 400; color: #111; padding: 0 24px; margin-bottom: 48px; }
 .sidebar-nav { display: flex; flex-direction: column; gap: 0; padding: 0; flex: 1; }
-.nav-item { padding: 11px 24px; font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 300; color: #888; cursor: pointer; transition: color 0.15s; display: flex; align-items: center; gap: 10px; border-left: 1px solid transparent; }
+.nav-item { padding: 11px 24px; font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 400; color: #777; cursor: pointer; transition: color 0.15s; display: flex; align-items: center; gap: 10px; border-left: 1px solid transparent; }
 .nav-item:hover { color: #111; }
 .nav-item.active { color: #111; border-left-color: #111; font-weight: 400; }
 .sidebar-footer { padding: 0 24px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 400; }
@@ -25,10 +25,10 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .topbar-title { font-size: 22px; font-weight: 300; color: #111; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -0.3px; }
 .topbar-title em { font-style: italic; color: #888; }
 .topbar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.topbar-date { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 300; }
+.topbar-date { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; font-weight: 400; }
 
 .channel-tabs { display: flex; gap: 0; border-bottom: 1px solid #d8d4ce; padding: 0 36px; background: #ebe8e2; }
-.channel-tab { padding: 10px 18px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: #999; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.channel-tab { padding: 10px 18px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; color: #777; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
 .channel-tab:hover { color: #444; }
 .channel-tab.active { color: #111; border-bottom-color: #111; font-weight: 500; letter-spacing: 1.5px; }
 
@@ -40,7 +40,7 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .stat-card.active .stat-label, .stat-card.active .stat-num, .stat-card.active .stat-sub { color: #fff; }
 .stat-label { font-size: 8px; letter-spacing: 3px; text-transform: uppercase; color: #aaa; font-weight: 400; margin-bottom: 10px; }
 .stat-num { font-size: 36px; font-weight: 300; color: #111; line-height: 1; font-family: 'IBM Plex Sans', sans-serif; letter-spacing: -1px; }
-.stat-sub { font-size: 10px; color: #888; margin-top: 8px; font-weight: 300; letter-spacing: 0.3px; }
+.stat-sub { font-size: 10px; color: #666; margin-top: 8px; font-weight: 400; letter-spacing: 0.3px; }
 
 .toolbar { padding: 14px 36px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #d8d4ce; flex-wrap: wrap; }
 .sort-btn { padding: 6px 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; border: 1px solid #ccc; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', monospace; color: #999; transition: all 0.15s; }
@@ -55,7 +55,7 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .filter-bar { padding: 10px 36px; border-bottom: 1px solid #d8d4ce; background: #ebe8e2; display: none; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 .filter-bar.open { display: flex; }
 .filter-group { display: flex; flex-direction: column; gap: 5px; }
-.filter-label { font-size: 7px; letter-spacing: 2.5px; text-transform: uppercase; color: #aaa; font-weight: 300; }
+.filter-label { font-size: 7px; letter-spacing: 2.5px; text-transform: uppercase; color: #888; font-weight: 400; }
 .filter-input { padding: 5px 10px; font-size: 11px; font-weight: 300; border: 1px solid #ccc; background: #f0ede8; font-family: 'IBM Plex Mono', monospace; color: #111; outline: none; transition: border-color 0.15s; }
 .filter-input:focus { border-color: #111; }
 .filter-clear-btn { padding: 5px 12px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', monospace; color: #888; transition: all 0.15s; align-self: flex-end; }
@@ -73,18 +73,18 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .col-option-check { width: 12px; height: 12px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .col-option-check.on { background: #111; border-color: #111; }
 .col-option-check.on::after { content: ''; display: block; width: 6px; height: 6px; background: #f0ede8; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
-.col-option-label { font-size: 10px; font-weight: 300; color: #555; font-family: 'IBM Plex Sans', sans-serif; }
+.col-option-label { font-size: 10px; font-weight: 400; color: #444; font-family: 'IBM Plex Sans', sans-serif; }
 
 .table-wrap { overflow-x: auto; }
 table { width: 100%; table-layout: fixed; border-collapse: collapse; }
 thead tr { border-bottom: 1px solid #d8d4ce; }
-thead th { padding: 11px 12px; font-size: 8px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 400; color: #888; text-align: left; white-space: nowrap; user-select: none; overflow: hidden; }
+thead th { padding: 11px 12px; font-size: 8px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 500; color: #666; text-align: left; white-space: nowrap; user-select: none; overflow: hidden; }
 thead th:first-child, td:first-child { padding-left: 32px; }
 tbody tr { border-bottom: 1px solid #dedad4; cursor: pointer; transition: background 0.1s; }
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: #ebe8e2; }
 tbody tr.selected { background: #e8e4de; }
-td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertical-align: middle; font-family: 'IBM Plex Sans', sans-serif; overflow: hidden; }
+td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertical-align: middle; font-family: 'IBM Plex Sans', sans-serif; overflow: hidden; }
 .col-po    { width: 110px; }
 .col-masuk { width: 120px; }
 .col-nama  { width: 150px; }
@@ -94,28 +94,28 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
 .col-aksi  { width: 140px; }
 .col-hidden { display: none; }
 
-.td-mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #666; letter-spacing: 0.5px; }
+.td-mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #444; letter-spacing: 0.5px; font-weight: 400; }
 .urgent-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #c0392b; margin-right: 7px; vertical-align: middle; }
-.status-badge { display: inline-block; padding: 3px 9px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; border: 1px solid; }
+.status-badge { display: inline-block; padding: 3px 9px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 400; font-family: 'IBM Plex Mono', monospace; white-space: nowrap; border: 1px solid; }
 .s-baru { border-color: #d8d4ce; color: #999; }
 .s-tunggu_ongkir { border-color: #c8a04a; color: #7a5a1a; background: #f5edda; }
 .s-diproses { border-color: #9aab9a; color: #3a5a3a; background: #edf2ed; }
 .s-dikirim { border-color: #111; color: #111; }
 
-.est-date { font-size: 12px; font-weight: 300; font-family: 'IBM Plex Mono', monospace; color: #666; }
+.est-date { font-size: 12px; font-weight: 400; font-family: 'IBM Plex Mono', monospace; color: #555; }
 .est-days { font-size: 9px; color: #aaa; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
 .est-urgent { color: #c0392b !important; }
 .est-edited-dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:#7b8fc7; margin-left:6px; vertical-align:middle; position:relative; top:-1px; }
 
 .entry-date { font-size: 12px; font-family: 'IBM Plex Mono', monospace; color: #666; }
-.entry-time { font-size: 9px; color: #bbb; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+.entry-time { font-size: 9px; color: #888; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; font-weight: 400; }
 .item-line { font-size: 12px; font-family: 'IBM Plex Sans', sans-serif; color: #333; line-height: 1.7; }
 .item-meta { color: #aaa; font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
 
 .empty-state { padding: 60px 36px; text-align: center; }
 .empty-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #bbb; font-weight: 300; }
 
-.tbl-action { padding: 5px 12px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 300; border: 1px solid; cursor: pointer; font-family: 'IBM Plex Mono', monospace; background: transparent; transition: all 0.15s; white-space: nowrap; }
+.tbl-action { padding: 5px 12px; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 400; border: 1px solid; cursor: pointer; font-family: 'IBM Plex Mono', monospace; background: transparent; transition: all 0.15s; white-space: nowrap; }
 .tbl-action-wa { border-color: #25D366; color: #1a9e4a; }
 .tbl-action-wa:hover { background: #25D366; color: #fff; }
 .tbl-action-resi { border-color: #ccc; color: #888; }
@@ -182,7 +182,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
 .artday-article-card.has-active { border-color: #9aab9a; }
 .artday-article-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e4df; }
 .artday-article-name { font-size: 13px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: #111; }
-.artday-article-summary { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #aaa; font-weight: 300; }
+.artday-article-summary { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #777; font-weight: 400; }
 .artday-color-rows { padding: 0 16px; }
 .artday-color-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid #eae6e0; gap: 12px; }
 .artday-color-row:last-child { border-bottom: none; }
@@ -351,15 +351,10 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 300; color: #111; vertica
   </div>
 
   <div class="toolbar">
-    <div style="display:flex;align-items:center;gap:6px">
-      <span style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#aaa;font-weight:300">urutkan</span>
-      <select id="sort-select" onchange="setSortFromSelect(this.value)" style="border:1px solid #ccc;background:transparent;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#111;padding:5px 10px;letter-spacing:1px;outline:none;cursor:pointer">
-        <option value="oldest">terlama masuk</option>
-        <option value="newest">terbaru masuk</option>
-        <option value="est">est. kirim</option>
-      </select>
-    </div>
-    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 6px"></div>
+    <button class="sort-btn active" id="sort-oldest" onclick="setSort('oldest',this)">↑ terlama</button>
+    <button class="sort-btn" id="sort-newest" onclick="setSort('newest',this)">↓ terbaru</button>
+    <button class="sort-btn" id="sort-est" onclick="setSort('est',this)">est. kirim</button>
+    <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
     <button class="sort-btn active" id="toggle-dikirim" onclick="toggleHideDikirim(this)">sembunyikan dikirim</button>
     <button class="sort-btn" id="btn-filter" onclick="toggleFilterBar(this)">filter ⌄</button>
     <button class="sort-btn" id="btn-export" onclick="exportCSV()">↓ CSV</button>
@@ -990,6 +985,14 @@ function printLabel(orderId) {
 function doprint(orderId) {
   const o = orders.find(x=>x.id===orderId); if(!o) return;
 
+  const fmtPhone = (p) => {
+    if(!p) return '';
+    const d = p.replace(/\D/g,'');
+    if(d.startsWith('62')) return '+'+d;
+    if(d.startsWith('0')) return '+62'+d.slice(1);
+    return '+62'+d;
+  };
+
   const itemRows = o.items.map(i => {
     const meta = [i.color, i.size].filter(Boolean).join(' · ');
     return `<div class="item-row"><div class="item-left"><span class="item-name">${i.name}</span>${meta ? `<span class="item-sep"> — </span><span class="item-meta">${meta}</span>` : ''}</div><span class="item-qty">×${i.qty}</span></div>`;
@@ -998,30 +1001,31 @@ function doprint(orderId) {
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${o.po_number}</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-@page { size: 15cm 10cm landscape; margin: 5mm 5mm 5mm 5mm; }
+@page { size: 15cm 10cm landscape; margin: 5mm; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: 'IBM Plex Mono', monospace; padding-top: 2mm; }
-.lbl { height: calc(10cm - 12mm); display: flex; flex-direction: column; }
-.header { display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:2px solid #111; margin-bottom:12px; }
-.logo { height:11px; width:auto; display:block; }
-.po-num { font-size:7pt; letter-spacing:2px; color:#111; }
-.body { display:grid; grid-template-columns:3fr 1.2fr; gap:18px; flex:1; margin-bottom:12px; }
-.to-lbl { font-size:6pt; letter-spacing:2px; color:#111; margin-bottom:4px; }
-.to-name { font-size:11pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; margin-bottom:3px; }
-.to-phone { font-size:9pt; color:#111; margin-bottom:2px; }
-.to-addr { font-size:8pt; color:#333; font-family:'IBM Plex Sans',sans-serif; line-height:1.5; }
+body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: 'IBM Plex Mono', monospace; }
+.lbl { height: calc(10cm - 10mm); display: flex; flex-direction: column; }
+.header { display:flex; justify-content:space-between; align-items:center; padding:4mm 0 6px; border-bottom:2px solid #111; margin-bottom:10px; }
+.logo { height:10px; width:auto; display:block; }
+.po-num { font-size:6.5pt; letter-spacing:2px; color:#111; }
+.body { display:grid; grid-template-columns:2.2fr 1fr; gap:14px; flex:1; margin-bottom:10px; }
+.to-lbl { font-size:5.5pt; letter-spacing:2px; color:#111; margin-bottom:4px; }
+.to-name { font-size:9.5pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; margin-bottom:3px; }
+.to-phone { font-size:8pt; color:#111; margin-bottom:2px; }
+.to-addr { font-size:7pt; color:#333; font-family:'IBM Plex Sans',sans-serif; line-height:1.5; max-width:8cm; }
 .from { text-align:right; }
-.from-lbl { font-size:6pt; letter-spacing:2px; color:#111; margin-bottom:4px; }
-.from-name { font-size:9.5pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; margin-bottom:3px; }
-.from-phone { font-size:8pt; color:#333; }
-.contents { border-top:2px solid #111; padding-top:9px; }
-.contents-lbl { font-size:6pt; letter-spacing:2px; color:#111; margin-bottom:6px; }
+.from-lbl { font-size:5.5pt; letter-spacing:2px; color:#111; margin-bottom:4px; }
+.from-name { font-size:8.5pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; margin-bottom:3px; }
+.from-phone { font-size:7pt; color:#333; }
+.contents { border-top:2px solid #111; padding-top:8px; }
+.contents-lbl { font-size:5.5pt; letter-spacing:2px; color:#111; margin-bottom:5px; }
 .item-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:3px; }
 .item-left { display:flex; align-items:baseline; flex:1; min-width:0; }
-.item-name { font-size:8.5pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; white-space:nowrap; }
-.item-sep { font-size:7pt; color:#333; margin:0 3px; }
-.item-meta { font-size:7pt; color:#333; font-family:'IBM Plex Mono',monospace; white-space:nowrap; }
-.item-qty { font-size:8.5pt; font-weight:500; color:#111; padding-left:10px; flex-shrink:0; }
+.item-name { font-size:8pt; font-weight:500; font-family:'IBM Plex Sans',sans-serif; color:#111; white-space:nowrap; }
+.item-sep { font-size:6.5pt; color:#333; margin:0 3px; }
+.item-meta { font-size:6.5pt; color:#333; font-family:'IBM Plex Mono',monospace; white-space:nowrap; }
+.item-qty { font-size:8pt; font-weight:500; color:#111; padding-left:8px; flex-shrink:0; }
+.footer-note { margin-top:8px; font-size:5pt; color:#111; font-style:italic; letter-spacing:0.5px; }
 </style></head><body>
 <div class="lbl">
   <div class="header">
@@ -1032,7 +1036,7 @@ body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-c
     <div class="to">
       <div class="to-lbl">TO</div>
       <div class="to-name">${o.name}</div>
-      <div class="to-phone">${o.phone}</div>
+      <div class="to-phone">${fmtPhone(o.phone)}</div>
       <div class="to-addr">${o.address}</div>
     </div>
     <div class="from">
@@ -1044,6 +1048,7 @@ body { background: #fff; color: #111; -webkit-print-color-adjust: exact; print-c
   <div class="contents">
     <div class="contents-lbl">CONTENTS</div>
     ${itemRows}
+    <div class="footer-note">all pre-order items are final sale — no exchange or refund</div>
   </div>
 </div>
 <script>window.onload=()=>setTimeout(()=>window.print(),600);<\/script>
