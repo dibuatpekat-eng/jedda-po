@@ -18,6 +18,8 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .nav-item:hover { color: #111; }
 .nav-item.active { color: #111; border-left-color: #111; font-weight: 400; }
 .sidebar-footer { padding: 0 24px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #888; font-weight: 400; }
+.logout-btn { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: #bbb; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-weight: 400; padding: 0; text-align: left; transition: color 0.15s; }
+.logout-btn:hover { color: #111; }
 
 .main { margin-left: 180px; min-height: 100vh; }
 .topbar { padding: 28px 36px 0; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #d8d4ce; padding-bottom: 20px; }
@@ -46,6 +48,13 @@ html, body { height: 100%; background: #f0ede8; font-family: 'IBM Plex Mono', mo
 .sort-btn { padding: 6px 14px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; border: 1px solid #ccc; background: transparent; cursor: pointer; font-family: 'IBM Plex Mono', monospace; color: #999; transition: all 0.15s; }
 .sort-btn:hover { border-color: #888; color: #555; }
 .sort-btn.active { border-color: #111; color: #111; background: transparent; }
+.dikirim-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0; user-select: none; }
+.dikirim-toggle-track { width: 28px; height: 16px; border: 1px solid #ccc; position: relative; transition: border-color 0.15s, background 0.15s; flex-shrink: 0; }
+.dikirim-toggle-thumb { width: 10px; height: 10px; background: #ccc; position: absolute; top: 2px; left: 2px; transition: left 0.15s, background 0.15s; }
+.dikirim-toggle.on .dikirim-toggle-track { border-color: #111; background: #111; }
+.dikirim-toggle.on .dikirim-toggle-thumb { background: #f0ede8; left: 14px; }
+.dikirim-toggle-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; color: #999; font-family: 'IBM Plex Mono', monospace; }
+.dikirim-toggle.on .dikirim-toggle-label { color: #111; }
 .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .search-input { padding: 6px 14px; font-size: 11px; font-weight: 300; border: 1px solid #ccc; background: transparent; font-family: 'IBM Plex Mono', monospace; color: #111; outline: none; width: 240px; transition: border-color 0.15s; }
 .search-input:focus { border-color: #111; }
@@ -211,7 +220,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
 .modal-input { width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: transparent; outline: none; color: #111; }
 .modal-input::placeholder { color: #aaa; font-weight: 300; }
 .modal-actions { display: flex; gap: 8px; margin-top: 24px; }
-.modal-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; text-align: left; }
+.modal-btn { flex: 1; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #ccc; background: transparent; color: #888; cursor: pointer; text-align: left; }
 .modal-btn-dark { background: #111; color: #f0ede8; border-color: #111; }
 .edit-item-modal-confirm { font-size: 10px; font-family: 'IBM Plex Mono', monospace; color: #7a5a1a; background: #f5edda; border: 1px solid #c8a04a; padding: 12px 14px; margin-top: 16px; white-space: pre-line; line-height: 1.7; display: none; }
 .edit-item-modal-confirm.show { display: block; }
@@ -301,14 +310,14 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
 </div>
 
 <div class="sidebar">
-  <div class="sidebar-brand">Jedda</div>
+  <div class="sidebar-brand">jedda</div>
   <nav class="sidebar-nav">
     <div class="nav-item active" id="nav-po" onclick="showPage('po')">pre-order</div>
     <div class="nav-item" id="nav-settings" onclick="showPage('settings')">settings</div>
   </nav>
   <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:10px">
     <span>admin</span>
-    <button onclick="lock()" style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#888;background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-weight:400;padding:0;text-align:left" onmouseover="this.style.color='#888'" onmouseout="this.style.color='#ccc'">kunci ↑</button>
+    <button onclick="lock()" class="logout-btn">log out</button>
   </div>
 </div>
 
@@ -343,10 +352,10 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
       <div class="stat-num" id="stat-tunggu_ongkir">—</div>
       <div class="stat-sub">belum bayar</div>
     </div>
-    <div class="stat-card" id="sc-diproses" onclick="setFilter('diproses',this)">
-      <div class="stat-label">diproses</div>
-      <div class="stat-num" id="stat-diproses">—</div>
-      <div class="stat-sub">ongkir lunas</div>
+    <div class="stat-card" id="sc-dikirim" onclick="setFilter('dikirim',this)">
+      <div class="stat-label">dikirim</div>
+      <div class="stat-num" id="stat-dikirim">—</div>
+      <div class="stat-sub">sudah terkirim</div>
     </div>
   </div>
 
@@ -355,7 +364,10 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
     <button class="sort-btn" id="sort-newest" onclick="setSort('newest',this)">↓ terbaru</button>
     <button class="sort-btn" id="sort-est" onclick="setSort('est',this)">est. kirim</button>
     <div style="width:1px;height:16px;background:#d8d4ce;margin:0 4px"></div>
-    <button class="sort-btn active" id="toggle-dikirim" onclick="toggleHideDikirim(this)">sembunyikan dikirim</button>
+    <div class="dikirim-toggle" id="toggle-dikirim" onclick="toggleHideDikirim()">
+      <div class="dikirim-toggle-track"><div class="dikirim-toggle-thumb"></div></div>
+      <span class="dikirim-toggle-label">sembunyikan dikirim</span>
+    </div>
     <button class="sort-btn" id="btn-filter" onclick="toggleFilterBar(this)">filter ⌄</button>
     <button class="sort-btn" id="btn-export" onclick="exportCSV()">↓ CSV</button>
     <div class="toolbar-right">
@@ -459,6 +471,10 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
       <div class="modal-label">kurir</div>
       <select class="modal-select" id="modal-kurir" onchange="handleKurirChange()">
         <option value="JNE">JNE</option>
+        <option value="SiCepat">SiCepat</option>
+        <option value="J&T">J&T</option>
+        <option value="Anteraja">Anteraja</option>
+        <option value="SAP">SAP</option>
         <option value="custom">lainnya (ketik sendiri)</option>
       </select>
     </div>
@@ -468,7 +484,7 @@ td { padding: 13px 12px; font-size: 13px; font-weight: 400; color: #111; vertica
     </div>
     <div class="modal-field">
       <div class="modal-label">nomor resi</div>
-      <input class="modal-input" id="modal-resi" placeholder="masukkan nomor resi...">
+      <input class="modal-input" id="modal-resi" placeholder="masukkan nomor resi..." onkeydown="if(event.key==='Enter')submitResi()">
     </div>
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeResiModal()">batal</button>
@@ -714,7 +730,7 @@ function pinDel() { if(pinBuffer.length>0){ pinBuffer=pinBuffer.slice(0,-1); upd
 function checkPin() {
   if(pinBuffer===CORRECT_PIN) {
     document.getElementById('pin-screen').style.display='none';
-    loadColPrefs(); init();
+    loadColPrefs(); initHideDikirim(); init();
   } else {
     document.getElementById('pin-error').classList.add('show');
     pinBuffer=''; updatePinDots(); syncPin();
@@ -826,7 +842,7 @@ function updateStats() {
   document.getElementById("stat-total").textContent         = base.length;
   document.getElementById("stat-baru").textContent          = base.filter(o=>o.status==="baru").length;
   document.getElementById("stat-tunggu_ongkir").textContent = base.filter(o=>o.status==="tunggu_ongkir").length;
-  document.getElementById("stat-diproses").textContent      = base.filter(o=>o.status==="diproses").length;
+  document.getElementById("stat-dikirim").textContent       = base.filter(o=>o.status==="dikirim").length;
 }
 
 function renderTable() {
@@ -878,7 +894,17 @@ function setSort(mode,el) {
 }
 function setSortFromSelect(val) { sortMode=val; renderTable(); }
 function setSearch(v){ searchQuery=v; renderTable(); }
-function toggleHideDikirim(el){ hideDikirim=!hideDikirim; el.classList.toggle('active',hideDikirim); el.textContent=hideDikirim?'sembunyikan dikirim':'tampilkan dikirim'; renderTable(); }
+function toggleHideDikirim(){ 
+  hideDikirim=!hideDikirim; 
+  const el=document.getElementById('toggle-dikirim'); 
+  if(el) el.classList.toggle('on',hideDikirim); 
+  try { localStorage.setItem('jedda_hide_dikirim', hideDikirim?'1':'0'); } catch(e){}
+  renderTable(); 
+}
+function initHideDikirim(){
+  try { const s=localStorage.getItem('jedda_hide_dikirim'); if(s!==null) hideDikirim=(s==='1'); } catch(e){}
+  const el=document.getElementById('toggle-dikirim'); if(el) el.classList.toggle('on',hideDikirim);
+}
 
 // ── panel ──
 function openPanel(id) {
@@ -1122,7 +1148,7 @@ async function saveResiToDb(id, resi, kurir) {
 
 function exportCSV(){
   const cols=["no. PO","channel","tanggal masuk","nama","hp","alamat","item","estimasi","status","resi","kurir"];
-  const rows=orders.map(o=>{
+  const rows=filteredOrders().map(o=>{
     const items=o.items.map(i=>[i.name,i.color,i.size,i.qty+'pcs'].filter(Boolean).join(' ')).join(' | ');
     const est=getEstDisplay(o);
     const tgl=new Date(o.created).toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"});

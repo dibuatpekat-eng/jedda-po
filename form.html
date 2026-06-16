@@ -82,7 +82,7 @@ body { font-family: 'IBM Plex Mono', monospace; -webkit-font-smoothing: antialia
 .field-input:focus { border-bottom-color: #111; }
 .field-input::placeholder { color: #ccc; font-weight: 300; }
 .submit-area { padding: 40px 28px 100px; }
-.submit-btn { display: block; width: 100%; padding: 18px; background: #111; color: #f0ede8; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; font-weight: 300; text-align: left; transition: opacity 0.15s; }
+.submit-btn { display: block; width: 100%; padding: 18px; background: #111; color: #f0ede8; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; font-weight: 400; text-align: left; transition: opacity 0.15s; }
 .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .submit-note { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-top: 14px; font-weight: 400; }
 .review-section { margin: 40px 28px 0; }
@@ -468,7 +468,7 @@ function render(){
   const chName=selectedChannel?.name||'Jedda';
 
   if(st.phase==="done"){
-    root.innerHTML=`<div class="done-page"><div class="done-header"><div class="done-brand">Jedda</div><div class="done-status">order received</div></div><div class="done-main"><div class="done-po-label">nomor pesanan</div><div class="done-po-num">${st.orderNum}</div><div class="done-divider"></div><div class="done-grid"><div class="done-cell"><div class="done-cell-label">estimasi PO</div><div class="done-cell-val">${st.savedEstDate||'—'}</div></div><div class="done-cell"><div class="done-cell-label">status</div><div class="done-cell-val">sedang diproses</div></div><div class="done-cell"><div class="done-cell-label">nama</div><div class="done-cell-val">${esc(st.name)}</div></div><div class="done-cell"><div class="done-cell-label">kontak</div><div class="done-cell-val">${esc(st.phone)}</div></div></div><div class="done-note">konfirmasi pesanan akan dikirim via whatsapp dalam 2x24 jam.</div><div class="done-track-hint">pantau status pesanan di<br><a class="done-track-link" href="https://po.jeddawear.com/track" target="_blank">po.jeddawear.com/track</a></div><button class="done-new-btn" onclick="resetAll()">+ order baru</button></div><div class="done-footer">jedda — ${new Date().getFullYear()}</div></div>`;
+    root.innerHTML=`<div class="done-page"><div class="done-header"><div class="done-brand">Jedda</div><div class="done-status">order received</div></div><div class="done-main"><div class="done-po-label">nomor pesanan</div><div class="done-po-num">${st.orderNum}</div><div class="done-divider"></div><div class="done-grid"><div class="done-cell"><div class="done-cell-label">estimasi PO</div><div class="done-cell-val">${st.savedEstDate||'—'}</div></div><div class="done-cell"><div class="done-cell-label">status</div><div class="done-cell-val">sedang diproses</div></div><div class="done-cell"><div class="done-cell-label">nama</div><div class="done-cell-val">${esc(st.name)}</div></div><div class="done-cell"><div class="done-cell-label">kontak</div><div class="done-cell-val">${esc(st.phone)}</div></div></div><div class="done-note">konfirmasi pesanan akan dikirim via whatsapp dalam 2x24 jam.</div><div class="done-track-hint">pantau status pesanan di<br><a class="done-track-link" href="https://po.jeddawear.com/track?id=${st.orderNum}" target="_blank">po.jeddawear.com/track</a></div><button class="done-new-btn" onclick="resetAll()">+ order baru</button></div><div class="done-footer">jedda — ${new Date().getFullYear()}</div></div>`;
     return;
   }
 
@@ -501,7 +501,7 @@ function render(){
   root.innerHTML=`<div class="header"><div class="header-brand">Jedda</div><div class="header-meta">pre-order<br>${new Date().toLocaleDateString("id-ID",{month:"long",year:"numeric"})}</div></div><hr class="header-rule"><div class="items-eyebrow"><span class="eyebrow-left">01 — pilih item</span><span class="eyebrow-right">${totalQty()>0?totalQty()+" dipilih":"—"}</span></div><div class="cat-block"><div class="item-grid">${cards}</div></div><div style="height:100px"></div><div id="cart-footer" class="cart-footer ${totalQty()>0?'visible':''}"><div class="cart-footer-inner" onclick="openCartPanel()"><div class="cf-left"><strong>${totalQty()} item</strong>est. ${estDisplay()}</div><button class="cf-btn" onclick="event.stopPropagation();openCartPanel()">lihat →</button></div></div>`;
 }
 
-function goReview(){ if(!st.name.trim()){alert("nama wajib diisi.");return;} if(!st.phone.trim()){alert("nomor HP wajib diisi.");return;} if(!st.address.trim()){alert("alamat wajib diisi.");return;} st.phase="review"; render(); }
+function goReview(){ if(!st.name.trim()){alert("nama wajib diisi.");return;} if(!st.phone.trim()){alert("nomor HP wajib diisi.");return;} const ph=st.phone.replace(/\D/g,""); if(ph.length<8){alert("nomor HP tidak valid.");return;} if(!st.address.trim()){alert("alamat wajib diisi.");return;} st.phase="review"; render(); }
 
 async function submitOrder(){
   const btn=document.getElementById('submit-btn');
