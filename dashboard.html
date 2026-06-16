@@ -1101,6 +1101,21 @@ function handleWaFollowUp(id){ const o=orders.find(x=>x.id===id); if(!o) return;
 function toggleOngkirConfirm(){ const el=document.getElementById('ongkir-confirm-toggle'); if(el) el.classList.toggle('checked'); }
 function handleOngkirDiterima(id){ const el=document.getElementById('ongkir-confirm-toggle'); if(!el?.classList.contains('checked')){ alert('centang konfirmasi dulu.'); return; } moveStatus(id,'diproses'); }
 
+async function moveStatus(id, newStatus) {
+  const o = orders.find(x => x.id === id); if(!o) return;
+  try {
+    await _sb.from('po_orders').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', id);
+    o.status = newStatus;
+    updateStats(); renderTable();
+    if(selectedId === id) renderPanel(o);
+    if(newStatus === 'tunggu_ongkir') closeOngkirModal();
+  } catch(e) { alert('gagal update status: ' + e.message); }
+}
+
+async function saveResiToDb(id, resi, kurir) {
+  await _sb.from('po_orders').update({ resi, kurir, status: 'dikirim', updated_at: new Date().toISOString() }).eq('id', id);
+}
+
 function exportCSV(){
   const cols=["no. PO","channel","tanggal masuk","nama","hp","alamat","item","estimasi","status","resi","kurir"];
   const rows=orders.map(o=>{
